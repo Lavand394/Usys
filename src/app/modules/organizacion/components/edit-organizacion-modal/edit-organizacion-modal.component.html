@@ -1,0 +1,117 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <div class="modal-title h4" id="example-modal-sizes-title-lg">
+      <ng-container *ngIf="organizacion">
+        <ng-container *ngIf="organizacion.id">Editar</ng-container>
+        <ng-container *ngIf="!organizacion.id">Crear</ng-container>
+        Organización
+        <ng-container *ngIf="organizacion.id">'{{organizacion.razonSocial}}'</ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <div class="overlay overlay-block cursor-default modal-body" style="min-height: 404px;">
+    <ng-container *ngIf="isLoading$ | async">
+      <div class="overlay-layer bg-transparent">
+        <div class="spinner spinner-lg spinner-success"></div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="organizacion">
+      <form action="#" class="form form-label-right" [formGroup]="formGroup">
+        <div class="form-group row">
+          <div class="col-lg-10">
+            <label class="form-label">Razón Social*</label>
+            <input type="text" class="form-control" name="razonSocial"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('razonSocial')"
+              [class.is-valid]="isControlValid('razonSocial')" formControlName="razonSocial" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'razonSocial')">El campo es necesario</div>
+            <div class="invalid-feedback" *ngIf="controlHasError('minlength', 'razonSocial')">First name should have at
+              least 3 symbols</div>
+            <div class="invalid-feedback" *ngIf="controlHasError('maxLength', 'razonSocial')">First name should have
+              maximum 100 symbols</div>
+          </div>
+          <div class="col-lg-2">
+            <label class="form-label">RFC</label>
+            <input type="text" class="form-control" name="rfc"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('rfc')"
+              [class.is-valid]="isControlValid('rfc')" formControlName="rfc" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'rfc')">El campo es necesario</div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-10">
+            <label class="form-label">Código Postal</label>
+            <input type="text" class="form-control" name="direccion"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('direccion')"
+              [class.is-valid]="isControlValid('direccion')" formControlName="direccion" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'direccion')">El campo es necesario</div>
+          </div>
+          <div class="col-lg-2">
+            <label class="form-label">Dirección</label>
+            <input type="text" class="form-control" name="codigoPostal"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('codigoPostal')"
+              [class.is-valid]="isControlValid('codigoPostal')" formControlName="codigoPostal" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'codigoPostal')">El campo es necesario</div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-6">
+            <label class="form-label">Ciudad</label>
+            <input type="text" class="form-control" name="ciudad"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('ciudad')"
+              [class.is-valid]="isControlValid('ciudad')" formControlName="ciudad" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'ciudad')">El campo es necesario</div>
+          </div>
+          <div class="col-lg-6">
+            <label class="form-label">Estado</label>
+            <input type="text" class="form-control" name="estado"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('estado')"
+              [class.is-valid]="isControlValid('estado')" formControlName="estado" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'estado')">El campo es necesario</div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-6">
+            <label class="form-label">Teléfono</label>
+            <input type="text" class="form-control" name="telefono"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('telefono')"
+              [class.is-valid]="isControlValid('telefono')" formControlName="telefono" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'telefono')">El campo es necesario</div>
+          </div>
+          <div class="col-lg-6">
+            <label class="form-label">Télefono Celular</label>
+            <input type="text" class="form-control" name="celular"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('celular')"
+              [class.is-valid]="isControlValid('celular')" formControlName="celular" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'celular')">El campo es necesario</div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-lg-4">
+            <label class="form-label">Rubro</label>
+            <input type="text" class="form-control" name="rubro"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('rubro')"
+              [class.is-valid]="isControlValid('rubro')" formControlName="rubro" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'rubro')">El campo es necesario</div>
+          </div>
+          <div class="col-lg-8">
+            <label class="form-label">Página Web</label>
+            <input type="text" class="form-control" name="web"
+            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('web')"
+              [class.is-valid]="isControlValid('web')" formControlName="web" />
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'web')">El campo es necesario</div>
+          </div>
+        </div>
+      </form>
+    </ng-container>
+  </div>
+  <div class="modal-footer">
+    <ng-container *ngIf="organizacion">
+
+      <button type="submit" class="btn btn-primary btn-elevate" (click)="save()"
+        [disabled]="formGroup.invalid">Guardar</button>
+    </ng-container>
+    <button type="button" class="btn btn-warning btn-elevate mr-2" (click)="modal.dismiss()">Cancelar</button>
+    
+  </div>
+</div>
