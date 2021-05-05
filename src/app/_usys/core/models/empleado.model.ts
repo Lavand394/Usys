@@ -1,4 +1,8 @@
+import { Persona } from "./persona.model";
+import { Usuario } from "./usuario.model";
+
 export interface Empleado {
+
   id: number;
   noEmpleado: string;
   Puesto: string;

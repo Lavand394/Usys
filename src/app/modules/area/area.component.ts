@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CustomersService } from '../../_usys/core/_services';
+import { CustomersService } from '../../_usys/core/_services/fake/areas.service';
 import {
   GroupingState,
   PaginatorState,
@@ -20,11 +20,10 @@ import {
   ISearchView,
 } from '../../_usys/crud-table';
 
-import { DeleteCustomerModalComponent } from './components/delete-customer-modal/delete-customer-modal.component';
-import { DeleteCustomersModalComponent } from './components/delete-customers-modal/delete-customers-modal.component';
-import { UpdateCustomersStatusModalComponent } from './components/update-customers-status-modal/update-customers-status-modal.component';
-import { FetchCustomersModalComponent } from './components/fetch-customers-modal/fetch-customers-modal.component';
-import { EditCustomerModalComponent } from './components/edit-customer-modal/edit-customer-modal.component';
+import { DeleteCustomerModalComponent } from './components/delete-area-modal/delete-area-modal.component';
+import { UpdateCustomersStatusModalComponent } from './components/update-area-status-modal/update-customers-status-modal.component';
+import { FetchCustomersModalComponent } from './components/fetch-area-modal/fetch-area-modal.component';
+import { EditCustomerModalComponent } from './components/edit-area-modal/edit-area-modal.component';
 
 @Component({
   selector: 'app-area',
@@ -167,7 +166,7 @@ delete(id: number) {
 }
 
 deleteSelected() {
-  const modalRef = this.modalService.open(DeleteCustomersModalComponent);
+  const modalRef = this.modalService.open(DeleteCustomerModalComponent);
   modalRef.componentInstance.ids = this.grouping.getSelectedRows();
   modalRef.result.then(() => this.customerService.fetch(), () => { });
 }

@@ -4,7 +4,7 @@
             <h3 class="card-label">Administración de áreas</h3>
         </div>
         <div class="card-toolbar">
-            <button type="button" class="btn btn-primary" (click)="create()">New Customer</button>
+            <button type="button" class="btn btn-primary" (click)="create()"><i _ngcontent-sal-c154="" class="flaticon-plus"></i>Nuevo registro</button>
         </div>
     </div>
     <div class="card-body">
@@ -78,10 +78,13 @@
                         <app-sort-icon column="id" [activeColumn]="sorting.column" [activeDirection]="sorting.direction" (sort)="sort($event)"></app-sort-icon>
                     </th>
                     <th>
-                        Nombre
+                        DESCRIPCCIÓN
                         <app-sort-icon column="firstName" [activeColumn]="sorting.column" [activeDirection]="sorting.direction" (sort)="sort($event)"></app-sort-icon>
                     </th>
-
+                    <th>
+                        ESTATUS
+                        <app-sort-icon column="status" [activeColumn]="sorting.column" [activeDirection]="sorting.direction" (sort)="sort($event)"></app-sort-icon>
+                    </th>
                     <th>ACCIONES</th>
                 </thead>
                 <tbody>
@@ -93,7 +96,7 @@
                 </label>
                         </td>
                         <td>{{ customer.id }}</td>
-                        <td>{{ customer.firstName }}</td>
+                        <td>{{ customer.descripcion }}</td>
                         <td>
 
                             <a title="Edit customer" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(customer.id)">
