@@ -13,7 +13,7 @@
 <div class="d-flex align-items-center py-3">
   <!-- begin: loading -->
   <div class="d-flex align-items-center" *ngIf="isLoading">
-    <div class="mr-2 text-muted">Loading...</div>
+    <div class="mr-2 text-muted">Cargando información...</div>
     <div class="spinner spinner-primary mr-10"></div>
   </div>
   <!-- end: loading -->
@@ -29,10 +29,10 @@
       {{ ps }}
     </option></select
   ><span class="react-bootstrap-table-pagin ation-total"
-    >&nbsp;Showing rows {{ paginator.page }} to&nbsp;{{
+    >&nbsp;Mostrando del {{ paginator.page }} al&nbsp;{{
       paginator.pageSize
     }}
-    of&nbsp;{{ paginator.total }}</span
+    de&nbsp;{{ paginator.total }}&nbsp;Registros&nbsp;</span
   >
   <!-- end: pageSize -->
 </div>

@@ -5,8 +5,6 @@ import { InlineSVGModule } from 'ng-inline-svg';
 import { CRUDTableModule } from '../../_usys/crud-table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeleteOrganizacionModalComponent } from './components/delete-organizacion-modal/delete-organizacion-modal.component';
-import { DeleteOrganizacionesModalComponent } from './components/delete-organizaciones-modal/delete-organizaciones-modal.component';
-import { UpdateOrganizacionesStatusModalComponent } from './components/update-organizaciones-status-modal/update-organizaciones-status-modal.component';
 import { EditOrganizacionModalComponent } from './components/edit-organizacion-modal/edit-organizacion-modal.component';
 import { NgbDatepickerModule, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { OrganizacionComponent } from './organizacion.component';
@@ -16,8 +14,6 @@ import { RouterModule } from '@angular/router';
   declarations: [
     OrganizacionComponent,
     DeleteOrganizacionModalComponent,
-    DeleteOrganizacionesModalComponent,
-    UpdateOrganizacionesStatusModalComponent,
     EditOrganizacionModalComponent
   ],
   imports: [
@@ -38,8 +34,6 @@ import { RouterModule } from '@angular/router';
   ],
   entryComponents: [
     DeleteOrganizacionModalComponent,
-    DeleteOrganizacionesModalComponent,
-    UpdateOrganizacionesStatusModalComponent,
     EditOrganizacionModalComponent
   ]
 })
