@@ -6,25 +6,25 @@
 </ng-container>
 
 <div class="modal-header">
-  <div class="modal-title h4">Customer Delete</div>
+  <div class="modal-title h4">Suspender Organización</div>
 </div>
 <div class="modal-body">
   <ng-container *ngIf="isLoading">
-    <span>Customer is deleting...</span>
+    <span>Suspendiendo la organización...</span>
   </ng-container>
 
   <ng-container *ngIf="!isLoading">
-    <span>Are you sure to permanently delete this customer?</span>
+    <span>¿Suspender la organización?</span>
   </ng-container>
 </div>
 
 <div class="modal-footer">
   <div>
     <button type="button" class="btn btn-light btn-elevate mr-1" (click)="modal.dismiss()">
-      Cancel
+      Cancelar
     </button>&nbsp;
-    <button type="button" class="btn btn-primary btn-elevate" (click)="deleteCustomer()">
-      Delete
+    <button type="button" class="btn btn-primary btn-elevate" (click)="deleteOrganizacion()">
+      Suspender
     </button>
   </div>
 </div>

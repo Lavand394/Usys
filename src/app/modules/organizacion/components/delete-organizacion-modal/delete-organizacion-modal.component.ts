@@ -3,6 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
 import { catchError, delay, finalize, tap } from 'rxjs/operators';
 import { CustomersService } from '../../../../_usys/core/_services';
+import { OrganizacionService } from '../../../../_usys/core/services/modules/organizacion.service';
 
 @Component({
   selector: 'app-delete-organizacion-modal',
@@ -14,14 +15,14 @@ export class DeleteOrganizacionModalComponent implements OnInit, OnDestroy {
   isLoading = false;
   subscriptions: Subscription[] = [];
 
-  constructor(private customersService: CustomersService, public modal: NgbActiveModal) { }
+  constructor(private customersService: CustomersService,private orgService : OrganizacionService, public modal: NgbActiveModal) { }
 
   ngOnInit(): void {
   }
 
-  deleteCustomer() {
+  deleteOrganizacion() {
     this.isLoading = true;
-    const sb = this.customersService.delete(this.id).pipe(
+    const sb = this.orgService.delete(this.id).pipe(
       delay(1000), // Remove it from your code (just for showing loading)
       tap(() => this.modal.close()),
       catchError((err) => {

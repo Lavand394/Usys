@@ -11,22 +11,14 @@ import {
   ICreateAction,
   IEditAction,
   IDeleteAction,
-  IDeleteSelectedAction,
-  IFetchSelectedAction,
-  IUpdateStatusForSelectedAction,
   ISortView,
   IFilterView,
   IGroupingView,
   ISearchView,
 } from '../../_usys/crud-table';
 import { DeleteOrganizacionModalComponent } from './components/delete-organizacion-modal/delete-organizacion-modal.component';
-import { DeleteOrganizacionesModalComponent } from './components/delete-organizaciones-modal/delete-organizaciones-modal.component';
-import { UpdateOrganizacionesStatusModalComponent } from './components/update-organizaciones-status-modal/update-organizaciones-status-modal.component';
 import { EditOrganizacionModalComponent } from './components/edit-organizacion-modal/edit-organizacion-modal.component';
-import { FetchOrganizacionesModalComponent } from './components/fetch-organizaciones-modal/fetch-organizaciones-modal.component';
 import { OrganizacionService } from '../../_usys/core/services/modules/organizacion.service';
-import { ThrowStmt } from '@angular/compiler';
-
 @Component({
   selector: 'app-organizacion',
   templateUrl: './organizacion.component.html',
@@ -38,8 +30,6 @@ OnDestroy,
 ICreateAction,
 IEditAction,
 IDeleteAction,
-IDeleteSelectedAction,
-IUpdateStatusForSelectedAction,
 ISortView,
 IFilterView,
 IGroupingView,
@@ -57,20 +47,18 @@ constructor(
   private fb: FormBuilder,
   private modalService: NgbModal,
   public customerService: CustomersService,
-  private OrgService: OrganizacionService
-) { 
-  this.OrgService.getDatosFakePrueba();
-}
+  public OrgService: OrganizacionService
+) { }
 
   // angular lifecircle hooks
   ngOnInit(): void {
     this.filterForm();
     this.searchForm();
-    this.customerService.fetch();
-    this.grouping = this.customerService.grouping;
-    this.paginator = this.customerService.paginator;
-    this.sorting = this.customerService.sorting;
-    const sb = this.customerService.isLoading$.subscribe(res => this.isLoading = res);
+    this.OrgService.fetch();
+    this.grouping = this.OrgService.grouping;
+    this.paginator = this.OrgService.paginator;
+    this.sorting = this.OrgService.sorting;
+    const sb = this.OrgService.isLoading$.subscribe(res => this.isLoading = res);
     this.subscriptions.push(sb);
   }
 
@@ -99,14 +87,14 @@ constructor(
     const filter = {};
     const status = this.filterGroup.get('status').value;
     if (status) {
-      filter['status'] = status;
+      filter['estatus'] = status;
     }
 
     const type = this.filterGroup.get('type').value;
     if (type) {
-      filter['type'] = type;
+      filter['rubro'] = type;
     }
-    this.customerService.patchState({ filter });
+    this.OrgService.patchState({ filter });
   }
 
   // search
@@ -128,7 +116,7 @@ constructor(
   }
 
   search(searchTerm: string) {
-    this.customerService.patchState({ searchTerm });
+    this.OrgService.patchState({ searchTerm });
   }
 
   // sorting
@@ -141,12 +129,12 @@ constructor(
     } else {
       sorting.direction = sorting.direction === 'asc' ? 'desc' : 'asc';
     }
-    this.customerService.patchState({ sorting });
+    this.OrgService.patchState({ sorting });
   }
 
   // pagination
   paginate(paginator: PaginatorState) {
-    this.customerService.patchState({ paginator });
+    this.OrgService.patchState({ paginator });
   }
 
   // form actions
@@ -158,7 +146,7 @@ constructor(
     const modalRef = this.modalService.open(EditOrganizacionModalComponent, { size: 'xl' });
     modalRef.componentInstance.id = id;
     modalRef.result.then(() =>
-      this.customerService.fetch(),
+      this.OrgService.fetch(),
       () => { }
     );
   }
@@ -166,24 +154,6 @@ constructor(
   delete(id: number) {
     const modalRef = this.modalService.open(DeleteOrganizacionModalComponent);
     modalRef.componentInstance.id = id;
-    modalRef.result.then(() => this.customerService.fetch(), () => { });
-  }
-
-  deleteSelected() {
-    const modalRef = this.modalService.open(DeleteOrganizacionesModalComponent);
-    modalRef.componentInstance.ids = this.grouping.getSelectedRows();
-    modalRef.result.then(() => this.customerService.fetch(), () => { });
-  }
-
-  updateStatusForSelected() {
-    const modalRef = this.modalService.open(UpdateOrganizacionesStatusModalComponent);
-    modalRef.componentInstance.ids = this.grouping.getSelectedRows();
-    modalRef.result.then(() => this.customerService.fetch(), () => { });
-  }
-
-  fetchSelected() {
-    const modalRef = this.modalService.open(FetchOrganizacionesModalComponent);
-    modalRef.componentInstance.ids = this.grouping.getSelectedRows();
-    modalRef.result.then(() => this.customerService.fetch(), () => { });
+    modalRef.result.then(() => this.OrgService.fetch(), () => { });
   }
 }

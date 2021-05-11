@@ -28,21 +28,3 @@ export interface IDeleteAction {
   delete(id: number): void;
 }
 
-export interface IDeleteSelectedAction {
-  grouping: GroupingState;
-  ngOnInit(): void;
-  deleteSelected(): void;
-}
-
-export interface IFetchSelectedAction {
-  grouping: GroupingState;
-  ngOnInit(): void;
-  fetchSelected(): void;
-}
-
-export interface IUpdateStatusForSelectedAction {
-  grouping: GroupingState;
-  ngOnInit(): void;
-  updateStatusForSelected(): void;
-}
-

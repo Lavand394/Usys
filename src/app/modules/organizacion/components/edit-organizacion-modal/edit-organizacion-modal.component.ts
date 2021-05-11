@@ -2,10 +2,10 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbDateAdapter, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
-import { catchError, finalize, first, tap } from 'rxjs/operators';
+import { catchError, first, tap } from 'rxjs/operators';
 import { Organizacion } from '../../../../_usys/core/models/organizacion.model';
-import { CustomersService } from '../../../../_usys/core/_services';
 import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
+import { OrganizacionService } from '../../../../_usys/core/services/modules/organizacion.service';
 
 const EMPTY_ORGANIZACION: Organizacion = {
   id: undefined,
@@ -17,7 +17,7 @@ const EMPTY_ORGANIZACION: Organizacion = {
   celular: '',
   ciudad: '',
   estado: '',
-  estatus: '',
+  estatus: 1,
   fechaCreacion: new Date(),
   rubro: '',
   web: '',
@@ -40,13 +40,13 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
   private subscriptions: Subscription[] = [];
   constructor(
-    private customersService: CustomersService,
+    private orgService: OrganizacionService,
     private fb: FormBuilder, public modal: NgbActiveModal
     ) { }
 
   ngOnInit(): void {
     // esta seccion se va a cambiar cuando actualice la parte de los services
-    this.isLoading$ = this.customersService.isLoading$;
+    this.isLoading$ = this.orgService.isLoading$;
     this.loadCustomer();
   }
 
@@ -55,7 +55,7 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
       this.organizacion = EMPTY_ORGANIZACION;
       this.loadForm();
     } else {
-      const sb = this.customersService.getItemById(this.id).pipe(
+      const sb = this.orgService.getItemById(this.id).pipe(
         first(),
         catchError((errorMessage) => {
           this.modal.dismiss(errorMessage);
@@ -68,21 +68,21 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
       this.subscriptions.push(sb);
     }
   }
-//Falta definir que validaciones va a llevar
+
   loadForm() {
     this.formGroup = this.fb.group({
-      razonSocial: [this.organizacion.razonSocial, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(100)])],
-        rfc: [this.organizacion.rfc, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(100)])],
-        direccion: [this.organizacion.direccion, Validators.compose([Validators.required])],
-        codigoPostal: [this.organizacion.codigoPostal, Validators.compose([Validators.nullValidator])],
-        telefono: [this.organizacion.telefono, Validators.compose([Validators.required])],
-        celular: [this.organizacion.celular, Validators.compose([Validators.required])],
-        ciudad: [this.organizacion.ciudad],
-        estado: [this.organizacion.estado, Validators.compose([Validators.required])],
+      razonSocial: [this.organizacion.razonSocial, Validators.compose([Validators.required,Validators.maxLength(150)])],
+        rfc: [this.organizacion.rfc, Validators.compose([Validators.required, Validators.maxLength(20)])],
+        direccion: [this.organizacion.direccion, Validators.compose([Validators.required, Validators.maxLength(150)])],
+        codigoPostal: [this.organizacion.codigoPostal, Validators.compose([Validators.required, Validators.maxLength(10)])],
+        telefono: [this.organizacion.telefono, Validators.compose([Validators.required, Validators.maxLength(50)])],
+        celular: [this.organizacion.celular, Validators.compose([Validators.required, Validators.maxLength(50)])],
+        ciudad: [this.organizacion.ciudad, Validators.maxLength(50)],
+        estado: [this.organizacion.estado, Validators.compose([Validators.required, Validators.maxLength(50)])],
+        estatus: [this.organizacion.estatus],
         fechaCreacion: [this.organizacion.fechaCreacion, Validators.compose([Validators.required])],
-        rubro: [this.organizacion.rubro, Validators.compose([Validators.required])],
-        web: [this.organizacion.web, Validators.compose([Validators.required])]
-
+        rubro: [this.organizacion.rubro, Validators.compose([Validators.required, Validators.maxLength(50)])],
+        web: [this.organizacion.web, Validators.compose([Validators.required, Validators.maxLength(150)])]
     });
   }
 
@@ -96,7 +96,7 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
   }
 
   edit() {
-    const sbUpdate = this.customersService.update(this.organizacion).pipe(
+    const sbUpdate = this.orgService.update(this.organizacion).pipe(
       tap(() => {
         this.modal.close();
       }),
@@ -109,7 +109,7 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
   }
 
   create() {
-    const sbCreate = this.customersService.create(this.organizacion).pipe(
+    const sbCreate = this.orgService.create(this.organizacion).pipe(
       tap(() => {
         this.modal.close();
       }),
@@ -131,10 +131,10 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
     this.organizacion.celular = formData.celular;
     this.organizacion.ciudad = formData.ciudad;
     this.organizacion.estado = formData.estado;
-    this.organizacion.ciudad = formData.estatus;
-    this.organizacion.estado = formData.fechaCreacion;
-    this.organizacion.ciudad = formData.rubro;
-    this.organizacion.estado = formData.web;
+    this.organizacion.estatus = formData.estatus;
+    this.organizacion.fechaCreacion = formData.fechaCreacion;
+    this.organizacion.rubro = formData.rubro;
+    this.organizacion.web = formData.web;
   }
 
   ngOnDestroy(): void {

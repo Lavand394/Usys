@@ -62,7 +62,8 @@ export abstract class TableService<T> {
 
   protected http: HttpClient;
   // API URL has to be overrided
-  API_URL = `${environment.apiUrl}/endpoint`;
+ // API_URL = `${environment.apiUrl}/endpoint`;
+ API_URL = "http://localhost:8080/api/organizacion";
   constructor(http: HttpClient) {
     this.http = http;
   }
@@ -72,7 +73,7 @@ export abstract class TableService<T> {
   create(item: BaseModel): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(this.API_URL, item).pipe(
+    return this.http.post<BaseModel>(this.API_URL + '/crear', item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
@@ -84,7 +85,7 @@ export abstract class TableService<T> {
 
   // READ (Returning filtered list of entities)
   find(tableState: ITableState): Observable<TableResponseModel<T>> {
-    const url = this.API_URL + '/find';
+    const url = this.API_URL + '/listar';
     this._errorMessage.next('');
     return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
       catchError(err => {
@@ -98,7 +99,7 @@ export abstract class TableService<T> {
   getItemById(id: number): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}/${id}`;
+    const url = `${this.API_URL}/ver/${id}`;
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -111,7 +112,7 @@ export abstract class TableService<T> {
 
   // UPDATE
   update(item: BaseModel): Observable<any> {
-    const url = `${this.API_URL}/${item.id}`;
+    const url = `${this.API_URL}/editar/${item.id}`;
     this._isLoading$.next(true);
     this._errorMessage.next('');
     return this.http.put(url, item).pipe(
@@ -144,7 +145,7 @@ export abstract class TableService<T> {
   delete(id: any): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}/${id}`;
+    const url = `${this.API_URL}/eliminar/${id}`;
     return this.http.delete(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -159,7 +160,7 @@ export abstract class TableService<T> {
   deleteItems(ids: number[] = []): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = this.API_URL + '/deleteItems';
+    const url = this.API_URL + '/eliminar';
     const body = { ids };
     return this.http.put(url, body).pipe(
       catchError(err => {

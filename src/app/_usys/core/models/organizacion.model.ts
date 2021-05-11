@@ -8,7 +8,7 @@ export interface Organizacion {
   celular: string;
   ciudad: string;
   estado: string;
-  estatus: string;
+  estatus: number;
   fechaCreacion: Date;
   rubro: string;
   web: string;
