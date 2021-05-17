@@ -52,7 +52,7 @@ export class CustomersService extends TableService<Empleado> implements OnDestro
     return this.http.get<Empleado[]>(this.API_URL).pipe(
       map((customers: Empleado[]) => {
         return customers.filter(c => ids.indexOf(c.id) > -1).map(c => {
-          c.datosUsuario.estatus = status;
+         // c.datosUsuario.estatus = status;
           return c;
         });
       }),

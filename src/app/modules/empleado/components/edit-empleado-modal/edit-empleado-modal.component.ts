@@ -13,10 +13,12 @@ const EMPTY_CUSTOMER: Empleado = {
   id: undefined,
   Cargo: undefined,
   Puesto: undefined,
-  idArea: undefined,
+  area: undefined,
   idOrganizacion: undefined,
   idPersona: undefined,
-  noEmpleado: undefined
+  noEmpleado: undefined,
+  persona: undefined,
+  usuario: undefined
 };
 
 const EMPTY_CUSTOMER_PERSONA: Persona = {
@@ -34,7 +36,8 @@ const EMPTY_CUSTOMER_USUARIO: Usuario = {
   estatus: undefined,
   fecha_Creacion: undefined,
   password: undefined,
-  ultimo_Acceso: undefined
+  ultimo_Acceso: undefined,
+  rol: undefined
 }
 
 
@@ -49,7 +52,7 @@ const EMPTY_CUSTOMER_USUARIO: Usuario = {
     {provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter}
   ]
 })
-export class EditCustomerModalComponent implements OnInit, OnDestroy {
+export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   @Input() id: number;
   isLoading$;
   customer: Empleado;
@@ -93,13 +96,13 @@ export class EditCustomerModalComponent implements OnInit, OnDestroy {
       nombre: [this.customerPersona.nombre, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
       apellido_paterno: [this.customerPersona.apellido_paterno, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
       apellido_materno: [this.customerPersona.apellido_materno, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
-      correo_electronico: [this.customerUsuario.correo_Electronico, Validators.compose([Validators.required, Validators.email])],
-      contrasena: ['', Validators.compose([Validators.required])],
+      correo_electronico: [this.customer.usuario.correo_Electronico, Validators.compose([Validators.required, Validators.email])],
+      contrasena: [this.customer.usuario.password, Validators.compose([Validators.required])],
       conf_contrasena: ['', Validators.compose([Validators.required])],
       cargo: [this.customer.Cargo, Validators.compose([Validators.required])],
       puesto: [this.customer.Puesto, Validators.compose([Validators.required])],
-      rol: ['', Validators.compose([Validators.required])],
-      area: ['', Validators.compose([Validators.required])],
+      rol: [this.customer.usuario.rol, Validators.compose([Validators.required])],
+      area: [this.customer.area, Validators.compose([Validators.required])],
       genero: [this.customerPersona.genero, Validators.compose([Validators.required])]
     }, { 
       validator: ConfirmedValidator('contrasena', 'conf_contrasena')

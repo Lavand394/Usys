@@ -4,9 +4,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { InlineSVGModule } from 'ng-inline-svg';
 import { CRUDTableModule } from '../../_usys/crud-table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DeleteCustomerModalComponent } from './components/delete-empleado-modal/delete-empleado-modal.component';
-import { UpdateCustomersStatusModalComponent } from './components/update-empleado-status-modal/update-empleado-status-modal.component';
-import { EditCustomerModalComponent } from './components/edit-empleado-modal/edit-empleado-modal.component';
+import { DeleteEmpleadoModalComponent } from './components/delete-empleado-modal/delete-empleado-modal.component';
+import { EditEmpleadoModalComponent } from './components/edit-empleado-modal/edit-empleado-modal.component';
 import { NgbDatepickerModule, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { EmpleadoComponent } from './empleado.component';
 
@@ -14,9 +13,8 @@ import { RouterModule } from '@angular/router';
 @NgModule({
   declarations: [
     EmpleadoComponent,
-    DeleteCustomerModalComponent,
-    UpdateCustomersStatusModalComponent,
-    EditCustomerModalComponent
+    DeleteEmpleadoModalComponent,
+    EditEmpleadoModalComponent
   ],
   imports: [
     CommonModule,
@@ -35,9 +33,8 @@ import { RouterModule } from '@angular/router';
     ]),
   ],
   entryComponents: [
-    DeleteCustomerModalComponent,
-    UpdateCustomersStatusModalComponent,
-    EditCustomerModalComponent
+    DeleteEmpleadoModalComponent,
+    EditEmpleadoModalComponent
   ]
 })
 export class EmpleadoModule {}

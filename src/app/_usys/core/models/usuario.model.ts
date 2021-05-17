@@ -10,5 +10,6 @@ export interface Usuario{
     ultimo_Acceso: Date;
     estatus: number; // Active = 1 | Suspended = 2
     password: string;
+    rol: Rol;
     
 }

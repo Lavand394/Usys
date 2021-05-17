@@ -1,6 +1,6 @@
 import { BaseModel } from '../../../_usys/crud-table';
 
-export interface Area  extends BaseModel 
+export interface Area
 {
   id: number;
   descripcion: string;

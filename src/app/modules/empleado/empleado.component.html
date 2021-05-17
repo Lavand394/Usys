@@ -11,70 +11,30 @@
         <!-- begin: Filtration form -->
         <div class="form form-label-right">
             <div class="form-group row">
-                <div class="col-lg-4">
+                <div class="col-lg-2">
                     <div class="row" [formGroup]="filterGroup">
-                        <div class="col-lg-6">
+                      
                             <select class="form-control" name="status" placeholder="Filter by Status" formControlName="status">
-                  <option value="">All</option>
-                  <option value="1">Susspended</option>
-                  <option value="2">Active</option>
-                  <option value="3">Pending</option>
-                </select><small class="form-text text-muted"><b>Filter</b> by Status</small>
-                        </div>
-                        <div class="col-lg-6">
-                            <select class="form-control" placeholder="Filter by Type" name="type" formControlName="type">
-                  <option value="">All</option>
-                  <option value="1">Business</option>
-                  <option value="2">Individual</option>
-                </select><small class="form-text text-muted"><b>Filter</b> by Type</small>
-                        </div>
+                  <option value="">Todos</option>
+                  <option value="1">Activo</option>
+                  <option value="2">Suspendido</option>
+                </select><small class="form-text text-muted"><b>Filtrar</b> por estatus</small>
+                    
                     </div>
                 </div>
-                <div class="col-lg-2" [formGroup]="searchGroup">
-                    <input type="text" class="form-control" name="searchText" placeholder="Search" value="" formControlName="searchTerm" /><small class="form-text text-muted"><b>Search</b> in all fields</small>
+                <div class="col-lg-4" [formGroup]="searchGroup">
+                    <input type="text" class="form-control" name="searchText" placeholder="" value="" formControlName="searchTerm" /><small class="form-text text-muted"><b>Búsqueda</b> general</small>
                 </div>
             </div>
         </div>
         <!-- end: Filtration form -->
-
-        <!-- begin: Grouping -->
-        <ng-container *ngIf="grouping.getSelectedRowsCount()">
-            <div class="form">
-                <div class="row align-items-center form-group-actions margin-top-20 margin-bottom-20">
-                    <div class="col-xl-12">
-                        <div class="form-group form-group-inline">
-                            <div class="form-label form-label-no-wrap">
-                                <label class="font-bold font-danger"><span>Selected records count:
-                      <b>{{ grouping.getSelectedRowsCount() }}</b></span></label>
-                            </div>
-                            <div>
-                                <button type="button" class="btn btn-danger font-weight-bolder font-size-sm mr-1" (click)="deleteSelected()">
-                    <i class="fa fa-trash"></i> Delete All
-                  </button>&nbsp;
-                                <button type="button" class="btn btn-light-primary font-weight-bolder font-size-sm mr-1" (click)="fetchSelected()">
-                    <i class="fa fa-stream"></i> Fetch Selected
-                  </button>&nbsp;
-                                <button type="button" class="btn btn-light-primary font-weight-bolder font-size-sm mr-1" (click)="updateStatusForSelected()">
-                    <i class="fa fa-sync-alt"></i> Update Status
-                  </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ng-container>
-        <!-- end: Grouping -->
-
+        
         <!-- begin:Table -->
         <div class="table-responsive angular-bootstrap-table">
             <table class="table table-head-custom table-vertical-center overflow-hidden">
                 <thead>
-                    <th class="selection-cell-header" data-row-selection="true">
-                        <label class="checkbox checkbox-single"><input type="checkbox" (click)="grouping.selectAllRows()"
-                  [checked]="grouping.checkAreAllRowsSelected()" /><span></span></label>
-                    </th>
                     <th>
-                        No. Empleado
+                        NO. EMPLEADO
                         <app-sort-icon column="noEmpleado" [activeColumn]="sorting.column" [activeDirection]="sorting.direction" (sort)="sort($event)"></app-sort-icon>
                     </th>
                     <th>
@@ -96,24 +56,27 @@
                     <th>ACCIONES</th>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let customer of customerService.items$ | async">
-                        <td class="selection-cell">
-                            <label class="checkbox checkbox-single"><input type="checkbox" (click)="grouping.selectRow(customer.id)"
-                    [checked]="grouping.isRowSelected(customer.id)" />
-                  <span></span>
-                </label>
-                       
+                    <tr *ngFor="let empleado of EmplService.items$ | async">
+                        
+                        <td>{{ empleado.noEmpleado }}</td>
+                        <td>{{ empleado.persona.nombre }}</td>
+                        <td>{{ empleado.persona.apellido_paterno }}</td>
+                        <td>{{ empleado.persona.apellido_materno }}</td>
+                        <td>{{ empleado.usuario.correo_Electronico }}</td>
+                        <td>
+                            <span class="label label-dot label-primary mr-2" [class.label-danger]="empleado.usuario.estatus === 0" [class.label-primary]="empleado.usuario.estatus === 1"></span>&nbsp;<span class="font-bold font-primary">
+                                <ng-container *ngIf="empleado.usuario.estatus === 0">Suspendido</ng-container>
+                                <ng-container *ngIf="empleado.usuario.estatus === 1">Activo</ng-container>
+                              </span>
                         </td>
-                        <td>{{ customer.noEmpleado }}</td>
-                        <td>{{ customer.datosPersona.nombre }}</td>
                         <td>
 
-                            <a title="Edit customer" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(customer.id)">
+                            <a title="Edit customer" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(empleado.id)">
                                 <span [inlineSVG]="'./assets/media/svg/icons/Communication/Write.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-primary">
                   </span>
                             </a>
 
-                            <a title="Delete customer" class="btn btn-icon btn-light btn-hover-danger btn-sm" (click)="delete(customer.id)">
+                            <a title="Delete customer" class="btn btn-icon btn-light btn-hover-danger btn-sm" (click)="delete(empleado.id)">
                                 <span [inlineSVG]="'./assets/media/svg/icons/General/Trash.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-danger">
                   </span>
                             </a>

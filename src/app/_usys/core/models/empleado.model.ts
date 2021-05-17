@@ -1,5 +1,6 @@
 import { Persona } from "./persona.model";
 import { Usuario } from "./usuario.model";
+import { Area } from "./area.model";
 
 export interface Empleado {
 
@@ -8,6 +9,8 @@ export interface Empleado {
   Puesto: string;
   Cargo: string;
   idPersona: number;
-  idArea: number;
+  area: Area;
   idOrganizacion: number;
+  persona: Persona;
+  usuario: Usuario;
 }
