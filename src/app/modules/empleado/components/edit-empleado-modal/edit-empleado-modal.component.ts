@@ -3,67 +3,43 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbDateAdapter, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
 import { catchError, finalize, first, tap } from 'rxjs/operators';
+import { Usuario } from '../../../../_usys/core/models/usuario.model';
 import { Empleado } from '../../../../_usys/core/models/empleado.model';
 import { CustomersService } from '../../../../_usys/core/_services';
 import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
-import { Persona } from '../../../../_usys/core/models/persona.model';
-import { Usuario } from 'src/app/_usys/core/models/usuario.model';
 
-const EMPTY_CUSTOMER: Empleado = {
+const EMPTY_CUSTOMER: Usuario = {
   id: undefined,
-  Cargo: undefined,
-  Puesto: undefined,
-  area: undefined,
-  idOrganizacion: undefined,
-  idPersona: undefined,
-  noEmpleado: undefined,
-  persona: undefined,
-  usuario: undefined
-};
-
-const EMPTY_CUSTOMER_PERSONA: Persona = {
-  idPersona: undefined,
-  apellido_paterno: undefined,
-  apellido_materno: undefined,
-  fecha_Nacimiento: undefined,
-  genero: undefined,
-  nombre: undefined
-};
-
-const EMPTY_CUSTOMER_USUARIO: Usuario = {
-  idUsuario: undefined,
-  correo_Electronico: undefined,
+  correoElectronico: undefined,
+  fechaCreacion: undefined,
+  ultimoAcceso: undefined,
   estatus: undefined,
-  fecha_Creacion: undefined,
   password: undefined,
-  ultimo_Acceso: undefined,
+  tipoUsuario: undefined,
+  empleado: undefined,
   rol: undefined
-}
-
+};
 
 @Component({
   selector: 'app-edit-empleado-modal',
   templateUrl: './edit-empleado-modal.component.html',
   styleUrls: ['./edit-empleado-modal.component.scss'],
-  // NOTE: For this example we are only providing current component, but probably
-  // NOTE: you will w  ant to provide your main App Module
   providers: [
-    {provide: NgbDateAdapter, useClass: CustomAdapter},
-    {provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter}
+    { provide: NgbDateAdapter, useClass: CustomAdapter },
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter }
   ]
 })
+
 export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   @Input() id: number;
   isLoading$;
-  customer: Empleado;
-  customerPersona: Persona;
-  customerUsuario: Usuario;
+  usuario: Usuario;
   formGroup: FormGroup;
   private subscriptions: Subscription[] = [];
   constructor(
     private customersService: CustomersService,
     private fb: FormBuilder, public modal: NgbActiveModal
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.isLoading$ = this.customersService.isLoading$;
@@ -72,9 +48,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
 
   loadCustomer() {
     if (!this.id) {
-      this.customer = EMPTY_CUSTOMER;
-      this.customerPersona = EMPTY_CUSTOMER_PERSONA;
-      this.customerUsuario = EMPTY_CUSTOMER_USUARIO;
+      this.usuario = EMPTY_CUSTOMER;
       this.loadForm();
     } else {
       const sb = this.customersService.getItemById(this.id).pipe(
@@ -83,8 +57,8 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
           this.modal.dismiss(errorMessage);
           return of(EMPTY_CUSTOMER);
         })
-      ).subscribe((customer: Empleado) => {
-        this.customer = customer;
+      ).subscribe((usuario: Usuario) => {
+        this.usuario = usuario;
         this.loadForm();
       });
       this.subscriptions.push(sb);
@@ -92,28 +66,29 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   loadForm() {
+
     this.formGroup = this.fb.group({
-      nombre: [this.customerPersona.nombre, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
-      apellido_paterno: [this.customerPersona.apellido_paterno, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
-      apellido_materno: [this.customerPersona.apellido_materno, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
-      correo_electronico: [this.customer.usuario.correo_Electronico, Validators.compose([Validators.required, Validators.email])],
-      contrasena: [this.customer.usuario.password, Validators.compose([Validators.required])],
+      nombre: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
+      apellido_paterno: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
+      apellido_materno: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
+      correo_electronico: ['', Validators.compose([Validators.required, Validators.email])],
+      contrasena: ['', Validators.compose([Validators.required])],
       conf_contrasena: ['', Validators.compose([Validators.required])],
-      cargo: [this.customer.Cargo, Validators.compose([Validators.required])],
-      puesto: [this.customer.Puesto, Validators.compose([Validators.required])],
-      rol: [this.customer.usuario.rol, Validators.compose([Validators.required])],
-      area: [this.customer.area, Validators.compose([Validators.required])],
-      genero: [this.customerPersona.genero, Validators.compose([Validators.required])]
-    }, { 
+      cargo: ['', Validators.compose([Validators.required])],
+      puesto: ['', Validators.compose([Validators.required])],
+      rol: ['', Validators.compose([Validators.required])],
+      area: ['', Validators.compose([Validators.required])],
+      genero: ['', Validators.compose([Validators.required])]
+    },{ 
       validator: ConfirmedValidator('contrasena', 'conf_contrasena')
     });
 
   }
-  
+
 
   save() {
     this.prepareCustomer();
-    if (this.customer.id) {
+    if (this.usuario.id) {
       this.edit();
     } else {
       this.create();
@@ -121,34 +96,43 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   edit() {
-    const sbUpdate = this.customersService.update(this.customer).pipe(
+    const sbUpdate = this.customersService.update(this.usuario).pipe(
       tap(() => {
         this.modal.close();
       }),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
-        return of(this.customer);
+        return of(this.usuario);
       }),
-    ).subscribe(res => this.customer = res);
+    ).subscribe(res => this.usuario = res);
     this.subscriptions.push(sbUpdate);
   }
 
   create() {
-    const sbCreate = this.customersService.create(this.customer).pipe(
+    const sbCreate = this.customersService.create(this.usuario).pipe(
       tap(() => {
         this.modal.close();
       }),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
-        return of(this.customer);
+        return of(this.usuario);
       }),
-    ).subscribe((res: Empleado) => this.customer = res);
+    ).subscribe((res: Usuario) => this.usuario = res);
     this.subscriptions.push(sbCreate);
   }
 
   private prepareCustomer() {
     const formData = this.formGroup.value;
-    this.customer.Cargo = formData.cargo;
+    this.usuario.empleado.persona.nombre = formData.nombre;
+    this.usuario.empleado.persona.apellidoPaterno = formData.apellido_paterno;
+    this.usuario.empleado.persona.apellidoPaterno = formData.apellido_materno;
+    this.usuario.correoElectronico = formData.correo_electronico;
+    this.usuario.password = formData.contrasena;
+    this.usuario.empleado.cargo = formData.cargo;
+    this.usuario.empleado.puesto = formData.puesto;
+    this.usuario.rol.idRol = formData.rol;
+    this.usuario.empleado.area.id = formData.area;
+    this.usuario.empleado.persona.genero = formData.genero;
   }
 
   ngOnDestroy(): void {
@@ -176,20 +160,20 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
     const control = this.formGroup.controls[controlName];
     return control.dirty || control.touched;
   }
-  
+
 }
 
-export function ConfirmedValidator(controlName: string, matchingControlName: string){
+export function ConfirmedValidator(controlName: string, matchingControlName: string) {
   return (formGroup: FormGroup) => {
-      const control = formGroup.controls[controlName];
-      const matchingControl = formGroup.controls[matchingControlName];
-      if (matchingControl.errors && !matchingControl.errors.confirmedValidator) {
-          return;
-      }
-      if (control.value !== matchingControl.value) {
-          matchingControl.setErrors({ confirmedValidator: true });
-      } else {
-          matchingControl.setErrors(null);
-      }
+    const control = formGroup.controls[controlName];
+    const matchingControl = formGroup.controls[matchingControlName];
+    if (matchingControl.errors && !matchingControl.errors.confirmedValidator) {
+      return;
+    }
+    if (control.value !== matchingControl.value) {
+      matchingControl.setErrors({ confirmedValidator: true });
+    } else {
+      matchingControl.setErrors(null);
+    }
   }
 }
