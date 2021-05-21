@@ -51,23 +51,23 @@
                     <th>ACCIONES</th>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let customer of customerService.items$ | async">
+                    <tr *ngFor="let area of AreaService.items$ | async">
                         <td class="selection-cell">
-                            <label class="checkbox checkbox-single"><input type="checkbox" (click)="grouping.selectRow(customer.id)"
-                    [checked]="grouping.isRowSelected(customer.id)" />
+                            <label class="checkbox checkbox-single"><input type="checkbox" (click)="grouping.selectRow(area.id)"
+                    [checked]="grouping.isRowSelected(area.id)" />
                   <span></span>
                 </label>
                         </td>
-                        <td>{{ customer.id }}</td>
-                        <td>{{ customer.descripcion }}</td>
+                        <td>{{ area.id }}</td>
+                        <td>{{ area.descripcion }}</td>
                         <td>
 
-                            <a title="Edit customer" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(customer.id)">
+                            <a title="Edit customer" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(area.id)">
                                 <span [inlineSVG]="'./assets/media/svg/icons/Communication/Write.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-primary">
                   </span>
                             </a>
 
-                            <a title="Delete customer" class="btn btn-icon btn-light btn-hover-danger btn-sm" (click)="delete(customer.id)">
+                            <a title="Delete customer" class="btn btn-icon btn-light btn-hover-danger btn-sm" (click)="delete(area.id)">
                                 <span [inlineSVG]="'./assets/media/svg/icons/General/Trash.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-danger">
                   </span>
                             </a>

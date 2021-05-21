@@ -1,11 +1,11 @@
 <div class="modal-content">
   <div class="modal-header">
     <div class="modal-title h4" id="example-modal-sizes-title-lg">
-      <ng-container *ngIf="customer">
-        <ng-container *ngIf="customer.id">Editar</ng-container>
-        <ng-container *ngIf="!customer.id">Crear</ng-container>
+      <ng-container *ngIf="area">
+        <ng-container *ngIf="area.id">Editar</ng-container>
+        <ng-container *ngIf="!area.id">Crear</ng-container>
         Área
-        <ng-container *ngIf="customer.id">'{{customer.descripcion}}'</ng-container>
+        <ng-container *ngIf="area.id">'{{area.descripcion}}'</ng-container>
       </ng-container>
     </div>
   </div>
@@ -16,7 +16,7 @@
       </div>
     </ng-container>
 
-    <ng-container *ngIf="customer">
+    <ng-container *ngIf="area">
       <form action="#" class="form form-label-right" [formGroup]="formGroup">
         <div class="form-group row">
           <div class="col-lg-12">
@@ -35,7 +35,7 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-light btn-elevate mr-2" (click)="modal.dismiss()">Cancel</button>
-    <ng-container *ngIf="customer">
+    <ng-container *ngIf="area">
 
       <button type="submit" class="btn btn-primary btn-elevate" (click)="save()"
         [disabled]="formGroup.invalid">Save</button>

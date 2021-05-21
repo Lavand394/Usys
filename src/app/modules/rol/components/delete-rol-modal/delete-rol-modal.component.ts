@@ -3,25 +3,26 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
 import { catchError, delay, finalize, tap } from 'rxjs/operators';
 import { CustomersService } from '../../../../_usys/core/_services';
+import { RolService } from '../../../../_usys/core/services/modules/rol.service';
 
 @Component({
-  selector: 'app-delete-area-modal',
-  templateUrl: './delete-area-modal.component.html',
-  styleUrls: ['./delete-area-modal.component.scss']
+  selector: 'app-delete-rol-modal',
+  templateUrl: './delete-rol-modal.component.html',
+  styleUrls: ['./delete-rol-modal.component.scss']
 })
-export class DeleteAreaModalComponent implements OnInit, OnDestroy {
+export class DeleteRolModalComponent implements OnInit, OnDestroy {
   @Input() id: number;
   isLoading = false;
   subscriptions: Subscription[] = [];
 
-  constructor(private customersService: CustomersService, public modal: NgbActiveModal) { }
+  constructor(private customersService: CustomersService,private rolService : RolService, public modal: NgbActiveModal) { }
 
   ngOnInit(): void {
   }
 
-  deleteCustomer() {
+  deleteRol() {
     this.isLoading = true;
-    const sb = this.customersService.delete(this.id).pipe(
+    const sb = this.rolService.delete(this.id).pipe(
       delay(1000), // Remove it from your code (just for showing loading)
       tap(() => this.modal.close()),
       catchError((err) => {

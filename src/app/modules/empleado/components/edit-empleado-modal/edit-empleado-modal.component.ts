@@ -130,7 +130,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
     this.usuario.password = formData.contrasena;
     this.usuario.empleado.cargo = formData.cargo;
     this.usuario.empleado.puesto = formData.puesto;
-    this.usuario.rol.idRol = formData.rol;
+    this.usuario.rol.id = formData.rol;
     this.usuario.empleado.area.id = formData.area;
     this.usuario.empleado.persona.genero = formData.genero;
   }

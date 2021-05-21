@@ -4,19 +4,17 @@ import { HttpClientModule } from '@angular/common/http';
 import { InlineSVGModule } from 'ng-inline-svg';
 import { CRUDTableModule } from '../../_usys/crud-table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DeleteCustomerModalComponent } from './components/delete-area-modal/delete-area-modal.component';
-import { EditCustomerModalComponent } from './components/edit-area-modal/edit-area-modal.component';
+import { DeleteAreaModalComponent } from './components/delete-area-modal/delete-area-modal.component';
+import { EditAreaModalComponent } from './components/edit-area-modal/edit-area-modal.component';
 import { NgbDatepickerModule, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
-import { RouterModule } from '@angular/router';
 import { AreaComponent } from './area.component';
 
-
-
+import { RouterModule } from '@angular/router';
 @NgModule({
   declarations: [
     AreaComponent,
-    DeleteCustomerModalComponent,
-    EditCustomerModalComponent
+    DeleteAreaModalComponent,
+    EditAreaModalComponent
   ],
   imports: [
     CommonModule,
@@ -35,8 +33,9 @@ import { AreaComponent } from './area.component';
     ]),
   ],
   entryComponents: [
-    DeleteCustomerModalComponent,
-    EditCustomerModalComponent
+    DeleteAreaModalComponent,
+    EditAreaModalComponent
   ]
 })
-export class AreaModule { }
+export class AreaModule {}
+
