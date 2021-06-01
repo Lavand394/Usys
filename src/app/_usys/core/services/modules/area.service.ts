@@ -16,7 +16,7 @@ export class AreaService  extends TableService<Area> implements OnDestroy{
 
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<Area>> {
-    return this.http.get<Area[]>("http://localhost:8080/api/area/listar").pipe(
+    return this.http.get<Area[]>("http://localhost:8080/api/Area/listar").pipe(
       map((response: Area[]) => {
         const filteredResult = baseFilter(response, tableState);
         const result: TableResponseModel<Area> = {

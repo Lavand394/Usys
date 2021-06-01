@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CustomersService } from '../../_usys/core/_services';
 import {
   GroupingState,
   PaginatorState,
@@ -20,7 +19,7 @@ import { DeleteAreaModalComponent } from './components/delete-area-modal/delete-
 import { EditAreaModalComponent } from './components/edit-area-modal/edit-area-modal.component';
 import { AreaService } from '../../_usys/core/services/modules/area.service';
 @Component({
-  selector: 'app-organizacion',
+  selector: 'app-area',
   templateUrl: './area.component.html',
   styleUrls: ['./area.component.scss']
 })
@@ -46,7 +45,7 @@ private subscriptions: Subscription[] = []; // Read more: => https://brianflove.
 constructor(
   private fb: FormBuilder,
   private modalService: NgbModal,
-  public customerService: CustomersService,
+  //public customerService: CustomersService,
   public AreaService: AreaService
 ) { }
 

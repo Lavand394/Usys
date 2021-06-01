@@ -4,13 +4,14 @@ import { NgbActiveModal, NgbDateAdapter, NgbDateParserFormatter } from '@ng-boot
 import { of, Subscription } from 'rxjs';
 import { catchError, finalize, first, tap } from 'rxjs/operators';
 import { Area } from '../../../../_usys/core/models/area.model';
-import { CustomersService } from '../../../../_usys/core/_services';
 import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
+import { AreaService } from 'src/app/_usys/core/services/modules/area.service';
 
 const EMPTY_CUSTOMER: Area = {
   id: undefined,
-  descripcion: '',
-  estatus: undefined
+  nombre: '',
+  estatus: 1,
+  idOrganizacion: 1
 };
 
 @Component({
@@ -31,12 +32,12 @@ export class EditAreaModalComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
   private subscriptions: Subscription[] = [];
   constructor(
-    private customersService: CustomersService,
+    private areaService: AreaService,
     private fb: FormBuilder, public modal: NgbActiveModal
     ) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.customersService.isLoading$;
+    this.isLoading$ = this.areaService.isLoading$;
     this.loadCustomer();
   }
 
@@ -45,7 +46,7 @@ export class EditAreaModalComponent implements OnInit, OnDestroy {
       this.area = EMPTY_CUSTOMER;
       this.loadForm();
     } else {
-      const sb = this.customersService.getItemById(this.id).pipe(
+      const sb = this.areaService.getItemById(this.id).pipe(
         first(),
         catchError((errorMessage) => {
           this.modal.dismiss(errorMessage);
@@ -61,7 +62,7 @@ export class EditAreaModalComponent implements OnInit, OnDestroy {
 
   loadForm() {
     this.formGroup = this.fb.group({
-      descripcion: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])], 
+      nombre: [this.area.nombre, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])], 
     });
   }
 
@@ -75,7 +76,7 @@ export class EditAreaModalComponent implements OnInit, OnDestroy {
   }
 
   edit() {
-    const sbUpdate = this.customersService.update(this.area).pipe(
+    const sbUpdate = this.areaService.update(this.area).pipe(
       tap(() => {
         this.modal.close();
       }),
@@ -88,7 +89,7 @@ export class EditAreaModalComponent implements OnInit, OnDestroy {
   }
 
   create() {
-    const sbCreate = this.customersService.create(this.area).pipe(
+    const sbCreate = this.areaService.create(this.area).pipe(
       tap(() => {
         this.modal.close();
       }),
@@ -102,7 +103,7 @@ export class EditAreaModalComponent implements OnInit, OnDestroy {
 
   private prepareCustomer() {
     const formData = this.formGroup.value;
-    this.area.descripcion = formData.descripcion;
+    this.area.nombre = formData.nombre;
   }
 
   ngOnDestroy(): void {

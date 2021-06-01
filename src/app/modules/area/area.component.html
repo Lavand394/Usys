@@ -32,10 +32,6 @@
         <div class="table-responsive angular-bootstrap-table">
             <table class="table table-head-custom table-vertical-center overflow-hidden">
                 <thead>
-                    <th class="selection-cell-header" data-row-selection="true">
-                        <label class="checkbox checkbox-single"><input type="checkbox" (click)="grouping.selectAllRows()"
-                  [checked]="grouping.checkAreAllRowsSelected()" /><span></span></label>
-                    </th>
                     <th>
                         ID
                         <app-sort-icon column="id" [activeColumn]="sorting.column" [activeDirection]="sorting.direction" (sort)="sort($event)"></app-sort-icon>
@@ -52,14 +48,14 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let area of AreaService.items$ | async">
-                        <td class="selection-cell">
-                            <label class="checkbox checkbox-single"><input type="checkbox" (click)="grouping.selectRow(area.id)"
-                    [checked]="grouping.isRowSelected(area.id)" />
-                  <span></span>
-                </label>
-                        </td>
                         <td>{{ area.id }}</td>
-                        <td>{{ area.descripcion }}</td>
+                        <td>{{ area.nombre }}</td>
+                        <td>
+                            <span class="label label-dot label-primary mr-2" [class.label-danger]="area.estatus === 0" [class.label-primary]="area.estatus === 1"></span>&nbsp;<span class="font-bold font-primary">
+                                <ng-container *ngIf="area.estatus === 0">Suspendido</ng-container>
+                                <ng-container *ngIf="area.estatus === 1">Activo</ng-container>
+                              </span>
+                        </td>
                         <td>
 
                             <a title="Edit customer" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(area.id)">

@@ -5,7 +5,7 @@
         <ng-container *ngIf="area.id">Editar</ng-container>
         <ng-container *ngIf="!area.id">Crear</ng-container>
         Área
-        <ng-container *ngIf="area.id">'{{area.descripcion}}'</ng-container>
+        <ng-container *ngIf="area.id">'{{area.nombre}}'</ng-container>
       </ng-container>
     </div>
   </div>
@@ -21,13 +21,13 @@
         <div class="form-group row">
           <div class="col-lg-12">
             <label class="form-label">Descripción</label>
-            <input type="text" class="form-control form-control-lg form-control-solid" name="descripcion"
-              placeholder="Descripción" autocomplete="off" [class.is-invalid]="isControlInvalid('descripcion')"
-              [class.is-valid]="isControlValid('descripcion')" formControlName="descripcion" />
-            <div class="valid-feedback" *ngIf="isControlValid('descripcion')">La descripcción es incorrecta.</div>
-            <div class="invalid-feedback" *ngIf="controlHasError('required', 'descripcion')">La descripción es requerida.</div>
-            <div class="invalid-feedback" *ngIf="controlHasError('minlength', 'descripcion')">La descripción debera contar con un minimo de 3 letras.</div>
-            <div class="invalid-feedback" *ngIf="controlHasError('maxLength', 'descripcion')">La descripcción deberá contar con un maximo de 50 letras.</div>
+            <input type="text" class="form-control form-control-lg form-control-solid" name="nombre"
+              placeholder="Descripción" autocomplete="off" [class.is-invalid]="isControlInvalid('nombre')"
+              [class.is-valid]="isControlValid('nombre')" formControlName="nombre" />
+            <div class="valid-feedback" *ngIf="isControlValid('nombre')">La descripcción es incorrecta.</div>
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'nombre')">La descripción es requerida.</div>
+            <div class="invalid-feedback" *ngIf="controlHasError('minlength', 'nombre')">La descripción debera contar con un minimo de 3 letras.</div>
+            <div class="invalid-feedback" *ngIf="controlHasError('maxLength', 'nombre')">La descripcción deberá contar con un maximo de 50 letras.</div>
           </div>
         </div>
       </form>

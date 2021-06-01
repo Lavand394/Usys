@@ -3,6 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
 import { catchError, delay, finalize, tap } from 'rxjs/operators';
 import { CustomersService } from '../../../../_usys/core/_services';
+import { AreaService } from 'src/app/_usys/core/services/modules/area.service';
 
 @Component({
   selector: 'app-delete-area-modal',
@@ -14,14 +15,14 @@ export class DeleteAreaModalComponent implements OnInit, OnDestroy {
   isLoading = false;
   subscriptions: Subscription[] = [];
 
-  constructor(private customersService: CustomersService, public modal: NgbActiveModal) { }
+  constructor(private areaService: AreaService, public modal: NgbActiveModal) { }
 
   ngOnInit(): void {
   }
 
   deleteCustomer() {
     this.isLoading = true;
-    const sb = this.customersService.delete(this.id).pipe(
+    const sb = this.areaService.delete(this.id).pipe(
       delay(1000), // Remove it from your code (just for showing loading)
       tap(() => this.modal.close()),
       catchError((err) => {

@@ -7,7 +7,6 @@ import { ITableState, TableResponseModel } from '../models/table.model';
 import { BaseModel } from '../models/base.model';
 import { SortState } from '../models/sort.model';
 import { GroupingState } from '../models/grouping.model';
-import { environment } from '../../../../environments/environment';
 
 const DEFAULT_STATE: ITableState = {
   filter: {},
@@ -63,7 +62,7 @@ export abstract class TableService<T> {
   protected http: HttpClient;
   // API URL has to be overrided
  // API_URL = `${environment.apiUrl}/endpoint`;
- API_URL = "http://localhost:8080/api/organizacion";
+ API_URL = "http://localhost:8080/api/Area/";
   constructor(http: HttpClient) {
     this.http = http;
   }
@@ -73,7 +72,7 @@ export abstract class TableService<T> {
   create(item: BaseModel): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(this.API_URL + '/crear', item).pipe(
+    return this.http.post<BaseModel>(this.API_URL + 'crear', item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
