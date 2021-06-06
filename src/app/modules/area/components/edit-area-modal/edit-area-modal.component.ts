@@ -3,28 +3,21 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbDateAdapter, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
 import { catchError, finalize, first, tap } from 'rxjs/operators';
-import { Customer } from '../../../../_usys/core/_models/customer.model';
-import { CustomersService } from '../../../../_usys/core/_services';
+import { Area } from '../../../../_usys/core/models/area.model';
 import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
+import { AreaService } from 'src/app/_usys/core/services/modules/area.service';
 
-const EMPTY_CUSTOMER: Customer = {
+const EMPTY_CUSTOMER: Area = {
   id: undefined,
-  firstName: '',
-  lastName: '',
-  email: '',
-  userName: '',
-  gender: 'Female',
-  status: 2,
-  dob: undefined,
-  dateOfBbirth: '',
-  ipAddress: '251.237.126.210',
-  type: 2
+  nombre: '',
+  estatus: 1,
+  idOrganizacion: 1
 };
 
 @Component({
-  selector: 'app-edit-customer-modal',
-  templateUrl: './edit-customer-modal.component.html',
-  styleUrls: ['./edit-customer-modal.component.scss'],
+  selector: 'app-edit-area-modal',
+  templateUrl: './edit-area-modal.component.html',
+  styleUrls: ['./edit-area-modal.component.scss'],
   // NOTE: For this example we are only providing current component, but probably
   // NOTE: you will w  ant to provide your main App Module
   providers: [
@@ -32,35 +25,35 @@ const EMPTY_CUSTOMER: Customer = {
     {provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter}
   ]
 })
-export class EditCustomerModalComponent implements OnInit, OnDestroy {
+export class EditAreaModalComponent implements OnInit, OnDestroy {
   @Input() id: number;
   isLoading$;
-  customer: Customer;
+  area: Area;
   formGroup: FormGroup;
   private subscriptions: Subscription[] = [];
   constructor(
-    private customersService: CustomersService,
+    private areaService: AreaService,
     private fb: FormBuilder, public modal: NgbActiveModal
     ) { }
 
   ngOnInit(): void {
-    this.isLoading$ = this.customersService.isLoading$;
+    this.isLoading$ = this.areaService.isLoading$;
     this.loadCustomer();
   }
 
   loadCustomer() {
     if (!this.id) {
-      this.customer = EMPTY_CUSTOMER;
+      this.area = EMPTY_CUSTOMER;
       this.loadForm();
     } else {
-      const sb = this.customersService.getItemById(this.id).pipe(
+      const sb = this.areaService.getItemById(this.id).pipe(
         first(),
         catchError((errorMessage) => {
           this.modal.dismiss(errorMessage);
           return of(EMPTY_CUSTOMER);
         })
-      ).subscribe((customer: Customer) => {
-        this.customer = customer;
+      ).subscribe((customer: Area) => {
+        this.area = customer;
         this.loadForm();
       });
       this.subscriptions.push(sb);
@@ -69,20 +62,13 @@ export class EditCustomerModalComponent implements OnInit, OnDestroy {
 
   loadForm() {
     this.formGroup = this.fb.group({
-      firstName: [this.customer.firstName, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(100)])],
-      lastName: [this.customer.lastName, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(100)])],
-      email: [this.customer.email, Validators.compose([Validators.required, Validators.email])],
-      dob: [this.customer.dateOfBbirth, Validators.compose([Validators.nullValidator])],
-      userName: [this.customer.userName, Validators.compose([Validators.required])],
-      gender: [this.customer.gender, Validators.compose([Validators.required])],
-      ipAddress: [this.customer.ipAddress],
-      type: [this.customer.type, Validators.compose([Validators.required])]
+      nombre: [this.area.nombre, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])], 
     });
   }
 
   save() {
     this.prepareCustomer();
-    if (this.customer.id) {
+    if (this.area.id) {
       this.edit();
     } else {
       this.create();
@@ -90,41 +76,34 @@ export class EditCustomerModalComponent implements OnInit, OnDestroy {
   }
 
   edit() {
-    const sbUpdate = this.customersService.update(this.customer).pipe(
+    const sbUpdate = this.areaService.update(this.area).pipe(
       tap(() => {
         this.modal.close();
       }),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
-        return of(this.customer);
+        return of(this.area);
       }),
-    ).subscribe(res => this.customer = res);
+    ).subscribe(res => this.area = res);
     this.subscriptions.push(sbUpdate);
   }
 
   create() {
-    const sbCreate = this.customersService.create(this.customer).pipe(
+    const sbCreate = this.areaService.create(this.area).pipe(
       tap(() => {
         this.modal.close();
       }),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
-        return of(this.customer);
+        return of(this.area);
       }),
-    ).subscribe((res: Customer) => this.customer = res);
+    ).subscribe((res: Area) => this.area = res);
     this.subscriptions.push(sbCreate);
   }
 
   private prepareCustomer() {
     const formData = this.formGroup.value;
-    this.customer.dob = new Date(formData.dob);
-    this.customer.email = formData.email;
-    this.customer.firstName = formData.firstName;
-    this.customer.dateOfBbirth = formData.dob;
-    this.customer.ipAddress = formData.ipAddress;
-    this.customer.lastName = formData.lastName;
-    this.customer.type = +formData.type;
-    this.customer.userName = formData.userName;
+    this.area.nombre = formData.nombre;
   }
 
   ngOnDestroy(): void {
