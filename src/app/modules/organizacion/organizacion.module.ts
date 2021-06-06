@@ -10,11 +10,13 @@ import { NgbDatepickerModule, NgbModalModule } from '@ng-bootstrap/ng-bootstrap'
 import { OrganizacionComponent } from './organizacion.component';
 
 import { RouterModule } from '@angular/router';
+import { EditOrganizacionParametrosModalComponent } from './components/edit-organizacion-parametros-modal/edit-organizacion-parametros-modal.component';
 @NgModule({
   declarations: [
     OrganizacionComponent,
     DeleteOrganizacionModalComponent,
-    EditOrganizacionModalComponent
+    EditOrganizacionModalComponent,
+    EditOrganizacionParametrosModalComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +36,8 @@ import { RouterModule } from '@angular/router';
   ],
   entryComponents: [
     DeleteOrganizacionModalComponent,
-    EditOrganizacionModalComponent
+    EditOrganizacionModalComponent,
+    EditOrganizacionParametrosModalComponent
   ]
 })
 export class OrganizacionModule {}
