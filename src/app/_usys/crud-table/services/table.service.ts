@@ -108,7 +108,19 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
-
+  getItemByIdP(id: number): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `http://localhost:8080/api/ParametroOrganizacion/ver/${id}`;
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', id, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
   // UPDATE
   update(item: BaseModel): Observable<any> {
     const url = `${this.API_URL}/editar/${item.id}`;

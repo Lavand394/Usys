@@ -35,6 +35,7 @@ const EMPTY_ORGANIZACION: Organizacion = {
 })
 export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
   @Input() id: number;
+  modulo = 'organizacion';
   isLoading$;
   organizacion: Organizacion;
   formGroup: FormGroup;
@@ -47,10 +48,10 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // esta seccion se va a cambiar cuando actualice la parte de los services
     this.isLoading$ = this.orgService.isLoading$;
-    this.loadCustomer();
+    this.loadOrganizacion();
   }
 
-  loadCustomer() {
+  loadOrganizacion() {
     if (!this.id) {
       this.organizacion = EMPTY_ORGANIZACION;
       this.loadForm();

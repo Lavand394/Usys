@@ -19,6 +19,7 @@ import {
 import { DeleteOrganizacionModalComponent } from './components/delete-organizacion-modal/delete-organizacion-modal.component';
 import { EditOrganizacionModalComponent } from './components/edit-organizacion-modal/edit-organizacion-modal.component';
 import { OrganizacionService } from '../../_usys/core/services/modules/organizacion.service';
+import {EditOrganizacionParametrosModalComponent} from './components/edit-organizacion-parametros-modal/edit-organizacion-parametros-modal.component';
 @Component({
   selector: 'app-organizacion',
   templateUrl: './organizacion.component.html',
@@ -155,5 +156,13 @@ constructor(
     const modalRef = this.modalService.open(DeleteOrganizacionModalComponent);
     modalRef.componentInstance.id = id;
     modalRef.result.then(() => this.OrgService.fetch(), () => { });
+  }
+  parametros(id: number) {
+    const modalRef = this.modalService.open(EditOrganizacionParametrosModalComponent, { size: 'xl' });
+    modalRef.componentInstance.id = id;
+    modalRef.result.then(() =>
+      this.OrgService.fetch(),
+      () => { }
+    );
   }
 }
