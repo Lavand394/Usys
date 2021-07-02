@@ -61,21 +61,18 @@
           </div>
         </div>
         <div class="form-group row">
-          <div class="col-lg-6">
-            <label class="form-label">Ciudad</label>
-            <input type="text" class="form-control" name="ciudad"
-            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('ciudad')"
-              [class.is-valid]="isControlValid('ciudad')" formControlName="ciudad" />
-            <div class="invalid-feedback" *ngIf="controlHasError('required', 'ciudad')">El campo es necesario</div>
-            <div class="invalid-feedback" *ngIf="controlHasError('maxLength', 'ciudad')">Máximo 50 caracteres</div>
-          </div>
+          
           <div class="col-lg-6">
             <label class="form-label">Estado</label>
-            <input type="text" class="form-control" name="estado"
-            placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('estado')"
-              [class.is-valid]="isControlValid('estado')" formControlName="estado" />
-            <div class="invalid-feedback" *ngIf="controlHasError('required', 'estado')">El campo es necesario</div>
-            <div class="invalid-feedback" *ngIf="controlHasError('maxLength', 'estado')">Máximo 50 caracteres</div>
+            <select class="form-control" name="estado" placeholder="Filtrar por ciudad" formControlName="estado">
+              <option  *ngFor="let dato of estados" [value]="dato.nombre">{{dato.nombre}}</option>
+            </select>
+          </div>
+          <div class="col-lg-6">
+            <label class="form-label">Ciudad</label>
+            <select class="form-control" name="ciudad" placeholder="Filtrar por ciudad" formControlName="ciudad">
+            <option  *ngFor="let dato of ciudades" [value]="dato.nombre">{{dato.nombre}}</option>
+          </select>
           </div>
         </div>
         <div class="form-group row">
