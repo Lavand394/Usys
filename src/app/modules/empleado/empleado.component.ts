@@ -42,7 +42,7 @@ isLoading: boolean;
 filterGroup: FormGroup;
 searchGroup: FormGroup;
 private subscriptions: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
-
+MODULO = 'Empleado';
 constructor(
   private fb: FormBuilder,
   private modalService: NgbModal,
@@ -54,7 +54,7 @@ constructor(
   ngOnInit(): void {
     this.filterForm();
     this.searchForm();
-    this.EmplService.fetch();
+    this.EmplService.fetch(this.MODULO);
     this.grouping = this.EmplService.grouping;
     this.paginator = this.EmplService.paginator;
     this.sorting = this.EmplService.sorting;
@@ -146,7 +146,7 @@ constructor(
     const modalRef = this.modalService.open(EditEmpleadoModalComponent, { size: 'xl' });
     modalRef.componentInstance.id = id;
     modalRef.result.then(() =>
-      this.EmplService.fetch(),
+      this.EmplService.fetch(this.MODULO),
       () => { }
     );
   }
@@ -154,6 +154,6 @@ constructor(
   delete(id: number) {
     const modalRef = this.modalService.open(DeleteEmpleadoModalComponent);
     modalRef.componentInstance.id = id;
-    modalRef.result.then(() => this.EmplService.fetch(), () => { });
+    modalRef.result.then(() => this.EmplService.fetch(this.MODULO), () => { });
   }
 }

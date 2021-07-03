@@ -4,8 +4,12 @@ import { NgbActiveModal, NgbDateAdapter, NgbDateParserFormatter } from '@ng-boot
 import { of, Subscription } from 'rxjs';
 import { catchError, first, tap } from 'rxjs/operators';
 import { Organizacion } from '../../../../_usys/core/models/organizacion.model';
+import { Pais } from '../../../../_usys/core/models/pais.model';
+import { SelectService } from '../../../../_usys/core/services/modules/select.service';
 import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
 import { OrganizacionService } from '../../../../_usys/core/services/modules/organizacion.service';
+import { Estado } from 'src/app/_usys/core/models/estado.modal';
+import { Ciudad } from '../../../../_usys/core/models/ciudad.modal';
 
 const EMPTY_ORGANIZACION: Organizacion = {
   id: undefined,
@@ -38,11 +42,15 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
   modulo = 'organizacion';
   isLoading$;
   organizacion: Organizacion;
+  paises: Pais;
+  estados: Estado;
+  ciudades: Ciudad;
   formGroup: FormGroup;
   private subscriptions: Subscription[] = [];
   constructor(
     private orgService: OrganizacionService,
-    private fb: FormBuilder, public modal: NgbActiveModal
+    private fb: FormBuilder, public modal: NgbActiveModal,
+    private selectService :  SelectService
     ) { }
 
   ngOnInit(): void {
@@ -52,6 +60,9 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
   }
 
   loadOrganizacion() {
+    this.loadSelectPais();
+    this.loadSelectEstado();
+    this.loadSelectCiudad();
     if (!this.id) {
       this.organizacion = EMPTY_ORGANIZACION;
       this.loadForm();
@@ -64,13 +75,56 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
         })
       ).subscribe((organizacion: Organizacion) => {
         this.organizacion = organizacion;
+        console.log(this.organizacion)
         this.loadForm();
       });
       this.subscriptions.push(sb);
     }
   }
-
+  loadSelectPais(){
+    const paises = this.selectService.getAllItems("Pais").pipe(
+      first(),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(EMPTY_ORGANIZACION); // cambiar esto
+      })
+    ).subscribe((pais: Pais) => {
+      this.paises = pais;
+      console.log(this.paises)
+      this.loadForm();
+    });
+    this.subscriptions.push(paises);
+  }
+loadSelectEstado(){
+  const estados = this.selectService.getAllItems("Estado").pipe(
+    first(),
+    catchError((errorMessage) => {
+      this.modal.dismiss(errorMessage);
+      return of(EMPTY_ORGANIZACION); // cambiar esto
+    })
+  ).subscribe((estado: Estado) => {
+    this.estados = estado;
+    console.log(this.estados)
+    this.loadForm();
+  });
+  this.subscriptions.push(estados);
+  }
+  loadSelectCiudad(){
+    const ciudades = this.selectService.getAllItems("Ciudad").pipe(
+      first(),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(EMPTY_ORGANIZACION); // cambiar esto
+      })
+    ).subscribe((ciudad: Ciudad) => {
+      this.ciudades = ciudad;
+      console.log(this.ciudades)
+      this.loadForm();
+    });
+    this.subscriptions.push(ciudades);
+  }
   loadForm() {
+    console.log(this.organizacion.celular)
     this.formGroup = this.fb.group({
       razonSocial: [this.organizacion.razonSocial, Validators.compose([Validators.required,Validators.maxLength(150)])],
         rfc: [this.organizacion.rfc, Validators.compose([Validators.required, Validators.maxLength(20)])],
