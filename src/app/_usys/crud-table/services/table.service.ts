@@ -8,6 +8,8 @@ import { BaseModel } from '../models/base.model';
 import { SortState } from '../models/sort.model';
 import { GroupingState } from '../models/grouping.model';
 
+import { HttpParams } from '@angular/common/http';
+
 const DEFAULT_STATE: ITableState = {
   filter: {},
   paginator: new PaginatorState(),
@@ -62,7 +64,7 @@ export abstract class TableService<T> {
   protected http: HttpClient;
   // API URL has to be overrided
  // API_URL = `${environment.apiUrl}/endpoint`;
- API_URL = "http://localhost:8080/api/Area/";
+ API_URL = "http://localhost:8080/api/Rol/";
   constructor(http: HttpClient) {
     this.http = http;
   }
@@ -108,6 +110,7 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
+
   getItemByIdP(id: number): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
@@ -121,6 +124,65 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
+
+  // Obtener los permisos relacionados por modulos que a su vez estan relacionados al rol seleccionado.
+  getModuloByRol(id: number): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `http://localhost:8080/api/CatalogoModulo/getModuloByRol/${id}`;
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', id, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  getPermisosByRolModulo(idModulo: number, idRol: number): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `http://localhost:8080/api/CatalogoPermiso/verPermisosPorRolModulo/${idRol}/${idModulo}`;
+    console.log(url);
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', idModulo+'|'+idRol, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  getCatalogoPermisos() {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `http://localhost:8080/api/CatalogoPermiso/listar`;
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('FIND ITEMS', err);
+        return undefined;
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  getCatalogoModulo() {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `http://localhost:8080/api/CatalogoModulo/listar`;
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('FIND ITEMS', err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
   // UPDATE
   update(item: BaseModel): Observable<any> {
     const url = `${this.API_URL}/editar/${item.id}`;

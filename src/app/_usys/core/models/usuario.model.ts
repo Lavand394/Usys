@@ -11,5 +11,6 @@ export interface Usuario{
     password: string;
     tipoUsuario: tipoUsuario;
     empleado: Empleado;
-    rol: Rol; 
+    rol: Rol;
+    numeroEmpleado: string; 
 }

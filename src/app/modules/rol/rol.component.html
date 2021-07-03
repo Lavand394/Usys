@@ -56,7 +56,7 @@
                 <tbody>
                     <tr *ngFor="let rol of RolService.items$ | async">
 
-                        <td>{{ rol.ID }}</td>
+                        <td>{{ rol.id }}</td>
                         <td>{{ rol.descripcion }}</td>
                         <td>
                             <span class="label label-dot label-primary mr-2" [class.label-danger]="rol.estatus === 0"

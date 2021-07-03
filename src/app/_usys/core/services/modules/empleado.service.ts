@@ -16,7 +16,7 @@ export class EmpleadoService  extends TableService<Usuario> implements OnDestroy
 
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<Usuario>> {
-    return this.http.get<Usuario[]>("http://localhost:8080/api/usuario/listar").pipe(
+    return this.http.get<Usuario[]>("http://localhost:8080/api/Empleado/listar").pipe(
       map((response: Usuario[]) => {
         const filteredResult = baseFilter(response, tableState);
         const result: TableResponseModel<Usuario> = {

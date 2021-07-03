@@ -20,7 +20,7 @@ import { DeleteEmpleadoModalComponent } from './components/delete-empleado-modal
 import { EditEmpleadoModalComponent } from './components/edit-empleado-modal/edit-empleado-modal.component';
 import { EmpleadoService } from '../../_usys/core/services/modules/empleado.service';
 @Component({
-  selector: 'app-organizacion',
+  selector: 'app-empleado',
   templateUrl: './empleado.component.html',
   styleUrls: ['./empleado.component.scss']
 })

@@ -16,7 +16,7 @@ export class RolService  extends TableService<Rol> implements OnDestroy{
 
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<Rol>> {
-    return this.http.get<Rol[]>("http://localhost:8080/api/rol/listar").pipe(
+    return this.http.get<Rol[]>("http://localhost:8080/api/Rol/listar").pipe(
       map((response: Rol[]) => {
         const filteredResult = baseFilter(response, tableState);
         const result: TableResponseModel<Rol> = {

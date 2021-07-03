@@ -17,7 +17,8 @@ const EMPTY_CUSTOMER: Usuario = {
   password: undefined,
   tipoUsuario: undefined,
   empleado: undefined,
-  rol: undefined
+  rol: undefined,
+  numeroEmpleado: undefined
 };
 
 @Component({

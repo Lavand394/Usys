@@ -58,7 +58,7 @@
                 <tbody>
                     <tr *ngFor="let usuario of EmplService.items$ | async">
                         
-                        <td>{{ usuario.empleado.noEmpleado }}</td>
+                        <td>{{ usuario.numeroEmpleado }}</td>
                         <td>{{ usuario.persona.nombre }}</td>
                         <td>{{ usuario.persona.apellido_paterno }}</td>
                         <td>{{ usuario.persona.apellido_materno }}</td>
