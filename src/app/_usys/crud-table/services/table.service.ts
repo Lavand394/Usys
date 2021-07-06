@@ -246,4 +246,72 @@ export abstract class TableService<T> {
     const newState = Object.assign(this._tableState$.value, patch);
     this._tableState$.next(newState);
   }
+
+  /**
+   * 
+   * @param modulo 
+   * @returns json entity catalogoModulo
+   * @description obtiene listado de tabla dbo.catalago_modulo
+   */
+  getCatalogoModulo(modulo) {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = this.API_URL +  modulo + '/listar';
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('FIND ITEMS', err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  getPermisosByRolModulo(idModulo: number, idRol: number, paramUrl): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    //const url = `http://localhost:8080/api/CatalogoPermiso/verPermisosPorRolModulo/${idRol}/${idModulo}`;
+    const url = `${this.API_URL}${paramUrl}/${idRol}/${idModulo}`;
+    console.log(url);
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', idModulo+'|'+idRol, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  // CREATE int_permiso_rol
+  // server should return the object with ID
+  createPermisoCheck(modulo, item: BaseModel): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    return this.http.post<BaseModel>(this.API_URL +  modulo + '/crear', item).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('CREATE ITEM', err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  // delete list of items by int_permiso_rol
+  deleteItemsPermisoCheck(modulo, id: any): Observable<any> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/eliminar/${id}`;
+    return this.http.delete(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('DELETE ITEM', id, err);
+        return of({});
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+  
+  
 }

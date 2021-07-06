@@ -8,5 +8,5 @@ export interface PermisosModulosByRol{
     accionPermiso: String;
     estatusPermiso: number; // Active = 1 | Inactive = 2
     modulo: String;
-
+    habilitado: number;
 }

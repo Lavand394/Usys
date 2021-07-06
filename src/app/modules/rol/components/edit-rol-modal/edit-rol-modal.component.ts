@@ -6,20 +6,37 @@ import { catchError, first, tap } from 'rxjs/operators';
 import { Rol } from '../../../../_usys/core/models/Rol.model';
 import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
 import { RolService } from '../../../../_usys/core/services/modules/rol.service';
-import { PermisosModulosByRol } from 'src/app/_usys/core/models/PermisosModulosByRol';
 import { Permisos } from 'src/app/_usys/core/models/permisos.model';
 import { catalogoModulo } from 'src/app/_usys/core/models/catalogoModulo';
 
-
-
 const EMPTY_ROl: Rol = {
   id: undefined,
-  descripcion: undefined,
-  estatus: undefined,
-  modulo: undefined,
-  permisos: undefined,
-  permisosModulo: undefined
+  descripcion: '',
+  estatus: 1,
+  idOrganizacion: 1
 };
+
+const EMPTY_MODULO: catalogoModulo = {
+  id: undefined,
+  idRol: undefined,
+  idPermiso: undefined,
+  idModulo: undefined,
+  accionPermiso: '',
+  estatusPermiso: 0,
+  modulo: ''
+}
+
+const EMTY_PERMISOS: Permisos = {
+  id: undefined,
+  idRol: undefined,
+  idPermiso: undefined,
+  idModulo: undefined,
+  accionPermiso: '',
+  estatusPermiso: 1, // Active = 1 | Inactive = 2
+  modulo: '',
+  habilitado: undefined,
+  idIntermedio: undefined
+}
 
 @Component({
   selector: 'app-edit-rol-modal',
@@ -35,12 +52,16 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   @Input() id: number;
   isLoading$;
   rol: Rol;
-  permisosModulosByRol: PermisosModulosByRol;
+  catalogoModulo: catalogoModulo;
+  //permisosModulosByRol: PermisosModulosByRol;
   permisos: Permisos;
   formGroup: FormGroup;
   isChecked: true;
-  arrPermisoSelect = [];
+  arrPermisoSelect;
   idModuloSelect = null;
+  MODULO = 'Rol';
+  disabled = true;
+  disabledButtonSave = true;
   private subscriptions: Subscription[] = [];
   constructor(
     private rolService: RolService,
@@ -54,23 +75,10 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   }
 
   loadCustomer() {
-    if (!this.id) {
-      this.rol = EMPTY_ROl;
-      console.log('Into here');
-      const sb = this.rolService.getCatalogoModulo().pipe(
-        first(),
-        catchError((errorMessage) => {
-          this.modal.dismiss(errorMessage);
-          return of(EMPTY_ROl);
-        })
-      ).subscribe((catalogoModulo: catalogoModulo) => {
-        this.rol.modulo = catalogoModulo;
-        console.log(catalogoModulo);
+    console.log('id: ' + this.id);
+    if (this.id) {
 
-      });
-      this.subscriptions.push(sb);
-      this.loadForm();
-    } else {
+      console.log('acction edit.');
       const sb = this.rolService.getItemById(this.id).pipe(
         first(),
         catchError((errorMessage) => {
@@ -79,32 +87,34 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
         })
       ).subscribe((rol: Rol) => {
         this.rol = rol;
-        // obtener los permisos y modulos relacionados al id rol seleccionado:
-
-        const sbpm = this.rolService.getModuloByRol(this.id).pipe(
-          first(),
-          catchError((errorMessage) => {
-            this.modal.dismiss(errorMessage);
-            return of(EMPTY_ROl);
-          })
-        ).subscribe((catalogoModulo: catalogoModulo) => {
-          this.rol.modulo = catalogoModulo;
-          console.log(catalogoModulo);
-        });
+        console.log(this.rol);
         this.loadForm();
-
-        this.subscriptions.push(sbpm);
+        this.subscriptions.push(sb);
+        this.disabled = true;
+        this.disabledButtonSave = false;
+        this.loadCatalogoModulos();
       });
-      this.subscriptions.push(sb);
+
+    } else {
+
+      console.log('acction new.');
+      this.rol = EMPTY_ROl;
+      this.catalogoModulo = EMPTY_MODULO;
+      this.disabled = false;
+      this.disabledButtonSave = true;
+      this.ngchangeHeight();
+      this.loadForm();
+
     }
   }
 
   loadForm() {
+
     this.formGroup = this.fb.group({
       descripcion: [this.rol.descripcion, Validators.compose([Validators.required, Validators.maxLength(150)])],
-      modulo: [null, [Validators.required]],
-      permisos: [null, [Validators.required]]
+      modulo: [this.catalogoModulo, Validators.compose([Validators.required])]
     });
+
   }
 
   save() {
@@ -130,6 +140,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   }
 
   create() {
+    console.log(this.rol);
     const sbCreate = this.rolService.create(this.rol).pipe(
       tap(() => {
         this.modal.close();
@@ -142,12 +153,48 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sbCreate);
   }
 
+  savePermiso(action, idIntermedio) {
+    if (action === 'habilita') {
+      console.log(this.arrPermisoSelect);
+      const sbCreate = this.rolService.createPermisoCheck('IntPermisoModulo', this.arrPermisoSelect).pipe(
+        tap(() => {
+
+        }),
+        catchError((errorMessage) => {
+          this.modal.dismiss(errorMessage);
+          return of(this.arrPermisoSelect);
+        }),
+      ).subscribe((res: Permisos) => {
+        console.log(res);
+        this.arrPermisoSelect = res;
+        console.log(this.arrPermisoSelect);
+        this.ngupdatedPermisoCheck(action);
+      });
+     
+    } else if (action === 'desahabilita') {
+      const sbCreate = this.rolService.deleteItemsPermisoCheck('IntPermisoModulo', idIntermedio).pipe(
+        tap(() => {
+
+        }),
+        catchError((errorMessage) => {
+          this.modal.dismiss(errorMessage);
+          return of(this.arrPermisoSelect);
+        }),
+      ).subscribe((res: Permisos) => {
+        console.log(res);
+        this.arrPermisoSelect = res;
+        console.log(this.arrPermisoSelect);
+        this.ngupdatedPermisoCheck(action);
+      });
+    }
+
+  }
+
   private prepareRol() {
     const formData = this.formGroup.value;
     this.rol.id = formData.idRol;
     this.rol.descripcion = formData.descripcion;
-    this.rol.modulo = formData.modulo;
-    this.rol.permisos = formData.permisos;
+    this.catalogoModulo = formData.modulo;
   }
 
   ngOnDestroy(): void {
@@ -175,94 +222,99 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     return control.dirty || control.touched;
   }
 
-  callPermisos(idModulo: number, idRol: number) {
+  ngcallPermisos(idModulo: number) {
     const idModuloN = Number(idModulo.toString().split(':')[1]);
-    console.log(idModuloN);
-    console.log(idRol);
     this.idModuloSelect = idModuloN;
+    const sb = this.rolService.getPermisosByRolModulo(idModuloN, this.rol.id, 'CatalogoPermiso' + '/verPermisosPorRolModulo').pipe(
+      first(),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(EMTY_PERMISOS);
+      })
+    ).subscribe((permisosModulosByRol: Permisos) => {
+      console.log(permisosModulosByRol);
+      this.permisos = permisosModulosByRol;
+    });
+  }
 
-    if (idRol !== undefined) {
-      const sb = this.rolService.getPermisosByRolModulo(idModuloN, idRol).pipe(
-        first(),
-        catchError((errorMessage) => {
-          this.modal.dismiss(errorMessage);
-          return of(EMPTY_ROl);
-        })
-      ).subscribe((permisosModulosByRol: PermisosModulosByRol) => {
+  ngcheckPermiso(event) {
 
-        this.rol.permisosModulo = permisosModulosByRol;
-        console.log(this.rol.permisosModulo);
-
-      });
-      this.subscriptions.push(sb);
-    } else {
-      console.log('callPermiso new action');
-      if (this.arrPermisoSelect.length !== 0) {
-        console.log('exist data in json');
-
-        for (const property in this.rol.permisosModulo) {
-          const idpermiso = `${this.rol.permisosModulo[property].id}`;
-          for (const objpermisosselect in this.arrPermisoSelect) {
-            if (Number(`${this.arrPermisoSelect[objpermisosselect].idModulo}`) === idModuloN
-              && Number(idpermiso) === Number(`${this.arrPermisoSelect[objpermisosselect].id}`)) {
-                //Find index of specific object using findIndex method.    
-
-//Log object to Console.
-console.log("Before update: ", this.rol.permisosModulo[property]);
-
-//Update object's name property.
-this.rol.permisosModulo[property].habilitado = 1;
-
-//Log object to console again.
-console.log("After update: ", this.rol.permisosModulo[property]);
-            }
-          }
-          /*if(Number(idpermiso) === Number(event.value)){
-            console.log(`${this.rol.permisosModulo[property].accion}`);
-            acciona =  `${this.rol.permisosModulo[property].accion}`;
-            console.log(acciona);
-          }*/
-        } 
-
-      } else {
-        const sb = this.rolService.getCatalogoPermisos().pipe(
-          first(),
-          catchError((errorMessage) => {
-            this.modal.dismiss(errorMessage);
-            return of(EMPTY_ROl);
-          })
-        ).subscribe((permisosModulosByRol: PermisosModulosByRol) => {
-
-          this.rol.permisosModulo = permisosModulosByRol;
-          console.log(this.rol.permisosModulo);
-
-        });
+    let acciona;
+    let idIntermedio;
+    for (const property in this.permisos) {
+      const idpermiso = `${this.permisos[property].idPermiso}`;
+      if (Number(idpermiso) === Number(event.value)) {
+        acciona = `${this.permisos[property].accion}`;
+        idIntermedio = `${this.permisos[property].id}`;
       }
+    }
 
+    if (event.checked) {
+      console.log('is checked');
+      var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 1, idIntermedia: idIntermedio, idRol: this.rol.id };
+      this.arrPermisoSelect = obj;
+      console.log(this.arrPermisoSelect);
+      this.savePermiso('habilita',idIntermedio);
+
+    } else {
+
+      console.log('no checked');
+      var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 0, idIntermedia: idIntermedio, idRol: this.rol.id };
+      this.arrPermisoSelect = obj;
+      console.log(this.arrPermisoSelect);
+      this.savePermiso('desahabilita',idIntermedio);
     }
 
   }
 
-  eventCheck(event) {
-    var acciona;
-    if (event.checked) {
-      console.log('is checked');
-      console.log(JSON.stringify(this.rol.permisosModulo));
-      for (const property in this.rol.permisosModulo) {
-        const idpermiso = `${this.rol.permisosModulo[property].id}`;
-        if (Number(idpermiso) === Number(event.value)) {
-          console.log(`${this.rol.permisosModulo[property].accion}`);
-          acciona = `${this.rol.permisosModulo[property].accion}`;
-          console.log(acciona);
+  ngchangeHeight() {
+    (document.querySelector('.modal-body') as HTMLElement).style.minHeight = '150px';
+  }
+
+  loadCatalogoModulos() {
+    const sb = this.rolService.getCatalogoModulo('CatalogoModulo').pipe(
+      first(),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(EMPTY_ROl);
+      })
+    ).subscribe((catalogoModulo: catalogoModulo) => {
+      this.catalogoModulo = catalogoModulo;
+      console.log(catalogoModulo);
+      this.loadForm();
+    });
+  }
+
+  ngupdatedPermisoCheck(action) {
+
+
+    for (const property in this.permisos) {
+      const idpermiso = `${this.permisos[property].id}`;
+      for (const objpermisosselect in this.arrPermisoSelect) {
+        if (Number(idpermiso) === Number(`${this.arrPermisoSelect[objpermisosselect].idPermiso}`)) {
+          //Find index of specific object using findIndex method.    
+
+          //Log object to Console.
+          console.log("Before update: ", this.permisos[property]);
+
+          if (action === 'habilita') {
+            //Update object's name property.
+            this.permisos[property].id = Number(`${this.arrPermisoSelect[objpermisosselect].idIntermedio}`);
+
+          } else if (action === 'desahabilita') {
+            //Update object's name property.
+            this.permisos[property].id = 0;
+
+          }
+
+          //Log object to console again.
+          console.log("After update: ", this.permisos[property]);
         }
       }
-
-      var obj = { idModulo: this.idModuloSelect, id: event.value, accion: acciona, habilitado: 1 };
-      this.arrPermisoSelect.push(obj);
-      console.log(this.arrPermisoSelect);
-    } else {
-      console.log('no checked');
     }
+
+
+
   }
 
 }

@@ -28,14 +28,59 @@
           <div class="col-lg-12">
             <label class="form-label">Descripción*</label>
             <input type="text" class="form-control" name="descripcion" placeholder="Complete el campo"
-              autocomplete="off" [class.is-invalid]="isControlInvalid('descripcion')"
-              [class.is-valid]="isControlValid('descripcion')" formControlName="descripcion" />
+              formControlName="descripcion" autocomplete="off" [class.is-invalid]="isControlInvalid('descripcion')"
+              [class.is-valid]="isControlValid('descripcion')" />
             <div class="invalid-feedback" *ngIf="controlHasError('required', 'descripcion')">El campo es necesario</div>
             <div class="invalid-feedback" *ngIf="controlHasError('maxLength', 'descripcion')">Máximo 150 caracteres
             </div>
           </div>
         </div>
-        <div class="form-group row">
+        <div class="form-group row" *ngIf="disabled">
+          <div class="col-lg-12 col-md-12 col-xs-12">
+            <label>Modulo</label>
+            <select formControlName="modulo" class="form-control form-control-lg form-control-solid" name="modulo"
+              (change)="ngcallPermisos($event.target.value)">
+              <option [ngValue]="null" disabled>Elige un modulo</option>
+              <option *ngFor="let m of catalogoModulo" [ngValue]="m.id">
+                {{ m.modulo }}
+              </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'modulo')">Por favor seleccione un
+              <b>Modulo</b>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="disabled">
+          <label>Permisos</label>
+          <div class="checkbox-inline" id="divcheckbox" *ngFor="let p of permisos">
+            <div *ngIf="p.habilitado == 1; then thenBlock else elseBlock"></div>
+            <ng-template #thenBlock>
+              <label class="checkbox" >
+                <input type="checkbox" value="{{p.idPermiso}}" id="chkbox{{p.idPermiso}}" name="checkboxPermisos" checked (change)="ngcheckPermiso($event.target)" />
+                <span></span>
+                {{p.accion}}
+              </label>
+            </ng-template>
+            <ng-template #elseBlock>
+              <label class="checkbox" >
+                <input type="checkbox" value="{{p.idPermiso}}" id="chkbox{{p.idPermiso}}" name="checkboxPermisos" (change)="ngcheckPermiso($event.target)" />
+                <span></span>
+                {{p.accion}}
+              </label>
+            </ng-template>
+          </div>
+          <span class="form-text text-muted">Los permisos se seleccionan por módulo seleccionado</span>
+        </div>
+        <div class="col-lg-12 col-md-12 col-xs-12" style="margin-top: 5%;" *ngIf="disabled">
+          <div class="alert alert-primary" role="alert">
+            Al seleccionar o deseleccionar alguna de las casillas de permisos, se estará realizando un guardado
+            automático a los permisos del rol
+            , esto debido a la seguridad e integridad de la información, favor de revisar sus cambios antes de salir
+            de esta ventana.
+          </div>
+        </div>
+
+        <!-- <div class="form-group row">
           <div class="col-lg-12 col-md-12 col-xs-12">
             <label>Modulo</label>
             <select formControlName="modulo" class="form-control form-control-lg form-control-solid" name="modulo"
@@ -68,29 +113,16 @@
                 {{p.accion}}
               </label>
             </ng-template>
-            
-            <!--<div *ngIf="rol.permisosModulo">
-              <ng-container *ngFor="let p of rol.permisos">
-                <ng-container >
-                  <div *ngIf="p.id == pm.id; then thenBlock else elseBlock"></div>
-                  <ng-template #thenBlock>
-                   
-                  </ng-template>
-                  <ng-template #elseBlock>
-                  </ng-template>
-                </ng-container>
-              </ng-container>
-            </div>-->
           </div>
           <span class="form-text text-muted">Los permisos se seleccionan por módulo seleccionado</span>
-        </div>
+        </div> -->
       </form>
     </ng-container>
   </div>
   <div class="modal-footer">
     <ng-container *ngIf="rol">
 
-      <button type="submit" class="btn btn-primary btn-elevate" (click)="save()"
+      <button type="submit" class="btn btn-primary btn-elevate" *ngIf="disabledButtonSave" (click)="save()"
         [disabled]="formGroup.invalid">Guardar</button>
     </ng-container>
     <button type="button" class="btn btn-warning btn-elevate mr-2" (click)="modal.dismiss()">Cancelar</button>
