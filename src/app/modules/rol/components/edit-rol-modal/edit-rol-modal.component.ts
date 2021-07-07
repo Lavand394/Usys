@@ -4,7 +4,7 @@ import { NgbActiveModal, NgbDateAdapter, NgbDateParserFormatter } from '@ng-boot
 import { of, Subscription } from 'rxjs';
 import { catchError, first, tap } from 'rxjs/operators';
 import { Rol } from '../../../../_usys/core/models/Rol.model';
-import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
+import { CustomAdapter, CustomDateParserFormatter } from '../../../../_usys/core';
 import { RolService } from '../../../../_usys/core/services/modules/rol.service';
 import { Permisos } from 'src/app/_usys/core/models/permisos.model';
 import { catalogoModulo } from 'src/app/_usys/core/models/catalogoModulo';
@@ -22,7 +22,7 @@ const EMPTY_MODULO: catalogoModulo = {
   idPermiso: undefined,
   idModulo: undefined,
   accionPermiso: '',
-  estatusPermiso: 0,
+  estatusPermiso: 1,
   modulo: ''
 }
 
@@ -48,12 +48,12 @@ const EMTY_PERMISOS: Permisos = {
     { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter }
   ]
 })
+
 export class EditRolModalComponent implements OnInit, OnDestroy {
   @Input() id: number;
   isLoading$;
   rol: Rol;
   catalogoModulo: catalogoModulo;
-  //permisosModulosByRol: PermisosModulosByRol;
   permisos: Permisos;
   formGroup: FormGroup;
   isChecked: true;
@@ -67,6 +67,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     private rolService: RolService,
     private fb: FormBuilder, public modal: NgbActiveModal
   ) { }
+  banderaModulo = null; // 1 = nuevo registro, 2 = modificar registro;
 
   ngOnInit(): void {
     // esta seccion se va a cambiar cuando actualice la parte de los services
@@ -74,11 +75,13 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     this.loadCustomer();
   }
 
+  /**
+   * Load modal action information of rol.
+   */
   loadCustomer() {
-    console.log('id: ' + this.id);
-    if (this.id) {
 
-      console.log('acction edit.');
+    if (this.id) {
+      this.banderaModulo = 2;
       const sb = this.rolService.getItemById(this.id).pipe(
         first(),
         catchError((errorMessage) => {
@@ -87,27 +90,27 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
         })
       ).subscribe((rol: Rol) => {
         this.rol = rol;
-        console.log(this.rol);
         this.loadForm();
         this.subscriptions.push(sb);
         this.disabled = true;
         this.disabledButtonSave = false;
         this.loadCatalogoModulos();
       });
-
     } else {
-
-      console.log('acction new.');
+      this.banderaModulo = 1;
       this.rol = EMPTY_ROl;
       this.catalogoModulo = EMPTY_MODULO;
       this.disabled = false;
       this.disabledButtonSave = true;
       this.ngchangeHeight();
       this.loadForm();
-
     }
+
   }
 
+  /**
+   * Load information in the form.
+   */
   loadForm() {
 
     this.formGroup = this.fb.group({
@@ -140,7 +143,6 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   }
 
   create() {
-    console.log(this.rol);
     const sbCreate = this.rolService.create(this.rol).pipe(
       tap(() => {
         this.modal.close();
@@ -153,10 +155,14 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sbCreate);
   }
 
+  /**
+   * @description function to save the action of enabling or disabling permission on a selected module.
+   * @param action 
+   * @param idIntermedio 
+   */
   savePermiso(action, idIntermedio) {
     if (action === 'habilita') {
-      console.log(this.arrPermisoSelect);
-      const sbCreate = this.rolService.createPermisoCheck('IntPermisoModulo', this.arrPermisoSelect).pipe(
+      this.rolService.createPermisoCheck('IntPermisoModulo', this.arrPermisoSelect).pipe(
         tap(() => {
 
         }),
@@ -165,14 +171,11 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
           return of(this.arrPermisoSelect);
         }),
       ).subscribe((res: Permisos) => {
-        console.log(res);
         this.arrPermisoSelect = res;
-        console.log(this.arrPermisoSelect);
         this.ngupdatedPermisoCheck(action);
       });
-     
     } else if (action === 'desahabilita') {
-      const sbCreate = this.rolService.deleteItemsPermisoCheck('IntPermisoModulo', idIntermedio).pipe(
+      this.rolService.deleteItemsPermisoCheck('IntPermisoModulo', idIntermedio).pipe(
         tap(() => {
 
         }),
@@ -181,9 +184,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
           return of(this.arrPermisoSelect);
         }),
       ).subscribe((res: Permisos) => {
-        console.log(res);
         this.arrPermisoSelect = res;
-        console.log(this.arrPermisoSelect);
         this.ngupdatedPermisoCheck(action);
       });
     }
@@ -192,9 +193,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
 
   private prepareRol() {
     const formData = this.formGroup.value;
-    this.rol.id = formData.idRol;
     this.rol.descripcion = formData.descripcion;
-    this.catalogoModulo = formData.modulo;
   }
 
   ngOnDestroy(): void {
@@ -222,23 +221,29 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     return control.dirty || control.touched;
   }
 
+  /**
+   * @description function to load the permissions related to the selected module.
+   * @param idModulo 
+   */
   ngcallPermisos(idModulo: number) {
     const idModuloN = Number(idModulo.toString().split(':')[1]);
     this.idModuloSelect = idModuloN;
-    const sb = this.rolService.getPermisosByRolModulo(idModuloN, this.rol.id, 'CatalogoPermiso' + '/verPermisosPorRolModulo').pipe(
+    this.rolService.getPermisosByRolModulo(idModuloN, this.rol.id, 'CatalogoPermiso' + '/verPermisosPorRolModulo').pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
         return of(EMTY_PERMISOS);
       })
     ).subscribe((permisosModulosByRol: Permisos) => {
-      console.log(permisosModulosByRol);
       this.permisos = permisosModulosByRol;
     });
   }
 
+  /**
+   * @description function to detect if a permission was selected.
+   * @param event 
+   */
   ngcheckPermiso(event) {
-
     let acciona;
     let idIntermedio;
     for (const property in this.permisos) {
@@ -250,29 +255,29 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     }
 
     if (event.checked) {
-      console.log('is checked');
       var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 1, idIntermedia: idIntermedio, idRol: this.rol.id };
       this.arrPermisoSelect = obj;
-      console.log(this.arrPermisoSelect);
-      this.savePermiso('habilita',idIntermedio);
-
+      this.savePermiso('habilita', idIntermedio);
     } else {
-
-      console.log('no checked');
       var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 0, idIntermedia: idIntermedio, idRol: this.rol.id };
       this.arrPermisoSelect = obj;
-      console.log(this.arrPermisoSelect);
-      this.savePermiso('desahabilita',idIntermedio);
+      this.savePermiso('desahabilita', idIntermedio);
     }
 
   }
 
+  /**
+   * @description function to resize the form window.
+   */
   ngchangeHeight() {
     (document.querySelector('.modal-body') as HTMLElement).style.minHeight = '150px';
   }
 
+  /**
+   * @description function to load the module catalog.
+   */
   loadCatalogoModulos() {
-    const sb = this.rolService.getCatalogoModulo('CatalogoModulo').pipe(
+    this.rolService.getCatalogoModulo('CatalogoModulo').pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
@@ -280,23 +285,20 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
       })
     ).subscribe((catalogoModulo: catalogoModulo) => {
       this.catalogoModulo = catalogoModulo;
-      console.log(catalogoModulo);
       this.loadForm();
     });
   }
 
+  /**
+   * @description function to visually load the selection of modified permissions.
+   * @param action 
+   */
   ngupdatedPermisoCheck(action) {
-
-
     for (const property in this.permisos) {
       const idpermiso = `${this.permisos[property].id}`;
       for (const objpermisosselect in this.arrPermisoSelect) {
         if (Number(idpermiso) === Number(`${this.arrPermisoSelect[objpermisosselect].idPermiso}`)) {
           //Find index of specific object using findIndex method.    
-
-          //Log object to Console.
-          console.log("Before update: ", this.permisos[property]);
-
           if (action === 'habilita') {
             //Update object's name property.
             this.permisos[property].id = Number(`${this.arrPermisoSelect[objpermisosselect].idIntermedio}`);
@@ -306,17 +308,32 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
             this.permisos[property].id = 0;
 
           }
-
-          //Log object to console again.
-          console.log("After update: ", this.permisos[property]);
         }
       }
     }
 
+  }
 
+  /**
+   * function to detect if the description value was modified.
+   * @param newObj 
+   */
+  ngmodelChanged(newObj) {
+
+    if (this.id) {
+      this.disabledButtonSave = true;
+    } else {
+      this.disabledButtonSave = false;
+    }
+
+    if (this.rol.descripcion.toString() === newObj.toString() && this.id) {
+      this.disabledButtonSave = false;
+    }
+
+    if(this.banderaModulo === 1){
+      this.disabledButtonSave = true;
+    }
 
   }
 
 }
-
-
