@@ -14,6 +14,7 @@ export class AuthService implements OnDestroy {
   // private fields
   private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
   private authLocalStorageToken = `${environment.appVersion}-${environment.USERDATA_KEY}`;
+  public idOrganizacion;
 
   // public fields
   currentUser$: Observable<UserModel>;
@@ -48,6 +49,8 @@ export class AuthService implements OnDestroy {
     return this.authHttpService.login(email, password).pipe(
       map((auth: AuthModel) => {
         const result = this.setAuthFromLocalStorage(auth);
+        // variable
+        this.idOrganizacion = 1;
         return result;
       }),
       switchMap(() => this.getUserByToken()),

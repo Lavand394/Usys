@@ -170,6 +170,21 @@ export abstract class TableService<T> {
     );
   }
 
+  // DELETE
+  deletePermisoRol(id: any, modulo: string): Observable<any> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/eliminarByRol/${id}`;
+    return this.http.delete(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('DELETE ITEM', id, err);
+        return of({});
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
   // delete list of items
   deleteItems(ids: number[] = []): Observable<any> {
     this._isLoading$.next(true);
@@ -312,6 +327,55 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
+
+  fetchCustomEmpleado(modulo: string){
+    this.MODAL = modulo;
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const request = this.findCustomEmpleado(this._tableState$.value)
+      .pipe(
+        tap((res: TableResponseModel<T>) => {
+          console.log(res.items);
+          this._items$.next(res.items);
+          this.patchStateWithoutFetch({
+            paginator: this._tableState$.value.paginator.recalculatePaginator(
+              res.total
+            ),
+          });
+        }),
+        catchError((err) => {
+          this._errorMessage.next(err);
+          return of({
+            items: [],
+            total: 0
+          });
+        }),
+        finalize(() => {
+          this._isLoading$.next(false);
+          const itemIds = this._items$.value.map((el: T) => {
+            const item = (el as unknown) as BaseModel;
+            return item.id;
+          });
+          this.patchStateWithoutFetch({
+            grouping: this._tableState$.value.grouping.clearRows(itemIds),
+          });
+        })
+      )
+      .subscribe();
+    this._subscriptions.push(request);
+  }
   
+  // READ (Returning filtered list of entities)
+  findCustomEmpleado(tableState: ITableState): Observable<TableResponseModel<T>> {
+    const url = this.API_URL +  this.MODAL + '/listarCustomEmpleado';
+    this._errorMessage.next('');
+    return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('FIND ITEMS', err);
+        return of({ items: [], total: 0 });
+      })
+    );
+  }
   
 }

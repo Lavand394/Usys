@@ -56,27 +56,27 @@
                     <th>ACCIONES</th>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let usuario of EmplService.items$ | async">
+                    <tr *ngFor="let customEmpleado of EmplService.items$ | async">
                         
-                        <td>{{ usuario.numeroEmpleado }}</td>
-                        <td>{{ usuario.persona.nombre }}</td>
-                        <td>{{ usuario.persona.apellido_paterno }}</td>
-                        <td>{{ usuario.persona.apellido_materno }}</td>
-                        <td>{{ usuario.correo_Electronico }}</td>
+                        <td>{{ customEmpleado.numEmpleado }}</td>
+                        <td>{{ customEmpleado.nombre }}</td>
+                        <td>{{ customEmpleado.apellidoPaterno }}</td>
+                        <td>{{ customEmpleado.apellidoMaterno }}</td>
+                        <td>{{ customEmpleado.correo }}</td>
                         <td>
-                            <span class="label label-dot label-primary mr-2" [class.label-danger]="usuario.estatus === 0" [class.label-primary]="usuario.estatus === 1"></span>&nbsp;<span class="font-bold font-primary">
-                                <ng-container *ngIf="usuario.estatus === 0">Suspendido</ng-container>
-                                <ng-container *ngIf="usuario.estatus === 1">Activo</ng-container>
+                            <span class="label label-dot label-primary mr-2" [class.label-danger]="customEmpleado.estatus === 0" [class.label-primary]="customEmpleado.estatus === 1"></span>&nbsp;<span class="font-bold font-primary">
+                                <ng-container *ngIf="customEmpleado.estatus === 0">Suspendido</ng-container>
+                                <ng-container *ngIf="customEmpleado.estatus === 1">Activo</ng-container>
                               </span>
                         </td>
                         <td>
 
-                            <a title="Edit customer" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(usuario.id)">
+                            <a title="Edit customer" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(customEmpleado.idUsuario)">
                                 <span [inlineSVG]="'./assets/media/svg/icons/Communication/Write.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-primary">
                   </span>
                             </a>
 
-                            <a title="Delete customer" class="btn btn-icon btn-light btn-hover-danger btn-sm" (click)="delete(usuario.id)">
+                            <a title="Delete customer" class="btn btn-icon btn-light btn-hover-danger btn-sm" (click)="delete(customEmpleado.idUsuario)">
                                 <span [inlineSVG]="'./assets/media/svg/icons/General/Trash.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-danger">
                   </span>
                             </a>

@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CustomersService } from '../../_usys/core/_services';
+import { AuthService } from '../auth/_services/auth.service';
 import {
   GroupingState,
   PaginatorState,
@@ -47,14 +48,16 @@ constructor(
   private fb: FormBuilder,
   private modalService: NgbModal,
   public customerService: CustomersService,
-  public EmplService: EmpleadoService
+  public EmplService: EmpleadoService,
+  private authService: AuthService
 ) { }
 
   // angular lifecircle hooks
   ngOnInit(): void {
+    console.log(this.authService.idOrganizacion);
     this.filterForm();
     this.searchForm();
-    this.EmplService.fetch(this.MODULO);
+    this.EmplService.fetchCustomEmpleado(this.MODULO);
     this.grouping = this.EmplService.grouping;
     this.paginator = this.EmplService.paginator;
     this.sorting = this.EmplService.sorting;
