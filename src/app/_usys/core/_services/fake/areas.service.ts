@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { exhaustMap, map } from 'rxjs/operators';
 import { TableService, TableResponseModel, ITableState, BaseModel, PaginatorState, SortState, GroupingState } from '../../../../_usys/crud-table';
-import { Customer } from '../../_models/customer.model';
+import { Area } from '../../models/area.model';
 import { baseFilter } from '../../../../_fake/fake-helpers/http-extenstions';
 import { environment } from '../../../../../environments/environment';
 import { Router } from '@angular/router';
@@ -20,18 +20,18 @@ const DEFAULT_STATE: ITableState = {
 @Injectable({
   providedIn: 'root'
 })
-export class CustomersService extends TableService<Customer> implements OnDestroy {
+export class CustomersService extends TableService<Area> implements OnDestroy {
   API_URL = `${environment.apiUrl}/Area`;
   constructor(@Inject(HttpClient) http) {
     super(http);
   }
 
   // READ
-  find(tableState: ITableState): Observable<TableResponseModel<Customer>> {
-    return this.http.get<Customer[]>(this.API_URL).pipe(
-      map((response: Customer[]) => {
+  find(tableState: ITableState): Observable<TableResponseModel<Area>> {
+    return this.http.get<Area[]>(this.API_URL).pipe(
+      map((response: Area[]) => {
         const filteredResult = baseFilter(response, tableState);
-        const result: TableResponseModel<Customer> = {
+        const result: TableResponseModel<Area> = {
           items: filteredResult.items,
           total: filteredResult.total
         };
@@ -49,14 +49,14 @@ export class CustomersService extends TableService<Customer> implements OnDestro
   }
 
   updateStatusForItems(ids: number[], status: number): Observable<any> {
-    return this.http.get<Customer[]>(this.API_URL).pipe(
-      map((customers: Customer[]) => {
+    return this.http.get<Area[]>(this.API_URL).pipe(
+      map((customers: Area[]) => {
         return customers.filter(c => ids.indexOf(c.id) > -1).map(c => {
-          c.status = status;
+          c.estatus = status;
           return c;
         });
       }),
-      exhaustMap((customers: Customer[]) => {
+      exhaustMap((customers: Area[]) => {
         const tasks$ = [];
         customers.forEach(customer => {
           tasks$.push(this.update(customer));

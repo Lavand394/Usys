@@ -43,7 +43,7 @@ isLoading: boolean;
 filterGroup: FormGroup;
 searchGroup: FormGroup;
 private subscriptions: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
-
+MODULO = 'organizacion';
 constructor(
   private fb: FormBuilder,
   private modalService: NgbModal,
@@ -55,7 +55,7 @@ constructor(
   ngOnInit(): void {
     this.filterForm();
     this.searchForm();
-    this.OrgService.fetch();
+    this.OrgService.fetch(this.MODULO);
     this.grouping = this.OrgService.grouping;
     this.paginator = this.OrgService.paginator;
     this.sorting = this.OrgService.sorting;
@@ -147,7 +147,7 @@ constructor(
     const modalRef = this.modalService.open(EditOrganizacionModalComponent, { size: 'xl' });
     modalRef.componentInstance.id = id;
     modalRef.result.then(() =>
-      this.OrgService.fetch(),
+      this.OrgService.fetch(this.MODULO),
       () => { }
     );
   }
@@ -155,13 +155,13 @@ constructor(
   delete(id: number) {
     const modalRef = this.modalService.open(DeleteOrganizacionModalComponent);
     modalRef.componentInstance.id = id;
-    modalRef.result.then(() => this.OrgService.fetch(), () => { });
+    modalRef.result.then(() => this.OrgService.fetch(this.MODULO), () => { });
   }
   parametros(id: number) {
     const modalRef = this.modalService.open(EditOrganizacionParametrosModalComponent, { size: 'xl' });
     modalRef.componentInstance.id = id;
     modalRef.result.then(() =>
-      this.OrgService.fetch(),
+      this.OrgService.fetch(this.MODULO),
       () => { }
     );
   }

@@ -7,7 +7,6 @@ import { ITableState, TableResponseModel } from '../models/table.model';
 import { BaseModel } from '../models/base.model';
 import { SortState } from '../models/sort.model';
 import { GroupingState } from '../models/grouping.model';
-import { environment } from '../../../../environments/environment';
 
 const DEFAULT_STATE: ITableState = {
   filter: {},
@@ -63,7 +62,8 @@ export abstract class TableService<T> {
   protected http: HttpClient;
   // API URL has to be overrided
  // API_URL = `${environment.apiUrl}/endpoint`;
- API_URL = "http://localhost:8080/api/organizacion";
+ API_URL = 'http://localhost:8080/api/';
+ MODAL = '';
   constructor(http: HttpClient) {
     this.http = http;
   }
@@ -73,7 +73,7 @@ export abstract class TableService<T> {
   create(item: BaseModel): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(this.API_URL + '/crear', item).pipe(
+    return this.http.post<BaseModel>(this.API_URL +  this.MODAL + '/crear', item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
@@ -85,7 +85,7 @@ export abstract class TableService<T> {
 
   // READ (Returning filtered list of entities)
   find(tableState: ITableState): Observable<TableResponseModel<T>> {
-    const url = this.API_URL + '/listar';
+    const url = this.API_URL +  this.MODAL + '/listar';
     this._errorMessage.next('');
     return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
       catchError(err => {
@@ -99,7 +99,7 @@ export abstract class TableService<T> {
   getItemById(id: number): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}/ver/${id}`;
+    const url = `${this.API_URL}${ this.MODAL}/ver/${id}`;
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -109,10 +109,12 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
-  getItemByIdP(id: number): Observable<BaseModel> {
+  
+  getItemByIdParametroOrganizacion(id: number, paramUrl): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `http://localhost:8080/api/ParametroOrganizacion/ver/${id}`;
+    const url = `${this.API_URL}${paramUrl}/${id}`;
+    console.log(url)
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -124,7 +126,7 @@ export abstract class TableService<T> {
   }
   // UPDATE
   update(item: BaseModel): Observable<any> {
-    const url = `${this.API_URL}/editar/${item.id}`;
+    const url = `${this.API_URL}${ this.MODAL}/editar/${item.id}`;
     this._isLoading$.next(true);
     this._errorMessage.next('');
     return this.http.put(url, item).pipe(
@@ -142,7 +144,7 @@ export abstract class TableService<T> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
     const body = { ids, status };
-    const url = this.API_URL + '/updateStatus';
+    const url = this.API_URL +  this.MODAL + '/updateStatus';
     return this.http.put(url, body).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -157,7 +159,7 @@ export abstract class TableService<T> {
   delete(id: any): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}/eliminar/${id}`;
+    const url = `${this.API_URL}${this.MODAL}/eliminar/${id}`;
     return this.http.delete(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -184,7 +186,8 @@ export abstract class TableService<T> {
     );
   }
 
-  public fetch() {
+  public fetch( modulo: string) {
+    this.MODAL = modulo;
     this._isLoading$.next(true);
     this._errorMessage.next('');
     const request = this.find(this._tableState$.value)
@@ -236,11 +239,79 @@ export abstract class TableService<T> {
   // Base Methods
   public patchState(patch: Partial<ITableState>) {
     this.patchStateWithoutFetch(patch);
-    this.fetch();
+    this.fetch( this.MODAL);
   }
 
   public patchStateWithoutFetch(patch: Partial<ITableState>) {
     const newState = Object.assign(this._tableState$.value, patch);
     this._tableState$.next(newState);
   }
+
+  /**
+   * 
+   * @param modulo 
+   * @returns json entity catalogoModulo
+   * @description obtiene listado de tabla dbo.catalago_modulo
+   */
+  getCatalogoModulo(modulo) {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = this.API_URL +  modulo + '/listar';
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('FIND ITEMS', err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  getPermisosByRolModulo(idModulo: number, idRol: number, paramUrl): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    //const url = `http://localhost:8080/api/CatalogoPermiso/verPermisosPorRolModulo/${idRol}/${idModulo}`;
+    const url = `${this.API_URL}${paramUrl}/${idRol}/${idModulo}`;
+    console.log(url);
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', idModulo+'|'+idRol, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  // CREATE int_permiso_rol
+  // server should return the object with ID
+  createPermisoCheck(modulo, item: BaseModel): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    return this.http.post<BaseModel>(this.API_URL +  modulo + '/crear', item).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('CREATE ITEM', err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  // delete list of items by int_permiso_rol
+  deleteItemsPermisoCheck(modulo, id: any): Observable<any> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/eliminar/${id}`;
+    return this.http.delete(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('DELETE ITEM', id, err);
+        return of({});
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+  
+  
 }

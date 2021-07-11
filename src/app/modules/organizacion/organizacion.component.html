@@ -76,17 +76,17 @@
                         <td>{{ org.telefono }}</td>
                         <td>
 
-                            <a title="Edit customer" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(org.id)">
+                            <a title="Editar organización" class="btn btn-icon btn-light btn-hover-primary btn-sm mx-3" (click)="edit(org.id)">
                                 <span [inlineSVG]="'./assets/media/svg/icons/Communication/Write.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-primary">
                   </span>
                             </a>
 
-                            <a title="Delete customer" class="btn btn-icon btn-light btn-hover-danger btn-sm" (click)="delete(org.id)">
+                            <a title="Borrar organización" class="btn btn-icon btn-light btn-hover-danger btn-sm mx-3" (click)="delete(org.id)">
                                 <span [inlineSVG]="'./assets/media/svg/icons/General/Trash.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-danger">
                   </span>
                             </a>
-                            <a title="Configurar párametros" class="btn btn-icon btn-light btn-hover-danger btn-sm" (click)="parametros(org.id)">
-                                <span [inlineSVG]="'./assets/media/svg/icons/General/Trash.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-danger">
+                            <a title="Configurar párametros" class="btn btn-icon btn-light btn-hover-warning btn-sm mx-3" (click)="parametros(org.id)">
+                                <span [inlineSVG]="'./assets/media/svg/icons/General/Settings-2.svg'" cacheSVG="true" class="svg-icon svg-icon-md svg-icon-warning">
                   </span>
                             </a>
                         </td>

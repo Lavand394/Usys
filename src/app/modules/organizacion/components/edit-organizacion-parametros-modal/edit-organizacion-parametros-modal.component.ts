@@ -19,7 +19,7 @@ const EMPTY_ORGANIZACION: ParametroOrganizacion = {
 })
 export class EditOrganizacionParametrosModalComponent implements OnInit , OnDestroy {
   @Input() id: number;
-  modulo = 'parametroorganizacion';
+  MODULO = 'ParametroOrganizacion';
   isLoading$;
   pOrganizacion: ParametroOrganizacion;
   formGroup: FormGroup;
@@ -36,19 +36,20 @@ export class EditOrganizacionParametrosModalComponent implements OnInit , OnDest
   }
 
   loadParametroOrganizacion() {
-    alert(this.id)
     if (!this.id) {
     this.pOrganizacion = EMPTY_ORGANIZACION;
     this.loadForm();
     } else {
-      const sb = this.pOrgService.getItemByIdP(this.id).pipe(
+      const sb = this.pOrgService.getItemByIdParametroOrganizacion(this.id, this.MODULO + '/ver/organizacion').pipe(
         first(),
         catchError((errorMessage) => {
+          console.log(errorMessage)
           this.modal.dismiss(errorMessage);
           return of(EMPTY_ORGANIZACION);
         })
-      ).subscribe((parametroOrgService: ParametroOrganizacion) => {
-        this.pOrganizacion = parametroOrgService;
+      ).subscribe((parametroO: ParametroOrganizacion) => {
+        this.pOrganizacion = parametroO;
+        console.log(this.pOrganizacion)
         this.loadForm();
       });
       this.subscriptions.push(sb);
@@ -56,6 +57,7 @@ export class EditOrganizacionParametrosModalComponent implements OnInit , OnDest
   }
 
   loadForm() {
+    console.log(this.pOrganizacion.espacio)
     this.formGroup = this.fb.group({
       espacio: [this.pOrganizacion.espacio, Validators.compose([Validators.required,Validators.maxLength(5)])],
       limiteUsuario: [this.pOrganizacion.limiteUsuario, Validators.compose([Validators.required, Validators.maxLength(5)])],
