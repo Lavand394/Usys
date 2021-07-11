@@ -149,7 +149,7 @@ constructor(
     const modalRef = this.modalService.open(EditEmpleadoModalComponent, { size: 'xl' });
     modalRef.componentInstance.id = id;
     modalRef.result.then(() =>
-      this.EmplService.fetch(this.MODULO),
+      this.EmplService.fetchCustomEmpleado(this.MODULO),
       () => { }
     );
   }

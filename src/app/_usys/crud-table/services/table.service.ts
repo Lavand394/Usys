@@ -268,7 +268,7 @@ export abstract class TableService<T> {
    * @returns json entity catalogoModulo
    * @description obtiene listado de tabla dbo.catalago_modulo
    */
-  getCatalogoModulo(modulo) {
+  getCatalogo(modulo) {
     this._isLoading$.next(true);
     this._errorMessage.next('');
     const url = this.API_URL +  modulo + '/listar';

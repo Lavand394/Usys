@@ -277,7 +277,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
    * @description function to load the module catalog.
    */
   loadCatalogoModulos() {
-    this.rolService.getCatalogoModulo('CatalogoModulo').pipe(
+    this.rolService.getCatalogo('CatalogoModulo').pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);

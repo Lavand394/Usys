@@ -2,24 +2,50 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbDateAdapter, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
-import { catchError, finalize, first, tap } from 'rxjs/operators';
+import { catchError, finalize, first, map, tap } from 'rxjs/operators';
 import { Usuario } from '../../../../_usys/core/models/usuario.model';
 import { Empleado } from '../../../../_usys/core/models/empleado.model';
-import { CustomersService } from '../../../../_usys/core/_services';
+import { EmpleadoService } from '../../../../_usys/core/services/modules/empleado.service';
 import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
+import { Rol } from 'src/app/_usys/core/models/rol.model';
+import { Persona } from 'src/app/_usys/core/models/persona.model';
 
 const EMPTY_CUSTOMER: Usuario = {
   id: undefined,
-  correoElectronico: undefined,
+  correo: '',
+  contrasenia: '',
   fechaCreacion: undefined,
   ultimoAcceso: undefined,
-  estatus: undefined,
-  password: undefined,
-  tipoUsuario: undefined,
-  empleado: undefined,
-  rol: undefined,
-  numeroEmpleado: undefined
+  estatus: 0,
+  idTipoUsuario: undefined,
+  idEmpleado: undefined,
+  idRol: undefined
 };
+
+const EMPTY_ROl: Rol = {
+  id: undefined,
+  descripcion: '',
+  estatus: 1,
+  idOrganizacion: 1
+};
+
+const EMPTY_PERSONA: Persona = {
+  id: undefined,
+  nombre: '',
+  apellidoPaterno: '',
+  apellidoMaterno: '',
+  genero: undefined, // H = 1 | M = 2 | O = 3
+  fechaNacimiento: undefined
+}
+
+const EMPTY_EMPLEADO: Empleado = {
+  id: undefined,
+  numeroEmpleado: '',
+  puesto: '',
+  cargo: '',
+  idPersona: undefined,
+  idArea: undefined
+}
 
 @Component({
   selector: 'app-edit-empleado-modal',
@@ -36,9 +62,12 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   isLoading$;
   usuario: Usuario;
   formGroup: FormGroup;
+  rol: Rol;
+  persona: Persona;
+  empleado: Empleado;
   private subscriptions: Subscription[] = [];
   constructor(
-    private customersService: CustomersService,
+    private customersService: EmpleadoService,
     private fb: FormBuilder, public modal: NgbActiveModal
   ) { }
 
@@ -49,8 +78,49 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
 
   loadCustomer() {
     if (!this.id) {
+      console.log(this.id);
       this.usuario = EMPTY_CUSTOMER;
+      this.persona = EMPTY_PERSONA;
+      this.empleado = EMPTY_EMPLEADO;
       this.loadForm();
+      
+      const sb = this.customersService.getCatalogo('Rol').pipe(
+        first(),
+        catchError((errorMessage) => {
+          this.modal.dismiss(errorMessage);
+          return of(EMPTY_ROl);
+        })
+      ).subscribe((rol: Rol) => {
+        console.log(rol);
+        this.rol = rol;
+      });
+      
+      /*const sb = this.customersService.getCatalogo('Rol').pipe(
+        first(),
+        catchError((errorMessage) => {
+          this.modal.dismiss(errorMessage);
+          return of(EMPTY_CUSTOMER);
+        })
+      ).subscribe((usuario: Rol) => {
+        this.rol = usuario;
+        
+      });
+      this.subscriptions.push(sb);*/
+      // load catalog of roles, areas and sexual gender.
+      /*const sb = this.customersService.getCatalogo('Rol').pipe(
+        catchError((errorMessage) => {
+          this.modal.dismiss(errorMessage);
+          return of(EMPTY_ROl);
+        })
+      ).subscribe((catalogoRol: Rol) => {
+        this.rol = catalogoRol;
+        console.log(this.rol);
+        this.loadForm();
+      });
+      this.subscriptions.push(sb);*/
+      
+      this.subscriptions.push(sb);
+      
     } else {
       const sb = this.customersService.getItemById(this.id).pipe(
         first(),
@@ -69,20 +139,23 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   loadForm() {
 
     this.formGroup = this.fb.group({
-      nombre: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
-      apellido_paterno: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
-      apellido_materno: ['', Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
-      correo_electronico: ['', Validators.compose([Validators.required, Validators.email])],
-      contrasena: ['', Validators.compose([Validators.required])],
+      nombre: [this.persona.nombre, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
+      apellido_paterno: [this.persona.apellidoPaterno, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
+      apellido_materno: [this.persona.apellidoMaterno, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
+      correo_electronico: [this.usuario.correo, Validators.compose([Validators.required, Validators.email])],
+      contrasena: [this.usuario.contrasenia, Validators.compose([Validators.required])],
       conf_contrasena: ['', Validators.compose([Validators.required])],
-      cargo: ['', Validators.compose([Validators.required])],
-      puesto: ['', Validators.compose([Validators.required])],
-      rol: ['', Validators.compose([Validators.required])],
+      cargo: [this.empleado.cargo, Validators.compose([Validators.required])],
+      puesto: [this.empleado.puesto, Validators.compose([Validators.required])],
+      rol: [this.rol, Validators.compose([Validators.required])]
+      /*rol: ['', Validators.compose([Validators.required])],
       area: ['', Validators.compose([Validators.required])],
-      genero: ['', Validators.compose([Validators.required])]
-    },{ 
+      genero: ['', Validators.compose([Validators.required])]*/
+    }
+    , {
       validator: ConfirmedValidator('contrasena', 'conf_contrasena')
-    });
+    }
+    );
 
   }
 
@@ -124,7 +197,8 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
 
   private prepareCustomer() {
     const formData = this.formGroup.value;
-    this.usuario.empleado.persona.nombre = formData.nombre;
+    this.persona.nombre = formData.nombre;
+    /*this.usuario.empleado.persona.nombre = formData.nombre;
     this.usuario.empleado.persona.apellidoPaterno = formData.apellido_paterno;
     this.usuario.empleado.persona.apellidoPaterno = formData.apellido_materno;
     this.usuario.correoElectronico = formData.correo_electronico;
@@ -133,7 +207,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
     this.usuario.empleado.puesto = formData.puesto;
     this.usuario.rol.id = formData.rol;
     this.usuario.empleado.area.id = formData.area;
-    this.usuario.empleado.persona.genero = formData.genero;
+    this.usuario.empleado.persona.genero = formData.genero;*/
   }
 
   ngOnDestroy(): void {
