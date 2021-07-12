@@ -377,5 +377,20 @@ export abstract class TableService<T> {
       })
     );
   }
+
+  // CREATE
+  // server should return the object with ID
+  createGeneral(modulo,item: BaseModel): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    return this.http.post<BaseModel>(this.API_URL +  modulo + '/crear', item).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('CREATE ITEM', err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
   
 }

@@ -9,12 +9,15 @@ import { EmpleadoService } from '../../../../_usys/core/services/modules/emplead
 import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
 import { Rol } from 'src/app/_usys/core/models/rol.model';
 import { Persona } from 'src/app/_usys/core/models/persona.model';
+import { Area } from 'src/app/_usys/core/models/area.model';
+import { Sexo } from 'src/app/_usys/core/models/sexo.model';
+
 
 const EMPTY_CUSTOMER: Usuario = {
   id: undefined,
   correo: '',
   contrasenia: '',
-  fechaCreacion: undefined,
+  fechaCreacion: new Date(),
   ultimoAcceso: undefined,
   estatus: 0,
   idTipoUsuario: undefined,
@@ -35,7 +38,7 @@ const EMPTY_PERSONA: Persona = {
   apellidoPaterno: '',
   apellidoMaterno: '',
   genero: undefined, // H = 1 | M = 2 | O = 3
-  fechaNacimiento: undefined
+  fechaNacimiento: new Date()
 }
 
 const EMPTY_EMPLEADO: Empleado = {
@@ -65,11 +68,19 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   rol: Rol;
   persona: Persona;
   empleado: Empleado;
+  area: Area;
+  sexo: Sexo;
+  myDate = new Date();
+  
   private subscriptions: Subscription[] = [];
   constructor(
     private customersService: EmpleadoService,
     private fb: FormBuilder, public modal: NgbActiveModal
-  ) { }
+  ) {
+    
+   }
+
+
 
   ngOnInit(): void {
     this.isLoading$ = this.customersService.isLoading$;
@@ -83,44 +94,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
       this.persona = EMPTY_PERSONA;
       this.empleado = EMPTY_EMPLEADO;
       this.loadForm();
-      
-      const sb = this.customersService.getCatalogo('Rol').pipe(
-        first(),
-        catchError((errorMessage) => {
-          this.modal.dismiss(errorMessage);
-          return of(EMPTY_ROl);
-        })
-      ).subscribe((rol: Rol) => {
-        console.log(rol);
-        this.rol = rol;
-      });
-      
-      /*const sb = this.customersService.getCatalogo('Rol').pipe(
-        first(),
-        catchError((errorMessage) => {
-          this.modal.dismiss(errorMessage);
-          return of(EMPTY_CUSTOMER);
-        })
-      ).subscribe((usuario: Rol) => {
-        this.rol = usuario;
-        
-      });
-      this.subscriptions.push(sb);*/
-      // load catalog of roles, areas and sexual gender.
-      /*const sb = this.customersService.getCatalogo('Rol').pipe(
-        catchError((errorMessage) => {
-          this.modal.dismiss(errorMessage);
-          return of(EMPTY_ROl);
-        })
-      ).subscribe((catalogoRol: Rol) => {
-        this.rol = catalogoRol;
-        console.log(this.rol);
-        this.loadForm();
-      });
-      this.subscriptions.push(sb);*/
-      
-      this.subscriptions.push(sb);
-      
+      this.loadCatalogos();
     } else {
       const sb = this.customersService.getItemById(this.id).pipe(
         first(),
@@ -144,17 +118,17 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
       apellido_materno: [this.persona.apellidoMaterno, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(50)])],
       correo_electronico: [this.usuario.correo, Validators.compose([Validators.required, Validators.email])],
       contrasena: [this.usuario.contrasenia, Validators.compose([Validators.required])],
-      conf_contrasena: ['', Validators.compose([Validators.required])],
+      conf_contrasena: [this.usuario.contrasenia, Validators.compose([Validators.required])],
       cargo: [this.empleado.cargo, Validators.compose([Validators.required])],
       puesto: [this.empleado.puesto, Validators.compose([Validators.required])],
-      rol: [this.rol, Validators.compose([Validators.required])]
-      /*rol: ['', Validators.compose([Validators.required])],
-      area: ['', Validators.compose([Validators.required])],
-      genero: ['', Validators.compose([Validators.required])]*/
+      rol: [this.rol, Validators.compose([Validators.required])],
+      area: [this.area, Validators.compose([Validators.required])],
+      genero: [this.sexo, Validators.compose([Validators.required])],
+      fechaNacimiento: [this.persona.fechaNacimiento, Validators.compose([Validators.required])]
     }
-    , {
-      validator: ConfirmedValidator('contrasena', 'conf_contrasena')
-    }
+      , {
+        validator: ConfirmedValidator('contrasena', 'conf_contrasena')
+      }
     );
 
   }
@@ -170,7 +144,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   edit() {
-    const sbUpdate = this.customersService.update(this.usuario).pipe(
+    const sbUpdate = this.customersService.update(this.persona).pipe(
       tap(() => {
         this.modal.close();
       }),
@@ -183,15 +157,20 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   create() {
-    const sbCreate = this.customersService.create(this.usuario).pipe(
+    console.log(this.sexo.id);
+    this.persona.genero = this.sexo.id;
+    const sbCreate = this.customersService.createGeneral('Persona',this.persona).pipe(
       tap(() => {
-        this.modal.close();
+        //this.modal.close();
       }),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
-        return of(this.usuario);
+        return of(this.persona);
       }),
-    ).subscribe((res: Usuario) => this.usuario = res);
+    ).subscribe((persona: Persona) => {
+      this.persona = persona;
+      this.createEmpleado();
+    });
     this.subscriptions.push(sbCreate);
   }
 
@@ -234,6 +213,100 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   isControlTouched(controlName): boolean {
     const control = this.formGroup.controls[controlName];
     return control.dirty || control.touched;
+  }
+
+  loadCatalogos() {
+
+    const sb = this.customersService.getCatalogo('Rol').pipe(
+      first(),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(EMPTY_ROl);
+      })
+    ).subscribe((rol: Rol) => {
+      console.log(rol);
+      this.rol = rol;
+      //console.log('area');
+      this.loadAreas();
+    });
+
+    this.subscriptions.push(sb);
+
+  }
+
+  loadAreas() {
+    const sb = this.customersService.getCatalogo('Area').pipe(
+      first(),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(EMPTY_ROl);
+      })
+    ).subscribe((area: Area) => {
+      console.log(area);
+      this.area = area;
+      console.log('genero');
+      this.loadGenero();
+    });
+
+    this.subscriptions.push(sb);
+  }
+
+  loadGenero(){
+    const sb = this.customersService.getCatalogo('Sexo').pipe(
+      first(),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(EMPTY_ROl);
+      })
+    ).subscribe((sexo: Sexo) => {
+      console.log(sexo);
+      this.sexo = sexo;
+      console.log('genero');
+    });
+
+    this.subscriptions.push(sb);
+  }
+
+  createEmpleado(){
+    this.empleado.idPersona = this.persona.id;
+    this.empleado.idArea = this.area.id;
+    const sbCreate = this.customersService.createGeneral('Empleado',this.empleado).pipe(
+      tap(() => {
+        //this.modal.close();
+      }),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(this.empleado);
+      }),
+    ).subscribe((empleado: Empleado) => {
+      this.empleado = empleado;
+      this.createUsuario();
+    });
+    this.subscriptions.push(sbCreate);
+  }
+
+  createUsuario(){
+    this.usuario.idTipoUsuario = 3;
+    this.usuario.idEmpleado = this.empleado.id;
+    this.usuario.idRol = this.rol.id;
+   
+    const sbCreate = this.customersService.createGeneral('Usuario',this.usuario).pipe(
+      tap(() => {
+        this.modal.close();
+      }),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(this.empleado);
+      }),
+    ).subscribe((usuario: Usuario) => {
+      this.usuario = usuario;
+      
+    });
+    this.subscriptions.push(sbCreate);
+  }
+
+  ngcallGenero(idGenero: number) {
+    this.sexo.id = Number(idGenero.toString().split(':')[1]);
   }
 
 }
