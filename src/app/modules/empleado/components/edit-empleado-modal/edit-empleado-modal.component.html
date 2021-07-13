@@ -125,7 +125,7 @@
         <div class="form-group row">
           <div class="col-lg-4 col-md-4 col-xs-12">
             <label>Rol</label>
-            <select formControlName="rol" class="form-control form-control-lg form-control-solid" name="rol">
+            <select formControlName="rol" class="form-control form-control-lg form-control-solid" name="rol" (change)="ngcallRol($event.target.value)" >
               <option [ngValue]="null" disabled>Elige un modulo</option>
               <option *ngFor="let r of rol" [ngValue]="r.id">
                 {{ r.descripcion }}
@@ -137,7 +137,7 @@
           </div>
           <div class="col-lg-4 col-md-4 col-xs-12">
             <label>Area</label>
-            <select class="form-control form-control-lg form-control-solid" name="area" formControlName="area" [class.is-invalid]="isControlInvalid('area')" [class.is-valid]="isControlValid('area')">
+            <select class="form-control form-control-lg form-control-solid" name="area" formControlName="area" (change)="ngcallArea($event.target.value)" [class.is-invalid]="isControlInvalid('area')" [class.is-valid]="isControlValid('area')">
               <option [ngValue]="null" disabled>Elige un modulo</option>
               <option *ngFor="let a of area" [ngValue]="a.id">
                 {{ a.nombre }}

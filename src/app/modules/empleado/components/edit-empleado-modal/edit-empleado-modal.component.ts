@@ -19,7 +19,7 @@ const EMPTY_CUSTOMER: Usuario = {
   contrasenia: '',
   fechaCreacion: new Date(),
   ultimoAcceso: undefined,
-  estatus: 0,
+  estatus: 1,
   idTipoUsuario: undefined,
   idEmpleado: undefined,
   idRol: undefined
@@ -37,7 +37,7 @@ const EMPTY_PERSONA: Persona = {
   nombre: '',
   apellidoPaterno: '',
   apellidoMaterno: '',
-  genero: undefined, // H = 1 | M = 2 | O = 3
+  idSexo: undefined, // H = 1 | M = 2 | O = 3
   fechaNacimiento: new Date()
 }
 
@@ -157,8 +157,8 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   create() {
-    console.log(this.sexo.id);
-    this.persona.genero = this.sexo.id;
+    this.persona.idSexo = this.sexo.id;
+    console.log(this.persona);
     const sbCreate = this.customersService.createGeneral('Persona',this.persona).pipe(
       tap(() => {
         //this.modal.close();
@@ -177,16 +177,13 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   private prepareCustomer() {
     const formData = this.formGroup.value;
     this.persona.nombre = formData.nombre;
-    /*this.usuario.empleado.persona.nombre = formData.nombre;
-    this.usuario.empleado.persona.apellidoPaterno = formData.apellido_paterno;
-    this.usuario.empleado.persona.apellidoPaterno = formData.apellido_materno;
-    this.usuario.correoElectronico = formData.correo_electronico;
-    this.usuario.password = formData.contrasena;
-    this.usuario.empleado.cargo = formData.cargo;
-    this.usuario.empleado.puesto = formData.puesto;
-    this.usuario.rol.id = formData.rol;
-    this.usuario.empleado.area.id = formData.area;
-    this.usuario.empleado.persona.genero = formData.genero;*/
+    this.persona.apellidoPaterno = formData.apellido_paterno;
+    this.persona.apellidoMaterno = formData.apellido_materno;
+    this.persona.fechaNacimiento = formData.fechaNacimiento;
+    this.empleado.cargo = formData.cargo;
+    this.empleado.puesto = formData.puesto;
+    this.usuario.correo = formData.correo_electronico;
+    this.usuario.contrasenia = formData.contrasena;
   }
 
   ngOnDestroy(): void {
@@ -280,7 +277,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
       }),
     ).subscribe((empleado: Empleado) => {
       this.empleado = empleado;
-      this.createUsuario();
+      this.addNumEmpleado();
     });
     this.subscriptions.push(sbCreate);
   }
@@ -289,7 +286,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
     this.usuario.idTipoUsuario = 3;
     this.usuario.idEmpleado = this.empleado.id;
     this.usuario.idRol = this.rol.id;
-   
+    
     const sbCreate = this.customersService.createGeneral('Usuario',this.usuario).pipe(
       tap(() => {
         this.modal.close();
@@ -305,8 +302,33 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
     this.subscriptions.push(sbCreate);
   }
 
+  addNumEmpleado(){
+    console.log('ID Empleado: '+this.empleado.id);
+    const sbAddNumEmpleado = this.customersService.addNumEmpleado('Empleado',this.empleado).pipe(
+      tap(() => {
+        this.modal.close();
+      }),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(this.empleado);
+      }),
+    ).subscribe((empleado: Empleado) => {
+      this.empleado.numeroEmpleado = empleado.numeroEmpleado;
+      this.createUsuario();
+    });
+    this.subscriptions.push(sbAddNumEmpleado);
+  }
+
   ngcallGenero(idGenero: number) {
     this.sexo.id = Number(idGenero.toString().split(':')[1]);
+  }
+
+  ngcallArea(idArea: number){
+    this.area.id = Number(idArea.toString().split(':')[1]);
+  }
+
+  ngcallRol(idRol: number){
+    this.rol.id = Number(idRol.toString().split(':')[1]);
   }
 
 }

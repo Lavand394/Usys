@@ -3,6 +3,6 @@ export interface Persona {
     nombre: string;
     apellidoPaterno: string;
     apellidoMaterno: string;
-    genero: number; // H = 1 | M = 2 | O = 3
+    idSexo: number; // H = 1 | M = 2 | O = 3
     fechaNacimiento: Date;
 }
