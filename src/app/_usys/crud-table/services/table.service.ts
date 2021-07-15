@@ -407,5 +407,33 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
-  
+
+  getItemByIdCustom(modulo, id: number): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/ver/${id}`;
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', id, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  getItemByIdCustomGeneral(modulo: string,apiaction :string, id: number): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/${apiaction}/${id}`;
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', id, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+  //verUsuarioByEmpleado
 }

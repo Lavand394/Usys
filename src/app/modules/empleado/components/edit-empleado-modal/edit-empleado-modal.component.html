@@ -1,11 +1,11 @@
 <div class="modal-content">
   <div class="modal-header">
     <div class="modal-title h4" id="example-modal-sizes-title-lg">
-      <ng-container *ngIf="empleado">
-        <ng-container *ngIf="empleado.id">Editar</ng-container>
-        <ng-container *ngIf="!empleado.id">Crear</ng-container>
+      <ng-container *ngIf="persona">
+        <ng-container *ngIf="persona.id">Editar</ng-container>
+        <ng-container *ngIf="!persona.id">Crear</ng-container>
         Empleado
-        <ng-container *ngIf="empleado.id">'{{persona.nombre}}'</ng-container>
+        <ng-container *ngIf="persona.id">'{{persona.nombre}}'</ng-container>
       </ng-container>
     </div>
   </div>
@@ -117,7 +117,7 @@
             <label>Fecha nacimiento</label>
             <input type="date" class="form-control form-control-lg form-control-solid" name="fechaNacimiento"
               [class.is-invalid]="isControlInvalid('fechaNacimiento')" [class.is-valid]="isControlValid('fechaNacimiento')"
-              placeholder="fecha de  nacimiento" autocomplete="off" formControlName="fechaNacimiento" placeholder="fecha" />
+              placeholder="fecha de  nacimiento" autocomplete="off" formControlName="fechaNacimiento"  placeholder="fecha"/>
             <div class="valid-feedback" *ngIf="isControlValid('puesto')">El puesto es correcto.</div>
             <div class="invalid-feedback" *ngIf="controlHasError('required', 'puesto')">El puesto es requerido.</div>
           </div>
@@ -125,15 +125,13 @@
         <div class="form-group row">
           <div class="col-lg-4 col-md-4 col-xs-12">
             <label>Rol</label>
-            <select formControlName="rol" class="form-control form-control-lg form-control-solid" name="rol" (change)="ngcallRol($event.target.value)" >
+            <select class="form-control form-control-lg form-control-solid" name="rol" formControlName="rol"  (change)="ngcallRol($event.target.value)" [class.is-invalid]="isControlInvalid('rol')" [class.is-valid]="isControlValid('rol')">
               <option [ngValue]="null" disabled>Elige un modulo</option>
               <option *ngFor="let r of rol" [ngValue]="r.id">
                 {{ r.descripcion }}
               </option>
             </select>
-            <div class="invalid-feedback" *ngIf="controlHasError('required', 'rol')">Por favor seleccione un
-              <b>Rol</b>
-            </div>
+            <div class="invalid-feedback" *ngIf="controlHasError('required', 'rol')">Por favor seleccione una <b>Rol</b></div>
           </div>
           <div class="col-lg-4 col-md-4 col-xs-12">
             <label>Area</label>
