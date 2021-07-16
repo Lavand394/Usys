@@ -435,5 +435,19 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
-  //verUsuarioByEmpleado
+  
+  updateCustomModal(modulo, item: BaseModel): Observable<any> {
+    const url = `${this.API_URL}${modulo}/editar/${item.id}`;
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    return this.http.put(url, item).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('UPDATE ITEM', item, err);
+        return of(item);
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
 }

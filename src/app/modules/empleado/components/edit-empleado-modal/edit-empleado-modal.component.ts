@@ -98,8 +98,6 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
 
   }
 
-
-
   ngOnInit(): void {
     this.isLoading$ = this.customersService.isLoading$;
     this.loadCustomer();
@@ -151,6 +149,14 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
     this.usuario.idRol = this.customEmpleadoEdit.idRol;
     this.empleado.idArea = this.customEmpleadoEdit.idArea;
     this.persona.idSexo = this.customEmpleadoEdit.idGenero;
+    this.empleado.numeroEmpleado = this.customEmpleadoEdit.numEmpleado;
+    this.usuario.idTipoUsuario = this.customEmpleadoEdit.tipoUsuario;
+    this.empleado.id = this.customEmpleadoEdit.idEmpleado;
+    this.empleado.idPersona = this.customEmpleadoEdit.idPersona;
+    this.persona.id = this.customEmpleadoEdit.idPersona;
+    this.usuario.id = this.customEmpleadoEdit.idUsuario;
+    this.usuario.idEmpleado = this.customEmpleadoEdit.idEmpleado;
+    this.usuario.idRol = this.customEmpleadoEdit.idRol;
   }
 
   loadForm() {
@@ -187,7 +193,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   edit() {
-    const sbUpdate = this.customersService.update(this.persona).pipe(
+    /*const sbUpdate = this.customersService.update(this.persona).pipe(
       tap(() => {
         this.modal.close();
       }),
@@ -196,7 +202,43 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
         return of(this.usuario);
       }),
     ).subscribe(res => this.usuario = res);
+    this.subscriptions.push(sbUpdate);*/
+
+    //update empleado
+    const sbUpdate = this.customersService.update(this.empleado).pipe(
+      tap(() => {
+      }),
+      catchError((err) => {
+        this.modal.dismiss(err);
+        return of(undefined);
+      }),
+      finalize(() => {
+        //update persona
+        this.customersService.updateCustomModal('Persona', this.persona).pipe(
+          tap(() => {
+            
+          }),
+          catchError((err) => {
+            this.modal.dismiss(err);
+            return of(undefined);
+          }),
+          finalize(() => {
+            //update usuario
+            this.customersService.updateCustomModal('Usuario', this.usuario).pipe(
+              tap(() => {
+                this.modal.close();
+              }),
+              catchError((err) => {
+                this.modal.dismiss(err);
+                return of(undefined);
+              })
+            ).subscribe(res => this.usuario = res);
+          })
+        ).subscribe(res => this.persona = res);
+      })
+    ).subscribe(res => this.empleado = res);
     this.subscriptions.push(sbUpdate);
+
   }
 
   create() {
@@ -411,38 +453,6 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
     this.sexo.id = undefined;
     this.sexo.nombre = undefined;
     this.sexo.estatus = undefined;
-  }
-
-  loadPersona() {
-    const sb = this.customersService.getItemByIdCustom('Persona', this.empleado.idPersona).pipe(
-      first(),
-      catchError((errorMessage) => {
-        this.modal.dismiss(errorMessage);
-        return of(EMPTY_CUSTOMER);
-      })
-    ).subscribe((persona: Persona) => {
-      this.persona = persona;
-      console.log(this.persona);
-      //this.loadUsuario();
-
-    });
-    this.subscriptions.push(sb);
-  }
-
-  loadUsuario() {
-    /*const sb = this.customersService.getItemByIdCustomUsuario('Usuario', this.empleado.id).pipe(
-      first(),
-      catchError((errorMessage) => {
-        this.modal.dismiss(errorMessage);
-        return of(EMPTY_CUSTOMER);
-      })
-    ).subscribe((usuario: Usuario) => {
-      this.usuario = usuario;
-      console.log(this.usuario);
-      this.loadForm();
-      this.loadCatalogos();
-    });
-    this.subscriptions.push(sb);*/
   }
 
 }

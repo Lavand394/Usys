@@ -3,6 +3,8 @@ import { BaseModel } from "../../crud-table";
 
 export interface CustomEmpleadoEdit extends BaseModel {
 
+    idUsuario: number;
+    idEmpleado: number;
     idPersona: number;
     nombre: string;
     apellidoPaterno: string;
@@ -15,5 +17,7 @@ export interface CustomEmpleadoEdit extends BaseModel {
     idRol: number;
     idArea: number;
     idGenero: number;
+    numEmpleado: string;
+    tipoUsuario: number;
 
 }
