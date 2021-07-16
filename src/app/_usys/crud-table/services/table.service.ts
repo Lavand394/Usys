@@ -171,6 +171,21 @@ export abstract class TableService<T> {
   }
 
   // DELETE
+  deleteCustomModulo(modulo, id: any): Observable<any> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/eliminar/${id}`;
+    return this.http.delete(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('DELETE ITEM', id, err);
+        return of({});
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  // DELETE
   deletePermisoRol(id: any, modulo: string): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');

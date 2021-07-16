@@ -154,9 +154,9 @@ constructor(
     );
   }
 
-  delete(id: number) {
+  delete(idEmpleado: number) {
     const modalRef = this.modalService.open(DeleteEmpleadoModalComponent);
-    modalRef.componentInstance.id = id;
+    modalRef.componentInstance.idEmpleado = idEmpleado;
     modalRef.result.then(() => this.EmplService.fetch(this.MODULO), () => { });
   }
 }

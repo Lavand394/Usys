@@ -160,7 +160,6 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   loadForm() {
-
     this.formGroup = this.fb.group({
       correo_electronico: [this.usuario.correo, Validators.compose([Validators.required, Validators.email])],
       contrasena: [this.usuario.contrasenia, Validators.compose([Validators.required])],
@@ -193,17 +192,6 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   edit() {
-    /*const sbUpdate = this.customersService.update(this.persona).pipe(
-      tap(() => {
-        this.modal.close();
-      }),
-      catchError((errorMessage) => {
-        this.modal.dismiss(errorMessage);
-        return of(this.usuario);
-      }),
-    ).subscribe(res => this.usuario = res);
-    this.subscriptions.push(sbUpdate);*/
-
     //update empleado
     const sbUpdate = this.customersService.update(this.empleado).pipe(
       tap(() => {
@@ -216,7 +204,6 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
         //update persona
         this.customersService.updateCustomModal('Persona', this.persona).pipe(
           tap(() => {
-            
           }),
           catchError((err) => {
             this.modal.dismiss(err);
@@ -238,7 +225,6 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
       })
     ).subscribe(res => this.empleado = res);
     this.subscriptions.push(sbUpdate);
-
   }
 
   create() {
@@ -289,14 +275,12 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
     return control.hasError(validation) && (control.dirty || control.touched);
   }
 
-
   isControlTouched(controlName): boolean {
     const control = this.formGroup.controls[controlName];
     return control.dirty || control.touched;
   }
 
   loadCatalogos() {
-
     const sb = this.customersService.getCatalogo('Rol').pipe(
       first(),
       catchError((errorMessage) => {
@@ -307,9 +291,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
       this.rol = rol;
       this.loadAreas();
     });
-
     this.subscriptions.push(sb);
-
   }
 
   loadAreas() {
@@ -317,13 +299,12 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
-        return of(EMPTY_ROl);
+        return of(EMPTY_AREA);
       })
     ).subscribe((area: Area) => {
       this.area = area;
       this.loadGenero();
     });
-
     this.subscriptions.push(sb);
   }
 
@@ -332,7 +313,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
-        return of(EMPTY_ROl);
+        return of(EMPTY_GENERO);
       })
     ).subscribe((sexo: Sexo) => {
       this.sexo = sexo;
