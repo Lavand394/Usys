@@ -10,7 +10,7 @@ const EMPTY_ORGANIZACION: ParametroOrganizacion = {
   espacio: 0,
   limiteUsuario: 0,
   estatus: 0,
-  idOrganizacion: 1,
+  idOrganizacion: undefined,
 };
 @Component({
   selector: 'app-edit-organizacion-parametros-modal',
@@ -43,13 +43,11 @@ export class EditOrganizacionParametrosModalComponent implements OnInit , OnDest
       const sb = this.pOrgService.getItemByIdParametroOrganizacion(this.id, this.MODULO + '/ver/organizacion').pipe(
         first(),
         catchError((errorMessage) => {
-          console.log(errorMessage)
           this.modal.dismiss(errorMessage);
           return of(EMPTY_ORGANIZACION);
         })
       ).subscribe((parametroO: ParametroOrganizacion) => {
         this.pOrganizacion = parametroO;
-        console.log(this.pOrganizacion)
         this.loadForm();
       });
       this.subscriptions.push(sb);
@@ -57,11 +55,11 @@ export class EditOrganizacionParametrosModalComponent implements OnInit , OnDest
   }
 
   loadForm() {
-    console.log(this.pOrganizacion.espacio)
     this.formGroup = this.fb.group({
       espacio: [this.pOrganizacion.espacio, Validators.compose([Validators.required,Validators.maxLength(5)])],
       limiteUsuario: [this.pOrganizacion.limiteUsuario, Validators.compose([Validators.required, Validators.maxLength(5)])],
-      estatus: [this.pOrganizacion.estatus, Validators.compose([Validators.required])]
+      estatus: [this.pOrganizacion.estatus, Validators.compose([Validators.required])],
+      idOrganizacion: [this.pOrganizacion.idOrganizacion]
     });
   }
 
@@ -69,13 +67,11 @@ export class EditOrganizacionParametrosModalComponent implements OnInit , OnDest
     this.prepareOrganizacion();
     if (this.pOrganizacion.id) {
       this.edit();
-    } else {
-      this.create();
     }
   }
 
   edit() {
-    const sbUpdate = this.pOrgService.update(this.pOrganizacion).pipe(
+    const sbUpdate = this.pOrgService.update(this.pOrganizacion, 'ParametroOrganizacion/editar/').pipe(
       tap(() => {
         this.modal.close();
       }),
@@ -87,18 +83,6 @@ export class EditOrganizacionParametrosModalComponent implements OnInit , OnDest
     this.subscriptions.push(sbUpdate);
   }
 
-  create() {
-    const sbCreate = this.pOrgService.create(this.pOrganizacion).pipe(
-      tap(() => {
-        this.modal.close();
-      }),
-      catchError((errorMessage) => {
-        this.modal.dismiss(errorMessage);
-        return of(this.pOrganizacion);
-      }),
-    ).subscribe((res: ParametroOrganizacion) => this.pOrganizacion = res);
-    this.subscriptions.push(sbCreate);
-  }
 
   private prepareOrganizacion() {
     const formData = this.formGroup.value;

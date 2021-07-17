@@ -82,6 +82,18 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
+  createParam(item: BaseModel, paramUrl): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    return this.http.post<BaseModel>(`${this.API_URL}${paramUrl}`, item).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('CREATE ITEM', err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
 
   // READ (Returning filtered list of entities)
   find(tableState: ITableState): Observable<TableResponseModel<T>> {
@@ -114,7 +126,6 @@ export abstract class TableService<T> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
     const url = `${this.API_URL}${paramUrl}/${id}`;
-    console.log(url)
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -125,8 +136,13 @@ export abstract class TableService<T> {
     );
   }
   // UPDATE
-  update(item: BaseModel): Observable<any> {
-    const url = `${this.API_URL}${ this.MODAL}/editar/${item.id}`;
+  update(item: BaseModel, urlparam?: string): Observable<any> {
+    var url;
+    if(urlparam){
+       url = `${this.API_URL}${urlparam}${item.id}`;
+    }else{
+       url = `${this.API_URL}${ this.MODAL}/editar/${item.id}`;
+    }
     this._isLoading$.next(true);
     this._errorMessage.next('');
     return this.http.put(url, item).pipe(
@@ -272,7 +288,6 @@ export abstract class TableService<T> {
     this._errorMessage.next('');
     //const url = `http://localhost:8080/api/CatalogoPermiso/verPermisosPorRolModulo/${idRol}/${idModulo}`;
     const url = `${this.API_URL}${paramUrl}/${idRol}/${idModulo}`;
-    console.log(url);
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
