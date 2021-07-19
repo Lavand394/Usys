@@ -6,12 +6,13 @@ import { catchError, finalize, first, tap } from 'rxjs/operators';
 import { Area } from '../../../../_usys/core/models/area.model';
 import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../../../../_usys/core';
 import { AreaService } from 'src/app/_usys/core/services/modules/area.service';
+import { AuthHTTPService } from '../../../auth/_services/auth-http/fake/auth-fake-http.service';
 
 const EMPTY_CUSTOMER: Area = {
   id: undefined,
   nombre: '',
   estatus: 1,
-  idOrganizacion: 1
+  idOrganizacion: 2
 };
 
 @Component({
@@ -33,7 +34,8 @@ export class EditAreaModalComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   constructor(
     private areaService: AreaService,
-    private fb: FormBuilder, public modal: NgbActiveModal
+    private fb: FormBuilder, public modal: NgbActiveModal,
+    private authService: AuthHTTPService
     ) { }
 
   ngOnInit(): void {

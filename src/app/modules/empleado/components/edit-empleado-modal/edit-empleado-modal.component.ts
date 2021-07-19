@@ -31,14 +31,14 @@ const EMPTY_ROl: Rol = {
   id: undefined,
   descripcion: '',
   estatus: 1,
-  idOrganizacion: 1
+  idOrganizacion: 2
 };
 
 const EMPTY_AREA: Area = {
   id: undefined,
   nombre: '',
   estatus: 1, // Active = 1 | Suspended = 2 | Pending = 3
-  idOrganizacion: undefined
+  idOrganizacion: 2
 }
 
 const EMPTY_GENERO: Sexo = {
@@ -295,7 +295,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   loadAreas() {
-    const sb = this.customersService.getCatalogo('Area').pipe(
+    const sb = this.customersService.getCatalogo('area').pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);

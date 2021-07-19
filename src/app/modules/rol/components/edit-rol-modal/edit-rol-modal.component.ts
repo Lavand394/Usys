@@ -13,7 +13,7 @@ const EMPTY_ROl: Rol = {
   id: undefined,
   descripcion: '',
   estatus: 1,
-  idOrganizacion: 1
+  idOrganizacion: 2
 };
 
 const EMPTY_MODULO: catalogoModulo = {

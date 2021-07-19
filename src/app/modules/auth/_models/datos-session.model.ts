@@ -9,5 +9,6 @@ export class DatosSession{
     idPersona: number;
     idEmpleado: number;
     idRol: number;
+    idTipoUsuario: number;
     
 }

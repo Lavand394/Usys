@@ -22,6 +22,7 @@ export class AuthHTTPService {
   private _errorMessage = new BehaviorSubject<string>('');
 
   public idOrganizacion;
+  public idTipoUsuario;
 
 
   protected http: HttpClient;
@@ -48,6 +49,7 @@ export class AuthHTTPService {
         }
 
         this.idOrganizacion = result.idOrganizacion;
+        this.idTipoUsuario = result.idTipoUsuario;
         
        /* this.validarSession('Usuario', email, password).pipe(
           catchError((errorMessage) => {
