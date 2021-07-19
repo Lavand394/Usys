@@ -198,6 +198,36 @@ export abstract class TableService<T> {
     );
   }
 
+  // DELETE
+  deleteCustomModulo(modulo, id: any): Observable<any> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/eliminar/${id}`;
+    return this.http.delete(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('DELETE ITEM', id, err);
+        return of({});
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  // DELETE
+  deletePermisoRol(id: any, modulo: string): Observable<any> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/eliminarByRol/${id}`;
+    return this.http.delete(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('DELETE ITEM', id, err);
+        return of({});
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
   // delete list of items
   deleteItems(ids: number[] = []): Observable<any> {
     this._isLoading$.next(true);
@@ -281,7 +311,7 @@ export abstract class TableService<T> {
    * @returns json entity catalogoModulo
    * @description obtiene listado de tabla dbo.catalago_modulo
    */
-  getCatalogoModulo(modulo) {
+  getCatalogo(modulo) {
     this._isLoading$.next(true);
     this._errorMessage.next('');
     const url = this.API_URL +  modulo + '/listar';
@@ -339,6 +369,7 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
+
   successMessage(){
     Swal.fire({
       position: 'center',
@@ -357,4 +388,128 @@ export abstract class TableService<T> {
       timer: 2000
     });
   }
+  
+
+  fetchCustomEmpleado(modulo: string){
+    this.MODAL = modulo;
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const request = this.findCustomEmpleado(this._tableState$.value)
+      .pipe(
+        tap((res: TableResponseModel<T>) => {
+          console.log(res.items);
+          this._items$.next(res.items);
+          this.patchStateWithoutFetch({
+            paginator: this._tableState$.value.paginator.recalculatePaginator(
+              res.total
+            ),
+          });
+        }),
+        catchError((err) => {
+          this._errorMessage.next(err);
+          return of({
+            items: [],
+            total: 0
+          });
+        }),
+        finalize(() => {
+          this._isLoading$.next(false);
+          const itemIds = this._items$.value.map((el: T) => {
+            const item = (el as unknown) as BaseModel;
+            return item.id;
+          });
+          this.patchStateWithoutFetch({
+            grouping: this._tableState$.value.grouping.clearRows(itemIds),
+          });
+        })
+      )
+      .subscribe();
+    this._subscriptions.push(request);
+  }
+  
+  // READ (Returning filtered list of entities)
+  findCustomEmpleado(tableState: ITableState): Observable<TableResponseModel<T>> {
+    const url = this.API_URL +  this.MODAL + '/listarCustomEmpleado';
+    this._errorMessage.next('');
+    return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('FIND ITEMS', err);
+        return of({ items: [], total: 0 });
+      })
+    );
+  }
+
+  // CREATE
+  // server should return the object with ID
+  createGeneral(modulo,item: BaseModel): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    return this.http.post<BaseModel>(this.API_URL +  modulo + '/crear', item).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('CREATE ITEM', err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  // UPDATE
+  addNumEmpleado(modulo,item: BaseModel): Observable<any> {
+    const url = `${this.API_URL}${modulo}/agregarNumEmpleado/${item.id}`;
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    return this.http.put(url, item).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('UPDATE ITEM', item, err);
+        return of(item);
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  getItemByIdCustom(modulo, id: number): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/ver/${id}`;
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', id, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
+  getItemByIdCustomGeneral(modulo: string,apiaction :string, id: number): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/${apiaction}/${id}`;
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', id, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+  
+  updateCustomModal(modulo, item: BaseModel): Observable<any> {
+    const url = `${this.API_URL}${modulo}/editar/${item.id}`;
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    return this.http.put(url, item).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('UPDATE ITEM', item, err);
+        return of(item);
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+
 }

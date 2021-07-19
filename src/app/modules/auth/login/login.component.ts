@@ -29,6 +29,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   // private fields
   private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
 
+  private idOrganizacion = null;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -84,6 +86,10 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe((user: UserModel) => {
         if (user) {
           this.router.navigate([this.  returnUrl]);
+          //variable session
+          this.idOrganizacion = 1;
+          //menu
+          // datos usuarios
         } else {
           this.hasError = true;
         }

@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CustomersService } from '../../_usys/core/_services';
+import { AuthHTTPService } from '../auth/_services/auth-http/fake/auth-fake-http.service';
 import {
   GroupingState,
   PaginatorState,
@@ -47,14 +48,16 @@ constructor(
   private fb: FormBuilder,
   private modalService: NgbModal,
   public customerService: CustomersService,
-  public EmplService: EmpleadoService
+  public EmplService: EmpleadoService,
+  private authService: AuthHTTPService
 ) { }
 
   // angular lifecircle hooks
   ngOnInit(): void {
+    console.log(this.authService.idOrganizacion);
     this.filterForm();
     this.searchForm();
-    this.EmplService.fetch(this.MODULO);
+    this.EmplService.fetchCustomEmpleado(this.MODULO);
     this.grouping = this.EmplService.grouping;
     this.paginator = this.EmplService.paginator;
     this.sorting = this.EmplService.sorting;
@@ -146,14 +149,14 @@ constructor(
     const modalRef = this.modalService.open(EditEmpleadoModalComponent, { size: 'xl' });
     modalRef.componentInstance.id = id;
     modalRef.result.then(() =>
-      this.EmplService.fetch(this.MODULO),
+      this.EmplService.fetchCustomEmpleado(this.MODULO),
       () => { }
     );
   }
 
-  delete(id: number) {
+  delete(idEmpleado: number) {
     const modalRef = this.modalService.open(DeleteEmpleadoModalComponent);
-    modalRef.componentInstance.id = id;
+    modalRef.componentInstance.idEmpleado = idEmpleado;
     modalRef.result.then(() => this.EmplService.fetch(this.MODULO), () => { });
   }
 }
