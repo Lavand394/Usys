@@ -7,7 +7,7 @@ import { ITableState, TableResponseModel } from '../models/table.model';
 import { BaseModel } from '../models/base.model';
 import { SortState } from '../models/sort.model';
 import { GroupingState } from '../models/grouping.model';
-
+import Swal from 'sweetalert2';
 const DEFAULT_STATE: ITableState = {
   filter: {},
   paginator: new PaginatorState(),
@@ -74,6 +74,22 @@ export abstract class TableService<T> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
     return this.http.post<BaseModel>(this.API_URL +  this.MODAL + '/crear', item).pipe(
+      tap((res) => {
+        this.successMessage();
+       }),
+      catchError(err => {
+        this._errorMessage.next(err);
+        this.failedMessage();
+        console.error('CREATE ITEM', err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
+  }
+  createParam(item: BaseModel, paramUrl): Observable<BaseModel> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    return this.http.post<BaseModel>(`${this.API_URL}${paramUrl}`, item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
@@ -114,7 +130,6 @@ export abstract class TableService<T> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
     const url = `${this.API_URL}${paramUrl}/${id}`;
-    console.log(url)
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -125,14 +140,23 @@ export abstract class TableService<T> {
     );
   }
   // UPDATE
-  update(item: BaseModel): Observable<any> {
-    const url = `${this.API_URL}${ this.MODAL}/editar/${item.id}`;
+  update(item: BaseModel, urlparam?: string): Observable<any> {
+    var url;
+    if(urlparam){
+       url = `${this.API_URL}${urlparam}${item.id}`;
+    }else{
+       url = `${this.API_URL}${ this.MODAL}/editar/${item.id}`;
+    }
     this._isLoading$.next(true);
     this._errorMessage.next('');
     return this.http.put(url, item).pipe(
+      tap((res) => {
+       this.successMessage();
+      }),
       catchError(err => {
         this._errorMessage.next(err);
         console.error('UPDATE ITEM', item, err);
+       this.failedMessage();
         return of(item);
       }),
       finalize(() => this._isLoading$.next(false))
@@ -161,8 +185,12 @@ export abstract class TableService<T> {
     this._errorMessage.next('');
     const url = `${this.API_URL}${this.MODAL}/eliminar/${id}`;
     return this.http.delete(url).pipe(
+      tap((res) => {
+        this.successMessage();
+       }),
       catchError(err => {
         this._errorMessage.next(err);
+        this.failedMessage();
         console.error('DELETE ITEM', id, err);
         return of({});
       }),
@@ -272,7 +300,6 @@ export abstract class TableService<T> {
     this._errorMessage.next('');
     //const url = `http://localhost:8080/api/CatalogoPermiso/verPermisosPorRolModulo/${idRol}/${idModulo}`;
     const url = `${this.API_URL}${paramUrl}/${idRol}/${idModulo}`;
-    console.log(url);
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -312,6 +339,22 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
-  
-  
+  successMessage(){
+    Swal.fire({
+      position: 'center',
+      icon: 'success',
+      title: 'La información ha sido guardada con éxito.',
+      showConfirmButton: false,
+      timer: 2000
+    });
+  }
+  failedMessage(){
+    Swal.fire({
+      position: 'center',
+      icon: 'error',
+      title: 'La petición no pudo ser completada.',
+      showConfirmButton: false,
+      timer: 2000
+    });
+  }
 }

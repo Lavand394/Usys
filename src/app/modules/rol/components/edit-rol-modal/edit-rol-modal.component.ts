@@ -75,10 +75,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   }
 
   loadCustomer() {
-    console.log('id: ' + this.id);
     if (this.id) {
-
-      console.log('acction edit.');
       const sb = this.rolService.getItemById(this.id).pipe(
         first(),
         catchError((errorMessage) => {
@@ -87,7 +84,6 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
         })
       ).subscribe((rol: Rol) => {
         this.rol = rol;
-        console.log(this.rol);
         this.loadForm();
         this.subscriptions.push(sb);
         this.disabled = true;
