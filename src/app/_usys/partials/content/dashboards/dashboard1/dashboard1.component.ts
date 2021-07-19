@@ -13,7 +13,7 @@ public listaDocumento: Documento[];
 public resultados: number= 0;
 public auxNum: number = 1;
 private idOrganizacion = 2;
-private filtro = 'JOSE ANTONIO';
+public filtro = '';
 private apartirDe = 0;
 private mostrar = 5;
 constructor(
@@ -27,6 +27,7 @@ constructor(
 
   buscarDocumentosGeneral(){
     console.log("click")
+    console.log(this.filtro)
     this.documentoService.obtenerDocumentos(this.idOrganizacion, this.filtro, this.apartirDe, this.mostrar).subscribe(json => {
      this.listaDocumento = json as Documento[];
     });
