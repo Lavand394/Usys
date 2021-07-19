@@ -36,9 +36,10 @@
           <div class="form-group row">
             <div class="col-lg-10">
               <label class="form-label">Estatus</label>
-              <input type="text" class="form-control" name="estatus"
-              placeholder="Complete el campo" autocomplete="off" [class.is-invalid]="isControlInvalid('estatus')"
-                [class.is-valid]="isControlValid('estatus')" formControlName="estatus" />
+              <select class="form-control" name="estatus" formControlName="estatus">
+                <option [value]="1">Activo</option>
+                <option [value]="0">Inactivo</option>
+              </select>
               <div class="invalid-feedback" *ngIf="controlHasError('required', 'estatus')">Seleccione una opción</div>
               <input type="hidden" class="form-control" name="idOrganizacion" autocomplete="off" formControlName="idOrganizacion" />
             </div>

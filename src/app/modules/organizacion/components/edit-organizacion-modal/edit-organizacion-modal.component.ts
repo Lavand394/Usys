@@ -22,7 +22,7 @@ const EMPTY_ORGANIZACION: Organizacion = {
   codigoPostal: '',
   telefono: '',
   celular: '',
-  idCiudad: undefined,
+  idMunicipio: undefined,
   estado: undefined,
   estatus: 1,
   fechaCreacion: new Date(),
@@ -33,7 +33,7 @@ const EMPTY_PARAMORGANIZACION: ParametroOrganizacion = {
   id: undefined,
   espacio: 0,
   limiteUsuario: 0,
-  estatus: 0,
+  estatus: 1,
   idOrganizacion: undefined,
 };
 @Component({
@@ -120,7 +120,7 @@ loadSelectEstado(){
   this.subscriptions.push(estados);
   }
   loadSelectCiudad(){
-    const ciudades = this.selectService.getAllItems('Ciudad').pipe(
+    const ciudades = this.selectService.getAllItems('municipio').pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
@@ -140,7 +140,7 @@ loadSelectEstado(){
         codigoPostal: [this.organizacion.codigoPostal, Validators.compose([Validators.required, Validators.maxLength(5)])],
         telefono: [this.organizacion.telefono, Validators.compose([Validators.required, Validators.maxLength(50)])],
         celular: [this.organizacion.celular, Validators.compose([Validators.required, Validators.maxLength(50)])],
-        idCiudad: [this.organizacion.idCiudad],
+        idMunicipio: [this.organizacion.idMunicipio],
         estado: [this.organizacion.estado],
         estatus: [this.organizacion.estatus],
         fechaCreacion: [this.organizacion.fechaCreacion, Validators.compose([Validators.required])],
@@ -208,7 +208,7 @@ loadSelectEstado(){
     this.organizacion.codigoPostal = formData.codigoPostal;
     this.organizacion.telefono = formData.telefono;
     this.organizacion.celular = formData.celular;
-    this.organizacion.idCiudad = formData.idCiudad;
+    this.organizacion.idMunicipio = formData.idMunicipio;
     this.organizacion.estatus = formData.estatus;
     this.organizacion.fechaCreacion = formData.fechaCreacion;
     this.organizacion.rubro = formData.rubro;
