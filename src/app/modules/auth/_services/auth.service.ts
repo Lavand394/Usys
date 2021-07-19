@@ -14,7 +14,7 @@ export class AuthService implements OnDestroy {
   // private fields
   private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
   private authLocalStorageToken = `${environment.appVersion}-${environment.USERDATA_KEY}`;
-  public idOrganizacion;
+  //public idOrganizacion;
 
   // public fields
   currentUser$: Observable<UserModel>;
@@ -33,7 +33,8 @@ export class AuthService implements OnDestroy {
 
   constructor(
     private authHttpService: AuthHTTPService,
-    private router: Router
+    private router: Router,
+    private authService: AuthHTTPService
   ) {
     this.isLoadingSubject = new BehaviorSubject<boolean>(false);
     this.currentUserSubject = new BehaviorSubject<UserModel>(undefined);
@@ -50,8 +51,10 @@ export class AuthService implements OnDestroy {
       map((auth: AuthModel) => {
         const result = this.setAuthFromLocalStorage(auth);
         // variable
-        this.idOrganizacion = 1;
-        return result;
+        //this.idOrganizacion = 1;
+       
+          return result;
+        
       }),
       switchMap(() => this.getUserByToken()),
       catchError((err) => {

@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CustomersService } from '../../_usys/core/_services';
-import { AuthService } from '../auth/_services/auth.service';
+import { AuthHTTPService } from '../auth/_services/auth-http/fake/auth-fake-http.service';
 import {
   GroupingState,
   PaginatorState,
@@ -49,7 +49,7 @@ constructor(
   private modalService: NgbModal,
   public customerService: CustomersService,
   public EmplService: EmpleadoService,
-  private authService: AuthService
+  private authService: AuthHTTPService
 ) { }
 
   // angular lifecircle hooks
