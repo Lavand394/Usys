@@ -37,4 +37,10 @@ export class DocumentoService  extends TableService<Documento> implements OnDest
       map(response => response as Documento[])
     );
   }
+
+  obtenerTotalDocumentos(idOrganizacion, filtro): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/documento/buscar/total/${idOrganizacion}/${filtro}/`).pipe(
+      map(response => response as any)
+    );
+  }
 }

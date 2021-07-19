@@ -34,7 +34,7 @@
                                 </div>
                                 <!--end::Icon-->
                                 <!--begin::Input-->
-                                <input type="text" class="form-control h-auto border-0 py-3 px-1 font-size-h6" placeholder="Buscar documento" />
+                                <input type="text" id="filtro" name="filtro" [(ngModel)]="filtro" class="form-control h-auto border-0 py-3 px-1 font-size-h6" placeholder="Buscar documento" />
                                 <!--end::Input-->
                             </div>
                             
@@ -74,10 +74,8 @@
         <div class="table-responsive angular-bootstrap-table">
             <table class="table table-head-custom table-vertical-center overflow-hidden">
                 <thead>
-                   
-                   
                     <th  colspan="3">
-                        Se encontraron <span class="text-dark-75">1</span> resultados
+                        Se encontraron <span class="text-dark-75">{{resultados}}</span> resultados
                       </th>
                    
                 </thead>
@@ -129,7 +127,13 @@
                 </tbody>
             </table>
         </div>
-        
+        <ng-pagination
+        [collectionSize]="resultados"
+        [page]="1"
+        [boundaryLinks]="true"
+        [pageSize]="5"
+        (pageChange)="pageChange($event)"
+      ></ng-pagination>
     </div>
     <!--end::Card-->
 </div>
