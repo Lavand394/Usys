@@ -21,11 +21,13 @@ constructor(
 
 
   buscarDocumentosGeneral(){
-    console.log("ENTROOOOOOOOOOOOOOO");
-    this.documentoService.obtenerDocumentos("JOSE ANTONIO").subscribe(json => {
-      console.log("ENTROOOOOOOOOOOOOOO 2");
+    let idOrganizacion = 2;
+    let filtro = "JOSE ANTONIO";
+    let apartirDe = 0;
+    let mostrar = 5;
+
+    this.documentoService.obtenerDocumentos(idOrganizacion, filtro, apartirDe, mostrar).subscribe(json => {
      this.listaDocumento = json as Documento[];
-     console.log("ENTROOOOOOOOOOOOOOO 3");
     });
   }
 }

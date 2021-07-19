@@ -32,8 +32,8 @@ export class DocumentoService  extends TableService<Documento> implements OnDest
     this.subscriptions.forEach(sb => sb.unsubscribe());
   }
 
-  obtenerDocumentos(filtro): Observable<Documento[]> {
-    return this.http.get(`http://localhost:8080/api/documento/${filtro}`).pipe(
+  obtenerDocumentos(idOrganizacion, filtro, apartirDe, mostrar): Observable<Documento[]> {
+    return this.http.get(`http://localhost:8080/api/documento/buscar/${idOrganizacion}/${filtro}/${apartirDe}/${mostrar}/`).pipe(
       map(response => response as Documento[])
     );
   }
