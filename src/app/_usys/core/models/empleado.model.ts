@@ -4,9 +4,9 @@ import { Area } from "./area.model";
 
 export interface Empleado {
   id: number;
-  noEmpleado: string;
+  numeroEmpleado: string;
   puesto: string;
   cargo: string;
-  persona: Persona;
-  area: Area
+  idPersona: number;
+  idArea: number;
 }

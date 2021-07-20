@@ -6,8 +6,8 @@ export interface Organizacion {
   codigoPostal: string;
   telefono: string;
   celular: string;
-  ciudad: string;
-  estado: string;
+  idMunicipio: number;
+  estado?: number;
   estatus: number;
   fechaCreacion: Date;
   rubro: string;

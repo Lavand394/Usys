@@ -43,10 +43,6 @@
                         <app-sort-icon column="rfc" [activeColumn]="sorting.column" [activeDirection]="sorting.direction" (sort)="sort($event)"></app-sort-icon>
                     </th>
                     <th>
-                        CIUDAD
-                        <app-sort-icon column="ciudad" [activeColumn]="sorting.column" [activeDirection]="sorting.direction" (sort)="sort($event)"></app-sort-icon>
-                    </th>
-                    <th>
                         RUBRO
                         <app-sort-icon column="rubro" [activeColumn]="sorting.column" [activeDirection]="sorting.direction" (sort)="sort($event)"></app-sort-icon>
                     </th>
@@ -65,7 +61,6 @@
                      
                         <td>{{ org.razonSocial }}</td>
                         <td>{{ org.rfc }}</td>
-                        <td>{{ org.ciudad }}</td>
                         <td>{{ org.rubro }}</td>
                         <td>
                             <span class="label label-dot label-primary mr-2" [class.label-danger]="org.estatus === 0" [class.label-primary]="org.estatus === 1"></span>&nbsp;<span class="font-bold font-primary">

@@ -158,7 +158,7 @@ constructor(
     modalRef.result.then(() => this.OrgService.fetch(this.MODULO), () => { });
   }
   parametros(id: number) {
-    const modalRef = this.modalService.open(EditOrganizacionParametrosModalComponent, { size: 'xl' });
+    const modalRef = this.modalService.open(EditOrganizacionParametrosModalComponent, { size: 'sm' });
     modalRef.componentInstance.id = id;
     modalRef.result.then(() =>
       this.OrgService.fetch(this.MODULO),

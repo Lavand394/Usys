@@ -15,25 +15,37 @@ export class DeleteRolModalComponent implements OnInit, OnDestroy {
   isLoading = false;
   subscriptions: Subscription[] = [];
 
-  constructor(private customersService: CustomersService,private rolService : RolService, public modal: NgbActiveModal) { }
+  constructor(private customersService: CustomersService, private rolService: RolService, public modal: NgbActiveModal) { }
 
   ngOnInit(): void {
   }
 
   deleteRol() {
     this.isLoading = true;
-    const sb = this.rolService.delete(this.id).pipe(
+    this.rolService.deletePermisoRol(this.id, 'IntPermisoModulo').pipe(
       delay(1000), // Remove it from your code (just for showing loading)
-      tap(() => this.modal.close()),
+      tap(() => {
+      }),
       catchError((err) => {
         this.modal.dismiss(err);
         return of(undefined);
       }),
       finalize(() => {
-        this.isLoading = false;
+        this.rolService.delete(this.id).pipe(
+          tap(() => {
+            this.modal.close();
+          }),
+          catchError((err) => {
+            this.modal.dismiss(err);
+            return of(undefined);
+          }),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        ).subscribe();
       })
     ).subscribe();
-    this.subscriptions.push(sb);
+    
   }
 
   ngOnDestroy(): void {
