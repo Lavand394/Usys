@@ -41,7 +41,7 @@ isLoading: boolean;
 filterGroup: FormGroup;
 searchGroup: FormGroup;
 private subscriptions: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
-MODULO = 'Area';
+MODULO = 'area';
 constructor(
   private fb: FormBuilder,
   private modalService: NgbModal,

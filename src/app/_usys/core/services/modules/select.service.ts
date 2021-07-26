@@ -15,7 +15,6 @@ export class SelectService  extends TableService<any> implements OnDestroy{
  
   getAllItems(lista: string): Observable<BaseModel> { 
     const url = `http://localhost:8080/api/${lista}/listar`;
-    console.log(url)
     return this.http.get<BaseModel>(url);
   }
 

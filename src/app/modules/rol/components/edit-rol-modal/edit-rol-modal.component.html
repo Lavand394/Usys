@@ -29,7 +29,7 @@
             <label class="form-label">Descripción*</label>
             <input type="text" class="form-control" name="descripcion" placeholder="Complete el campo"
               formControlName="descripcion" autocomplete="off" [class.is-invalid]="isControlInvalid('descripcion')"
-              [class.is-valid]="isControlValid('descripcion')" />
+              [class.is-valid]="isControlValid('descripcion')" (ngModelChange)="ngmodelChanged($event)" />
             <div class="invalid-feedback" *ngIf="controlHasError('required', 'descripcion')">El campo es necesario</div>
             <div class="invalid-feedback" *ngIf="controlHasError('maxLength', 'descripcion')">Máximo 150 caracteres
             </div>
@@ -79,43 +79,6 @@
             de esta ventana.
           </div>
         </div>
-
-        <!-- <div class="form-group row">
-          <div class="col-lg-12 col-md-12 col-xs-12">
-            <label>Modulo</label>
-            <select formControlName="modulo" class="form-control form-control-lg form-control-solid" name="modulo"
-              (change)="callPermisos($event.target.value, rol.id)">
-              <option [ngValue]="null" disabled>Elige un modulo</option>
-              <option *ngFor="let m of rol.modulo" [ngValue]="m.id">
-                {{ m.modulo }}
-              </option>
-            </select>
-            <div class="invalid-feedback" *ngIf="controlHasError('required', 'modulo')">Por favor seleccione un
-              <b>Rol</b>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Permisos</label>
-          <div class="checkbox-inline" id="divcheckbox" *ngFor="let p of rol.permisosModulo">
-            <div *ngIf="p.habilitado == 1; then thenBlock else elseBlock"></div>
-            <ng-template #thenBlock>
-              <label class="checkbox" >
-                <input type="checkbox" value="{{p.id}}" id="chkbox{{p.id}}" name="checkboxPermisos" checked (change)="eventCheck($event.target)" />
-                <span></span>
-                {{p.accion}}
-              </label>
-            </ng-template>
-            <ng-template #elseBlock>
-              <label class="checkbox" >
-                <input type="checkbox" value="{{p.id}}" id="chkbox{{p.id}}" name="checkboxPermisos" (change)="eventCheck($event.target)" />
-                <span></span>
-                {{p.accion}}
-              </label>
-            </ng-template>
-          </div>
-          <span class="form-text text-muted">Los permisos se seleccionan por módulo seleccionado</span>
-        </div> -->
       </form>
     </ng-container>
   </div>

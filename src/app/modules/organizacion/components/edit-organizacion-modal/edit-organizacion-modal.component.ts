@@ -10,6 +10,9 @@ import { CustomAdapter, CustomDateParserFormatter, getDateFromString } from '../
 import { OrganizacionService } from '../../../../_usys/core/services/modules/organizacion.service';
 import { Estado } from 'src/app/_usys/core/models/estado.modal';
 import { Ciudad } from '../../../../_usys/core/models/ciudad.modal';
+import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
+import { ParametroOrganizacionService } from '../../../../_usys/core/services/modules/parametro-organizacion.service';
+import { ParametroOrganizacion } from 'src/app/_usys/core/models/parametro-organizacion.model';
 
 const EMPTY_ORGANIZACION: Organizacion = {
   id: undefined,
@@ -19,14 +22,20 @@ const EMPTY_ORGANIZACION: Organizacion = {
   codigoPostal: '',
   telefono: '',
   celular: '',
-  ciudad: '',
-  estado: '',
+  idMunicipio: undefined,
+  estado: undefined,
   estatus: 1,
   fechaCreacion: new Date(),
   rubro: '',
   web: '',
 };
-
+const EMPTY_PARAMORGANIZACION: ParametroOrganizacion = {
+  id: undefined,
+  espacio: 0,
+  limiteUsuario: 0,
+  estatus: 1,
+  idOrganizacion: undefined,
+};
 @Component({
   selector: 'app-edit-organizacion-modal',
   templateUrl: './edit-organizacion-modal.component.html',
@@ -42,27 +51,31 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
   modulo = 'organizacion';
   isLoading$;
   organizacion: Organizacion;
+  pOrganizacion: ParametroOrganizacion = EMPTY_PARAMORGANIZACION;
+  parametro: ParametroOrganizacion;
   paises: Pais;
   estados: Estado;
   ciudades: Ciudad;
   formGroup: FormGroup;
   private subscriptions: Subscription[] = [];
   constructor(
+    private pOrgService: ParametroOrganizacionService,
     private orgService: OrganizacionService,
     private fb: FormBuilder, public modal: NgbActiveModal,
-    private selectService :  SelectService
+    private selectService: SelectService
     ) { }
 
   ngOnInit(): void {
     // esta seccion se va a cambiar cuando actualice la parte de los services
     this.isLoading$ = this.orgService.isLoading$;
     this.loadOrganizacion();
-  }
-
-  loadOrganizacion() {
     this.loadSelectPais();
     this.loadSelectEstado();
     this.loadSelectCiudad();
+  }
+
+  loadOrganizacion() {
+   
     if (!this.id) {
       this.organizacion = EMPTY_ORGANIZACION;
       this.loadForm();
@@ -75,14 +88,13 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
         })
       ).subscribe((organizacion: Organizacion) => {
         this.organizacion = organizacion;
-        console.log(this.organizacion)
         this.loadForm();
       });
       this.subscriptions.push(sb);
     }
   }
   loadSelectPais(){
-    const paises = this.selectService.getAllItems("Pais").pipe(
+    const paises = this.selectService.getAllItems('Pais').pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
@@ -90,13 +102,12 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
       })
     ).subscribe((pais: Pais) => {
       this.paises = pais;
-      console.log(this.paises)
       this.loadForm();
     });
     this.subscriptions.push(paises);
   }
 loadSelectEstado(){
-  const estados = this.selectService.getAllItems("Estado").pipe(
+  const estados = this.selectService.getAllItems('Estado').pipe(
     first(),
     catchError((errorMessage) => {
       this.modal.dismiss(errorMessage);
@@ -104,13 +115,12 @@ loadSelectEstado(){
     })
   ).subscribe((estado: Estado) => {
     this.estados = estado;
-    console.log(this.estados)
     this.loadForm();
   });
   this.subscriptions.push(estados);
   }
   loadSelectCiudad(){
-    const ciudades = this.selectService.getAllItems("Ciudad").pipe(
+    const ciudades = this.selectService.getAllItems('municipio').pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
@@ -118,22 +128,20 @@ loadSelectEstado(){
       })
     ).subscribe((ciudad: Ciudad) => {
       this.ciudades = ciudad;
-      console.log(this.ciudades)
       this.loadForm();
     });
     this.subscriptions.push(ciudades);
   }
   loadForm() {
-    console.log(this.organizacion.celular)
     this.formGroup = this.fb.group({
-      razonSocial: [this.organizacion.razonSocial, Validators.compose([Validators.required,Validators.maxLength(150)])],
+      razonSocial: [this.organizacion.razonSocial, Validators.compose([Validators.required, Validators.maxLength(150)])],
         rfc: [this.organizacion.rfc, Validators.compose([Validators.required, Validators.maxLength(20)])],
         direccion: [this.organizacion.direccion, Validators.compose([Validators.required, Validators.maxLength(150)])],
-        codigoPostal: [this.organizacion.codigoPostal, Validators.compose([Validators.required, Validators.maxLength(10)])],
+        codigoPostal: [this.organizacion.codigoPostal, Validators.compose([Validators.required, Validators.maxLength(5)])],
         telefono: [this.organizacion.telefono, Validators.compose([Validators.required, Validators.maxLength(50)])],
         celular: [this.organizacion.celular, Validators.compose([Validators.required, Validators.maxLength(50)])],
-        ciudad: [this.organizacion.ciudad, Validators.maxLength(50)],
-        estado: [this.organizacion.estado, Validators.compose([Validators.required, Validators.maxLength(50)])],
+        idMunicipio: [this.organizacion.idMunicipio],
+        estado: [this.organizacion.estado],
         estatus: [this.organizacion.estatus],
         fechaCreacion: [this.organizacion.fechaCreacion, Validators.compose([Validators.required])],
         rubro: [this.organizacion.rubro, Validators.compose([Validators.required, Validators.maxLength(50)])],
@@ -172,20 +180,35 @@ loadSelectEstado(){
         this.modal.dismiss(errorMessage);
         return of(this.organizacion);
       }),
-    ).subscribe((res: Organizacion) => this.organizacion = res);
+    ).subscribe((res: Organizacion) => {
+      this.organizacion = res;
+      this.pOrganizacion.idOrganizacion = this.organizacion.id;
+// mandamos la consulta para crear el nuevo parametro
+      this.pOrgService.createParam(this.pOrganizacion, 'ParametroOrganizacion/crear').pipe(
+  tap(() => {
+    this.modal.close();
+  }),
+  catchError((errorMessage) => {
+    this.modal.dismiss(errorMessage);
+    return of(this.pOrganizacion);
+  }),
+).subscribe((res1: ParametroOrganizacion) => this.pOrganizacion = res1);
+      this.subscriptions.push(sbCreate);
+
+    });
     this.subscriptions.push(sbCreate);
   }
 
   private prepareOrganizacion() {
     const formData = this.formGroup.value;
+
     this.organizacion.razonSocial = formData.razonSocial;
     this.organizacion.rfc = formData.rfc;
     this.organizacion.direccion = formData.direccion;
     this.organizacion.codigoPostal = formData.codigoPostal;
     this.organizacion.telefono = formData.telefono;
     this.organizacion.celular = formData.celular;
-    this.organizacion.ciudad = formData.ciudad;
-    this.organizacion.estado = formData.estado;
+    this.organizacion.idMunicipio = formData.idMunicipio;
     this.organizacion.estatus = formData.estatus;
     this.organizacion.fechaCreacion = formData.fechaCreacion;
     this.organizacion.rubro = formData.rubro;
