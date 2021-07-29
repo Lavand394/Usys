@@ -23,6 +23,7 @@ export class OrganizacionService  extends TableService<Organizacion> implements 
           items: filteredResult.items,
           total: filteredResult.total
         };
+        console.log(result)
         return result;
       })
     );

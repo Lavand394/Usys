@@ -8,6 +8,7 @@ import { BaseModel } from '../models/base.model';
 import { SortState } from '../models/sort.model';
 import { GroupingState } from '../models/grouping.model';
 import Swal from 'sweetalert2';
+import { Documento } from '../../core/models/documento.model';
 const DEFAULT_STATE: ITableState = {
   filter: {},
   paginator: new PaginatorState(),
@@ -101,6 +102,7 @@ export abstract class TableService<T> {
 
   // READ (Returning filtered list of entities)
   find(tableState: ITableState): Observable<TableResponseModel<T>> {
+    console.log('ok2')
     const url = this.API_URL +  this.MODAL + '/listar';
     this._errorMessage.next('');
     return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
@@ -257,7 +259,71 @@ export abstract class TableService<T> {
       finalize(() => this._isLoading$.next(false))
     );
   }
+  obtenerDocumentos(idOrganizacion, filtro, apartirDe, mostrar): Observable<any> {
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `http://localhost:8080/api/documento/buscar/${idOrganizacion}/${filtro}/${apartirDe}/${mostrar}/`;
+    return this.http.get<BaseModel>(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT' + err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );
 
+  }
+
+// READ (Returning filtered list of entities)
+findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, apartirDe?:number, mostrar?:number): Observable<TableResponseModel<T>> {
+  const url = `http://localhost:8080/api/documento/buscar/${idOrganizacion}/${filtro}/${apartirDe}/${mostrar}/`;
+  this._errorMessage.next('');
+  return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
+    catchError(err => {
+      this._errorMessage.next(err);
+      console.error('FIND ITEMS', err);
+      return of({ items: [], total: 0 });
+    })
+  );
+}
+
+
+  public fetchDocumentos( modulo: string, idOrganizacion, filtro, apartirDe, mostrar) {
+    this.MODAL = modulo;
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const request = this.findDocumentos(this._tableState$.value,idOrganizacion, filtro, apartirDe, mostrar)
+      .pipe(
+        tap((res: TableResponseModel<T>) => {
+          console.log(res)
+          this._items$.next(res.items);
+          this.patchStateWithoutFetch({
+            paginator: this._tableState$.value.paginator.recalculatePaginator(
+              res.total
+            ),
+          });
+        }),
+        catchError((err) => {
+          this._errorMessage.next(err);
+          return of({
+            items: [],
+            total: 0
+          });
+        }),
+        finalize(() => {
+          this._isLoading$.next(false);
+          const itemIds = this._items$.value.map((el: T) => {
+            const item = (el as unknown) as BaseModel;
+            return item.id;
+          });
+          this.patchStateWithoutFetch({
+            grouping: this._tableState$.value.grouping.clearRows(itemIds),
+          });
+        })
+      )
+      .subscribe();
+      this._subscriptions.push(request);
+  }
   public fetch( modulo: string) {
     this.MODAL = modulo;
     this._isLoading$.next(true);
@@ -265,6 +331,7 @@ export abstract class TableService<T> {
     const request = this.find(this._tableState$.value)
       .pipe(
         tap((res: TableResponseModel<T>) => {
+          console.log(res)
           this._items$.next(res.items);
           this.patchStateWithoutFetch({
             paginator: this._tableState$.value.paginator.recalculatePaginator(

@@ -21,6 +21,7 @@ import { CoreModule } from '../_usys/core';
 import { AsideDynamicComponent } from './_layout/components/aside-dynamic/aside-dynamic.component';
 import { HeaderMenuDynamicComponent } from './_layout/components/header/header-menu-dynamic/header-menu-dynamic.component';
 
+
 @NgModule({
   declarations: [
     LayoutComponent,
