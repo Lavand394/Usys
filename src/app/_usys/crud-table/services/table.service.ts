@@ -8,6 +8,7 @@ import { BaseModel } from '../models/base.model';
 import { SortState } from '../models/sort.model';
 import { GroupingState } from '../models/grouping.model';
 import Swal from 'sweetalert2';
+import { Directorio } from '../../core/models/directorio.model';
 const DEFAULT_STATE: ITableState = {
   filter: {},
   paginator: new PaginatorState(),
@@ -560,6 +561,24 @@ export abstract class TableService<T> {
       }),
       finalize(() => this._isLoading$.next(false))
     );
+  }
+
+  getDirectorios(idModulo: number, idRol: number, paramUrl){
+    console.log(`${this.API_URL}${paramUrl}/${idModulo}/${idRol}`);
+    return this.http.get<Directorio[]>(`${this.API_URL}${paramUrl}/${idModulo}/${idRol}`)
+/*
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    //const url = `http://localhost:8080/api/CatalogoPermiso/verPermisosPorRolModulo/${idRol}/${idModulo}`;
+    const url = `${this.API_URL}${paramUrl}/${idRol}/${idModulo}`;
+    return this.http.get(url).pipe(
+      catchError(err => {
+        this._errorMessage.next(err);
+        console.error('GET ITEM BY IT', idModulo+'|'+idRol, err);
+        return of({ id: undefined });
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );*/
   }
 
 }
