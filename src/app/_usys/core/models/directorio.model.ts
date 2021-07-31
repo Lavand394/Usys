@@ -6,4 +6,5 @@ export interface Directorio{
   isExpanded?: boolean;
   idArea: number;
   bandera?: number;
+  idPadre: number;
 }

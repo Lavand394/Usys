@@ -99,7 +99,7 @@
               <button mat-icon-button disabled></button>
               <label class="checkbox">
                 <input type="checkbox" value="{{node.id}}" id="chkboxss{{node.id}}" name="checkboxTreGeneral"
-                  (change)="ngcheckTree($event.target)" />
+                  (change)="ngcheckTree($event.target)"   [checked]="checklistSelection.isSelected(node)"/>
                 <span> </span>
                 &nbsp;&nbsp;&nbsp;&nbsp;{{node.nombre}}
               </label>
@@ -118,7 +118,7 @@
               </button>
               <label class="checkbox">
                 <input type="checkbox" value="{{node.id}}" id="chkboxss{{node.id}}" name="checkboxTreGeneral"
-                  (change)="ngcheckTree($event.target)" />
+                  (change)="ngcheckTree($event.target)"   [checked]="checklistSelection.isSelected(node)"/>
                 <span> </span>
                 &nbsp;&nbsp;&nbsp;&nbsp;{{node.nombre}}
               </label>

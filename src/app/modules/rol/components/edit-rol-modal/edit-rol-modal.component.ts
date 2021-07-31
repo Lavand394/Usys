@@ -18,18 +18,6 @@ import { Directorio } from 'src/app/_usys/core/models/directorio.model';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { TreeNode } from 'primeng/api/treenode';
 
-/**
- * function for tree list
- */
-/**
-* Node for to-do item
-*/
-
-/**
-* The Json object for to-do list data.
-*/
-
-
 /** Flat node with expandable and level information */
 interface ExampleFlatNode {
   expandable: boolean;
@@ -74,7 +62,8 @@ const EMPTY_DIRECTORIO: Directorio = {
   expandable: true,
   level: undefined,
   nombre: '',
-  idArea: undefined
+  idArea: undefined,
+  idPadre: undefined
 }
 
 
@@ -111,76 +100,9 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     private fb: FormBuilder, public modal: NgbActiveModal
   ) { }
   banderaModulo = null; // 1 = nuevo registro, 2 = modificar registro;
-  
- TREE_DATA_E: Directorio[] = [
- ];
-  /*{
-    name: 'Nominas',
-    expandable: true,
-    level: 0,
-    nombre: 'Nominas',
-    id: 0
-  }, {
-    name: '2019',
-    expandable: false,
-    level: 1,
-    nombre: '2019',
-    id: 0
-  }, {
-    name: '2020',
-    expandable: false,
-    level: 1,
-    nombre: '2020',
-    id: 0
-  }, {
-    name: '2021',
-    expandable: false,
-    level: 1,
-    nombre: '2021',
-    id: 0
-  }, {
-    name: 'Presupuestos',
-    expandable: true,
-    level: 0,
-    nombre: 'Presupuestos',
-    id: 0
-  }, {
-    name: 'Administración',
-    expandable: true,
-    level: 1,
-    nombre: 'Administración',
-    id: 0
-  }, {
-    name: '2020',
-    expandable: false,
-    level: 2,
-    nombre: '2020',
-    id: 0
-  }, {
-    name: '2021',
-    expandable: false,
-    level: 2,
-    nombre: '2021',
-    id: 0
-  }, {
-    name: 'TI',
-    expandable: true,
-    level: 1,
-    nombre: 'TI',
-    id: 0
-  }, {
-    name: '2020',
-    expandable: false,
-    level: 2,
-    nombre: '2020',
-    id: 0
-  }, {
-    name: '2021',
-    expandable: false,
-    level: 2,
-    nombre: '2021',
-    id: 0
-  }*/
+
+  TREE_DATA_E: Directorio[] = [
+  ];
 
   treeItems: TreeNode[] = [];
   loading = false;
@@ -189,28 +111,8 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     // esta seccion se va a cambiar cuando actualice la parte de los services
     this.isLoading$ = this.rolService.isLoading$;
     this.loadCustomer();
-    
-  }
-/*
-  loadTree(idArea: number ,idRol: number,nodeId: number | undefined = undefined,  ) {
-    this.loading = true;
-    return this.rolService.getDirectorios(idArea, idRol, nodeId, 'Rol' + '/listarDirectoriosPorRolArea').pipe(
-      map(response => response.map(item => {
-        return { label: item.nombre, ...item};
-      })),
-      tap(items =>{
-        this.loading = false;
-      })
-    );
-  }
 
-  nodeExpand(event: any){
-    if(event.node){
-      this.loadTree(event.node.id, this.rol.id, this.area.id).pipe(take(1)).subscribe(response => {
-        event.node.children = response;
-      })
-    }
-  }*/
+  }
 
   /**
    * Load modal action information of rol.
@@ -473,50 +375,56 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     }
 
   }
-  
-    treeControl = new FlatTreeControl<Directorio>(
-      node => node.level, node => node.expandable);
-  
-  
-  
-    checklistSelection = new SelectionModel<Directorio>(true );
-  
-  
-    dataSource = new ArrayDataSource(this.TREE_DATA_E);
-  
-    hasChild = (_: number, node: Directorio) => node.expandable;
-  
-    getParentNode(node: Directorio): Directorio | null {
-      const nodeIndex = this.TREE_DATA_E.indexOf(node);
-  
-      for (let i = nodeIndex - 1; i >= 0; i--) {
-        if (this.TREE_DATA_E[i].level === node.level - 1) {
-          return this.TREE_DATA_E[i];
+
+  treeControl = new FlatTreeControl<Directorio>(
+    node => node.level, node => node.expandable);
+
+
+
+  checklistSelection = new SelectionModel<Directorio>(true);
+
+
+  dataSource = new ArrayDataSource(this.TREE_DATA_E);
+
+  hasChild = (_: number, node: Directorio) => node.expandable;
+
+  getParentNode(node: Directorio): Directorio | null {
+    const nodeIndex = this.TREE_DATA_E.indexOf(node);
+
+    for (let i = nodeIndex - 1; i >= 0; i--) {
+      if (this.TREE_DATA_E[i].level === node.level - 1) {
+        return this.TREE_DATA_E[i];
+      }
+    }
+
+    return null;
+  }
+
+  shouldRender(node: Directorio) {
+    let parent = this.getParentNode(node);
+    while (parent) {
+      if (!parent.isExpanded) {
+        return false;
+      }
+      parent = this.getParentNode(parent);
+    }
+    return true;
+  }
+
+  ngcheckTree(event) {
+    console.log(event.value);
+    if (event.checked) {
+      console.log('habilita');
+      for (const item in this.directorio) {
+        const idPadre = `${this.directorio[item].idPadre}`;
+        if(Number(idPadre) === event.value){
+          this.checklistSelection.toggle(this.directorio[item]);
         }
       }
-  
-      return null;
+    } else {
+      console.log('desahabilita');
     }
-  
-    shouldRender(node: Directorio) {
-      let parent = this.getParentNode(node);
-      while (parent) {
-        if (!parent.isExpanded) {
-          return false;
-        }
-        parent = this.getParentNode(parent);
-      }
-      return true;
-    }
-  
-    ngcheckTree(event) {
-  
-      if (event.checked) {
-        console.log('habilita');
-      } else {
-        console.log('desahabilita');
-      }
-    } 
+  }
 
   /**
    * @description function to load the module catalog.
@@ -539,55 +447,9 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
    * @param idModulo 
    */
   ngcallDirectorio(idModulo: number) {
-  /*  const idModuloN = Number(idModulo.toString().split(':')[1]);
-    this.idModuloSelect = idModuloN;
-    this.loadTree(this.idModuloSelect, this.rol.id, 0).pipe(
-      take(1)).subscribe(response => {
-        this.treeItems = response;
-      });*/
-
-    
-
     const idModuloN = Number(idModulo.toString().split(':')[1]);
     this.idModuloSelect = idModuloN;
     console.log(this.idModuloSelect);
-   /* const sbUpdate = this.rolService.getPermisosByRolModulo(this.rol.id, this.idModuloSelect, 'Rol' + '/listarDirectoriosPorRolArea').pipe(
-      first(),
-      catchError((errorMessage) => {
-        this.modal.dismiss(errorMessage);
-        return of(EMTY_PERMISOS);
-      })
-    ).subscribe((directorio: Directorio) => {
-     console.log(directorio);
-      //Find index of specific object using findIndex method.    
-      for (const property in this.directorio) {
-        const expandable = `${this.directorio[property].expandable}`;
-        if (Number(expandable) === 1) {
-          this.directorio[property].expandable = true;
-        }
-      }
-
-     
-      console.log(this.directorio);
-      this.TREE_DATA_E.push(
-        directorio
-      );
-
-      console.log(this.TREE_DATA_E);
-      
-      this.treeControl = new FlatTreeControl<Directorio>(
-        node => node.level, node => node.expandable);
-    
-    
-    
-      this.checklistSelection = new SelectionModel<Directorio>(true );
-    
-    
-      this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
-    
-      this.hasChild = (_: number, node: Directorio) => node.expandable;
-   
-    });*/
 
     this.rolService.getPermisosByRolModulo(this.rol.id, this.idModuloSelect, 'Rol' + '/listarDirectoriosPorRolArea').pipe(
       first(),
@@ -596,7 +458,10 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
         return of(EMPTY_DIRECTORIO);
       })
     ).subscribe((directorio: Directorio) => {
-      //this.directorio = directorio;
+      this.TREE_DATA_E = [];
+      this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
+      this.hasChild = (_: number, node: Directorio) => node.expandable;
+      this.directorio = directorio;
       for (const property in directorio) {
         const id = `${directorio[property].id}`;
         const padre = `${directorio[property].level}`;
@@ -604,51 +469,20 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
         if (Number(expandable) === 1) {
           directorio[property].expandable = true;
           directorio[property].isExpanded = true;
-        }else{
+        } else {
           directorio[property].expandable = false;
           directorio[property].isExpanded = false;
         }
 
-        if(directorio[property].bandera !== 1){
-          this.TREE_DATA_E.push(directorio[property]);
-          this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
-          this.hasChild = (_: number, node: Directorio) => node.expandable;
-        }
-       
-        for (const hijos in directorio) {
-          const level = `${directorio[hijos].level}`;
-          if(Number(id) === Number(level)){
-            if(directorio[hijos].bandera !== 1){
-              this.directorio = directorio[hijos];
-              this.directorio.level = Number(directorio[property].level)+1;
-              this.TREE_DATA_E.push(this.directorio);
-              this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
-              this.hasChild = (_: number, node: Directorio) => node.expandable;
-              directorio[hijos].bandera = 1;
-            }
-           
-            //delete directorio[hijos]; 
-          }
-        }
-        console.log(this.TREE_DATA_E);
- /*
-    this.hasChild = (_: number, node: Directorio) => node.expandable;*/
+        this.TREE_DATA_E.push(directorio[property]);
+        this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
+        this.hasChild = (_: number, node: Directorio) => node.expandable;
 
       }
-      
-   //   this.checklistSelection = new SelectionModel<Directorio>(true );
-      
-      
-    
-  
-    
-    //this.hasChild = (_: number, node: Directorio) => node.expandable;
-
-   
     });
 
-    
-    
+
+
 
   }
 
