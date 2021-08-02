@@ -5,6 +5,7 @@ import { Documento } from '../../models/documento.model';
 import { Observable } from 'rxjs';
 import { baseFilter } from '../../../../_fake/fake-helpers/http-extenstions';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,7 @@ export class DocumentoService  extends TableService<Documento> implements OnDest
 // READ
 findDocumentos(tableState: ITableState, org, fil, apa, mo): Observable<TableResponseModel<Documento>> {
 
-  return this.http.get<Documento[]>(`http://localhost:8080/api/documento/buscar/${org}/${fil}/${apa}/${mo}/`).pipe(
+  return this.http.get<Documento[]>(`${environment.backend}/documento/buscar/${org}/${fil}/${apa}/${mo}/`).pipe(
     map((response: Documento[]) => {
       const filteredResult = baseFilter(response, tableState);
       const result: TableResponseModel<Documento> = {
@@ -35,7 +36,7 @@ ngOnDestroy() {
   this.subscriptions.forEach(sb => sb.unsubscribe());
 }
   obtenerTotalDocumentos(idOrganizacion, filtro): Observable<any> {
-    return this.http.get(`http://localhost:8080/api/documento/buscar/total/${idOrganizacion}/${filtro}/`).pipe(
+    return this.http.get(`${environment.backend}/documento/buscar/total/${idOrganizacion}/${filtro}/`).pipe(
       map(response => response as any)
     );
   }

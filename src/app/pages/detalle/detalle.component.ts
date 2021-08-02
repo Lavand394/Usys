@@ -6,6 +6,9 @@ import {
   PaginatorState,
 } from '../../_usys/crud-table';
 import { DocumentoService } from '../../_usys/core/services/modules/documento.service';
+import {NgbModal, ModalDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import { DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
+
 @Component({
   selector: 'app-detalle',
   templateUrl: './detalle.component.html',
@@ -19,6 +22,10 @@ isLoading: boolean;
 filterGroup: FormGroup;
 searchGroup: FormGroup;
 private subscriptions: Subscription[] = [];
+closeResult: string;
+public urlDocumento: SafeResourceUrl;
+public nombreDocumento: string;
+public urlDocumentoDescarga: string;
 
 MODULO = 'documento';
 private idOrganizacion = 2;
@@ -31,7 +38,9 @@ private idOrganizacion = 2;
 
 constructor(
   private fb: FormBuilder,
-  public documentoService: DocumentoService
+  public documentoService: DocumentoService,
+  private modalService: NgbModal,
+  private sanitizer: DomSanitizer
 ) { }
 
   ngOnInit(): void {
@@ -74,5 +83,19 @@ constructor(
   busquedaRapida(event){
     this.documentoService.fetchDocumentos(this.MODULO, this.idOrganizacion, this.filtroR, this.apartirDe, this.mostrar);
     this.documentoService.obtenerTotalDocumentos(this.idOrganizacion, this.filtroR).subscribe(res => this.resultados = res);
+  }
+
+  
+  public visualizarDocumento(content, url, nombreDocumento) {
+    this.urlDocumento = this.sanitizer.bypassSecurityTrustResourceUrl(`http://docs.google.com/gview?url=${url}&embedded=true`);
+    this.nombreDocumento = nombreDocumento;
+    this.urlDocumentoDescarga = url;
+    this.modalService.open(content, {
+      size: 'lg'
+    });
+  }
+
+  public descargarDocumento(url) {
+    window.open(url, '_blank', '');  
   }
 }
