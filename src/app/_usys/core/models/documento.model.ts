@@ -8,9 +8,10 @@ export interface Documento
   url: string;
   fechaCreacion: string;
   idOrganizacion: number;
+  razonSocial: string;
   tipo: string;
   idArea: number;
   nombreArea: string;
   totalMetadatos: number;
-  metadatos: Metadatos;
+  Metadatos: Metadatos;
 }

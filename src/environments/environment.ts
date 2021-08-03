@@ -7,7 +7,9 @@ export const environment = {
   appVersion: 'v717demo1',
   USERDATA_KEY: 'authf649fc9a5f55',
   isMockEnabled: true,
-  apiUrl: 'api'
+  apiUrl: 'api',
+  backend: 'http://localhost:8080/api',
+  //backend: 'https://usysback.azurewebsites.net/api'
 };
 
 /*

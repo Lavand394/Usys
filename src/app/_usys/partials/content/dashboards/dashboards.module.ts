@@ -7,10 +7,11 @@ import { DashboardWrapperComponent } from './dashboard-wrapper/dashboard-wrapper
 import { WidgetsModule } from '../widgets/widgets.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CRUDTableModule } from '../../../../_usys/crud-table';
+import { RouterModule } from '@angular/router';
 @NgModule({
   declarations: [Dashboard1Component, Dashboard2Component, DashboardWrapperComponent, Dashboard3Component],
   imports: [CommonModule,FormsModule,
-    ReactiveFormsModule, WidgetsModule,  CRUDTableModule],
+    ReactiveFormsModule, WidgetsModule,  CRUDTableModule,  RouterModule],
   exports: [DashboardWrapperComponent],
 })
 export class DashboardsModule { }
