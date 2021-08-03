@@ -1,13 +1,31 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SelectionModel } from '@angular/cdk/collections';
+import { FlatTreeControl } from '@angular/cdk/tree';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { NgbActiveModal, NgbDateAdapter, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { of, Subscription } from 'rxjs';
-import { catchError, first, tap } from 'rxjs/operators';
+import { catchError, first, map, take, tap } from 'rxjs/operators';
 import { Rol } from '../../../../_usys/core/models/Rol.model';
 import { CustomAdapter, CustomDateParserFormatter } from '../../../../_usys/core';
 import { RolService } from '../../../../_usys/core/services/modules/rol.service';
 import { Permisos } from 'src/app/_usys/core/models/permisos.model';
 import { catalogoModulo } from 'src/app/_usys/core/models/catalogoModulo';
+import { ArrayDataSource } from '@angular/cdk/collections';
+import { Area } from 'src/app/_usys/core/models/area.model';
+import { Directorio } from 'src/app/_usys/core/models/directorio.model';
+import { NestedTreeControl } from '@angular/cdk/tree';
+
+/** Flat node with expandable and level information */
+interface ExampleFlatNode {
+  expandable: boolean;
+  name: string;
+  level: number;
+  isExpanded?: boolean;
+  nombre: string;
+  id: number;
+}
 
 const EMPTY_ROl: Rol = {
   id: undefined,
@@ -38,6 +56,17 @@ const EMTY_PERMISOS: Permisos = {
   idIntermedio: undefined
 }
 
+const EMPTY_DIRECTORIO: Directorio = {
+  id: undefined,
+  expandable: true,
+  level: undefined,
+  nombre: '',
+  idArea: undefined,
+  idPadre: undefined,
+  habilitado: 0
+}
+
+
 @Component({
   selector: 'app-edit-rol-modal',
   templateUrl: './edit-rol-modal.component.html',
@@ -46,7 +75,8 @@ const EMTY_PERMISOS: Permisos = {
   providers: [
     { provide: NgbDateAdapter, useClass: CustomAdapter },
     { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter }
-  ]
+  ],
+
 })
 
 export class EditRolModalComponent implements OnInit, OnDestroy {
@@ -54,6 +84,8 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   isLoading$;
   rol: Rol;
   catalogoModulo: catalogoModulo;
+  area: Area;
+  directorio: Directorio;
   permisos: Permisos;
   formGroup: FormGroup;
   isChecked: true;
@@ -69,10 +101,17 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   ) { }
   banderaModulo = null; // 1 = nuevo registro, 2 = modificar registro;
 
+  TREE_DATA_E: Directorio[] = [
+  ];
+
+ 
+  loading = false;
+
   ngOnInit(): void {
     // esta seccion se va a cambiar cuando actualice la parte de los services
     this.isLoading$ = this.rolService.isLoading$;
     this.loadCustomer();
+
   }
 
   /**
@@ -115,7 +154,8 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
 
     this.formGroup = this.fb.group({
       descripcion: [this.rol.descripcion, Validators.compose([Validators.required, Validators.maxLength(150)])],
-      modulo: [this.catalogoModulo, Validators.compose([Validators.required])]
+      modulo: [this.catalogoModulo, Validators.compose([Validators.required])],
+      area: [this.area, Validators.compose([Validators.required])]
     });
 
   }
@@ -285,7 +325,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
       })
     ).subscribe((catalogoModulo: catalogoModulo) => {
       this.catalogoModulo = catalogoModulo;
-      this.loadForm();
+      this.loadAreas()
     });
   }
 
@@ -330,9 +370,169 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
       this.disabledButtonSave = false;
     }
 
-    if(this.banderaModulo === 1){
+    if (this.banderaModulo === 1) {
       this.disabledButtonSave = true;
     }
+
+  }
+
+  treeControl = new FlatTreeControl<Directorio>(
+    node => node.level, node => node.expandable);
+
+ 
+
+  checklistSelection = new SelectionModel<Directorio>(true);
+
+
+  dataSource = new ArrayDataSource(this.TREE_DATA_E);
+
+  hasChild = (_: number, node: Directorio) => node.expandable;
+
+  getParentNode(node: Directorio): Directorio | null {
+    const nodeIndex = this.TREE_DATA_E.indexOf(node);
+
+    for (let i = nodeIndex - 1; i >= 0; i--) {
+      if (this.TREE_DATA_E[i].level === node.level - 1) {
+        return this.TREE_DATA_E[i];
+      }
+    }
+
+    return null;
+  }
+
+  shouldRender(node: Directorio) {
+    let parent = this.getParentNode(node);
+    while (parent) {
+      if (!parent.isExpanded) {
+        return false;
+      }
+      parent = this.getParentNode(parent);
+    }
+    return true;
+  }
+
+  ngcheckTree(event) {
+    console.log(event.value);
+    if (event.checked) {
+      console.log('habilita');
+      console.log(this.directorio);
+      for (const children in this.directorio) {
+        const idPadre = `${this.directorio[children].idPadre}`;
+        if(Number(idPadre) === Number(event.value)){
+          this.checklistSelection.toggle(this.directorio[children]);
+          for (const children2 in this.directorio) {
+            const idPadre2 = `${this.directorio[children2].idPadre}`;
+            if(Number(idPadre2) === Number(this.directorio[children].id)){
+              this.checklistSelection.toggle(this.directorio[children2]);
+            }
+          }
+        }
+      }
+    } else {
+      console.log('desahabilita');
+      console.log(this.directorio);
+      for (const children in this.directorio) {
+        const idPadre = `${this.directorio[children].idPadre}`;
+        if(Number(idPadre) === Number(event.value)){
+          this.checklistSelection.deselect(this.directorio[children]);
+          for (const children2 in this.directorio) {
+            const idPadre2 = `${this.directorio[children2].idPadre}`;
+            if(Number(idPadre2) === Number(this.directorio[children].id)){
+              this.checklistSelection.deselect(this.directorio[children2]);
+            }
+          }
+        }
+      }
+    }
+
+    //action for save 
+    /*if (event.checked) {
+      var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 1, idIntermedia: idIntermedio, idRol: this.rol.id };
+      this.arrPermisoSelect = obj;
+      this.savePermiso('habilita', idIntermedio);
+    } else {
+      var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 0, idIntermedia: idIntermedio, idRol: this.rol.id };
+      this.arrPermisoSelect = obj;
+      this.savePermiso('desahabilita', idIntermedio);
+    }*/
+  }
+
+  /**
+   * @description function to load the module catalog.
+   */
+  loadAreas() {
+    this.rolService.getItemByIdCustomGeneral('area', 'listarPorOrganizacion', 2).pipe(
+      first(),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(EMPTY_ROl);
+      })
+    ).subscribe((area: Area) => {
+      this.area = area;
+      this.loadForm();
+    });
+  }
+
+  /**
+   * @description function to load the permissions related to the selected module.
+   * @param idModulo 
+   */
+  ngcallDirectorio(idModulo: number) {
+    const idModuloN = Number(idModulo.toString().split(':')[1]);
+    this.idModuloSelect = idModuloN;
+    console.log(this.idModuloSelect);
+
+    this.rolService.getPermisosByRolModulo(this.rol.id, this.idModuloSelect, 'Rol' + '/listarDirectoriosPorRolArea').pipe(
+      first(),
+      catchError((errorMessage) => {
+        this.modal.dismiss(errorMessage);
+        return of(EMPTY_DIRECTORIO);
+      })
+    ).subscribe((directorio: Directorio) => {
+      console.log(directorio);
+      this.TREE_DATA_E = [];
+     
+      this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
+      
+      this.hasChild = (_: number, node: Directorio) => node.expandable;
+      this.directorio = directorio;
+     
+      for (const property in directorio) {
+        const expandable = `${directorio[property].expandable}`;
+        const habilitado = `${directorio[property].habilitado}`;
+        if (Number(expandable) === 1) {
+          directorio[property].expandable = true;
+          directorio[property].isExpanded = true;
+        } else {
+          directorio[property].expandable = false;
+          directorio[property].isExpanded = false;
+        }
+
+        
+       
+        this.TREE_DATA_E.push(directorio[property]);
+        this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
+        this.hasChild = (_: number, node: Directorio) => node.expandable;
+        
+        
+      }
+
+      for (const property in directorio) {
+        const habilitado = `${directorio[property].habilitado}`;
+        if(Number(habilitado) === 1){
+          this.checklistSelection.toggle(directorio[property]);
+        }else{
+          this.checklistSelection.deselect(directorio[property]);
+        }
+      }
+
+     
+
+    });
+
+
+
+
 
   }
 

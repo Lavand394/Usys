@@ -10,5 +10,6 @@ export class DatosSession{
     idEmpleado: number;
     idRol: number;
     idTipoUsuario: number;
+    directorios: number;
     
 }

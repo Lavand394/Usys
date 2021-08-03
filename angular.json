@@ -23,7 +23,8 @@
               "object-path",
               "apexcharts",
               "clipboard.js",
-              "highlight.js"
+              "highlight.js",
+              "tsparticles"
             ],
             "index": "src/index.html",
             "main": "src/main.ts",

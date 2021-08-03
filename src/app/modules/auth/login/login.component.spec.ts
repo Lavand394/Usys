@@ -148,4 +148,5 @@ describe('LoginComponent', () => {
     expect(errors['minlength']).toBeFalsy();
     expect(errors['maxlength']).toBeFalsy();
   });
+
 });

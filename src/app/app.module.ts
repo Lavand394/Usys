@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import { AuthService } from './modules/auth/_services/auth.service';
 import { environment } from 'src/environments/environment';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+ 
 
 // Highlight JS
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';

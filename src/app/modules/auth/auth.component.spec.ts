@@ -39,4 +39,6 @@ describe('AuthComponent', () => {
     expect(links.length).toBeGreaterThanOrEqual(3);
     expect(links.join(' ')).toEqual(FOOTER_LINKS.join(' '));
   });
+
+ 
 });
