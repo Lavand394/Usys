@@ -16,7 +16,6 @@ import { ArrayDataSource } from '@angular/cdk/collections';
 import { Area } from 'src/app/_usys/core/models/area.model';
 import { Directorio } from 'src/app/_usys/core/models/directorio.model';
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { TreeNode } from 'primeng/api/treenode';
 
 /** Flat node with expandable and level information */
 interface ExampleFlatNode {
@@ -63,7 +62,8 @@ const EMPTY_DIRECTORIO: Directorio = {
   level: undefined,
   nombre: '',
   idArea: undefined,
-  idPadre: undefined
+  idPadre: undefined,
+  habilitado: 0
 }
 
 
@@ -104,7 +104,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   TREE_DATA_E: Directorio[] = [
   ];
 
-  treeItems: TreeNode[] = [];
+ 
   loading = false;
 
   ngOnInit(): void {
@@ -379,7 +379,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   treeControl = new FlatTreeControl<Directorio>(
     node => node.level, node => node.expandable);
 
-
+ 
 
   checklistSelection = new SelectionModel<Directorio>(true);
 
@@ -415,15 +415,46 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     console.log(event.value);
     if (event.checked) {
       console.log('habilita');
-      for (const item in this.directorio) {
-        const idPadre = `${this.directorio[item].idPadre}`;
-        if(Number(idPadre) === event.value){
-          this.checklistSelection.toggle(this.directorio[item]);
+      console.log(this.directorio);
+      for (const children in this.directorio) {
+        const idPadre = `${this.directorio[children].idPadre}`;
+        if(Number(idPadre) === Number(event.value)){
+          this.checklistSelection.toggle(this.directorio[children]);
+          for (const children2 in this.directorio) {
+            const idPadre2 = `${this.directorio[children2].idPadre}`;
+            if(Number(idPadre2) === Number(this.directorio[children].id)){
+              this.checklistSelection.toggle(this.directorio[children2]);
+            }
+          }
         }
       }
     } else {
       console.log('desahabilita');
+      console.log(this.directorio);
+      for (const children in this.directorio) {
+        const idPadre = `${this.directorio[children].idPadre}`;
+        if(Number(idPadre) === Number(event.value)){
+          this.checklistSelection.deselect(this.directorio[children]);
+          for (const children2 in this.directorio) {
+            const idPadre2 = `${this.directorio[children2].idPadre}`;
+            if(Number(idPadre2) === Number(this.directorio[children].id)){
+              this.checklistSelection.deselect(this.directorio[children2]);
+            }
+          }
+        }
+      }
     }
+
+    //action for save 
+    /*if (event.checked) {
+      var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 1, idIntermedia: idIntermedio, idRol: this.rol.id };
+      this.arrPermisoSelect = obj;
+      this.savePermiso('habilita', idIntermedio);
+    } else {
+      var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 0, idIntermedia: idIntermedio, idRol: this.rol.id };
+      this.arrPermisoSelect = obj;
+      this.savePermiso('desahabilita', idIntermedio);
+    }*/
   }
 
   /**
@@ -458,14 +489,17 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
         return of(EMPTY_DIRECTORIO);
       })
     ).subscribe((directorio: Directorio) => {
+      console.log(directorio);
       this.TREE_DATA_E = [];
+     
       this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
+      
       this.hasChild = (_: number, node: Directorio) => node.expandable;
       this.directorio = directorio;
+     
       for (const property in directorio) {
-        const id = `${directorio[property].id}`;
-        const padre = `${directorio[property].level}`;
         const expandable = `${directorio[property].expandable}`;
+        const habilitado = `${directorio[property].habilitado}`;
         if (Number(expandable) === 1) {
           directorio[property].expandable = true;
           directorio[property].isExpanded = true;
@@ -474,12 +508,28 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
           directorio[property].isExpanded = false;
         }
 
+        
+       
         this.TREE_DATA_E.push(directorio[property]);
         this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
         this.hasChild = (_: number, node: Directorio) => node.expandable;
-
+        
+        
       }
+
+      for (const property in directorio) {
+        const habilitado = `${directorio[property].habilitado}`;
+        if(Number(habilitado) === 1){
+          this.checklistSelection.toggle(directorio[property]);
+        }else{
+          this.checklistSelection.deselect(directorio[property]);
+        }
+      }
+
+     
+
     });
+
 
 
 

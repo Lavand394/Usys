@@ -51,9 +51,6 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import {OverlayModule} from '@angular/cdk/overlay';
-import {TreeModule} from 'primeng/tree';
-import {ToastModule} from 'primeng/toast';
-import {ButtonModule} from 'primeng/button';
 
 import { RouterModule } from '@angular/router';
 @NgModule({
@@ -120,10 +117,7 @@ import { RouterModule } from '@angular/router';
     MatTreeModule,
     OverlayModule,
     PortalModule,
-    ScrollingModule,
-    TreeModule,
-    ToastModule,
-    ButtonModule
+    ScrollingModule
   ],
   entryComponents: [
     //DeleteOrganizacionModalComponent,

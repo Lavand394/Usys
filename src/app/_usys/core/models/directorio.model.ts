@@ -7,4 +7,5 @@ export interface Directorio{
   idArea: number;
   bandera?: number;
   idPadre: number;
+  habilitado: number;
 }

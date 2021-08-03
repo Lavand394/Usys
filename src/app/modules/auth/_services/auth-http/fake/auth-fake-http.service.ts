@@ -23,6 +23,7 @@ export class AuthHTTPService {
 
   public idOrganizacion;
   public idTipoUsuario;
+  public idDirectorio: DatosSession;
 
 
   protected http: HttpClient;
@@ -48,8 +49,23 @@ export class AuthHTTPService {
           return notFoundError;
         }
 
+
+        console.log(result);
+        
         this.idOrganizacion = result.idOrganizacion;
         this.idTipoUsuario = result.idTipoUsuario;
+   
+
+        this.getDirectorios('Usuario',result.idRol).pipe(
+        
+          catchError((errorMessage) => {
+            return of(null);
+          })
+        ).subscribe((objectDirectorios: DatosSession) => {
+          console.log(objectDirectorios);
+          this.idDirectorio = objectDirectorios;
+          console.log(this.idDirectorio);
+        });
         
        /* this.validarSession('Usuario', email, password).pipe(
           catchError((errorMessage) => {
@@ -146,4 +162,10 @@ export class AuthHTTPService {
       finalize(() => this._isLoading$.next(false))
     );*/
   }
+
+  getDirectorios(modulo, idrol: number): Observable<DatosSession> {
+    const url = `${this.API_URL1}${modulo}/obtenerDirectorios/${idrol}`;
+    return this.http.get<DatosSession>(url);
+  }
 }
+
