@@ -12,16 +12,23 @@ import { environment } from '../../../../../environments/environment';
 })
 export class DocumentoService  extends TableService<Documento> implements OnDestroy{
   //valores default para carga inicial
- 
+  URL: string;
   public texto = '';
   constructor(@Inject(HttpClient) http) {
     super(http);
   }
  
 // READ
-findDocumentos(tableState: ITableState, org, fil, apa, mo): Observable<TableResponseModel<Documento>> {
-
-  return this.http.get<Documento[]>(`${environment.backend}/documento/buscar/${org}/${fil}/${apa}/${mo}/`).pipe(
+findDocumentos(tableState: ITableState, fil, apa, mo): Observable<TableResponseModel<Documento>> {
+  if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
+    this.URL = `http://localhost:8080/api/documento/buscar/${JSON.parse( localStorage.getItem('svariable')).orgID}/${fil}/${apa}/${mo}/`;
+  }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
+    this.URL = `http://localhost:8080/api/documento/buscar/${JSON.parse( localStorage.getItem('svariable')).orgID}/${fil}/${apa}/${mo}/`;
+  }else{
+    this.URL = `http://localhost:8080/api/documento/buscar/${JSON.parse( localStorage.getItem('svariable')).orgID}/${fil}/${apa}/${mo}/`;
+    console.log(this.URL)
+  }
+  return this.http.get<Documento[]>(this.URL).pipe(
     map((response: Documento[]) => {
       const filteredResult = baseFilter(response, tableState);
       const result: TableResponseModel<Documento> = {
@@ -35,8 +42,9 @@ findDocumentos(tableState: ITableState, org, fil, apa, mo): Observable<TableResp
 ngOnDestroy() {
   this.subscriptions.forEach(sb => sb.unsubscribe());
 }
-  obtenerTotalDocumentos(idOrganizacion, filtro): Observable<any> {
-    return this.http.get(`${environment.backend}/documento/buscar/total/${idOrganizacion}/${filtro}/`).pipe(
+  obtenerTotalDocumentos(filtro): Observable<any> {
+    return this.http.get(`${environment.backend}/documento/buscar/total/${JSON.parse( localStorage.getItem('svariable')).orgID}/${filtro}/`)
+    .pipe(
       map(response => response as any)
     );
   }

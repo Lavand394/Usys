@@ -1,5 +1,5 @@
-import { Injectable, OnDestroy, Inject } from '@angular/core';
-import { HttpClient } from "@angular/common/http";
+import { Injectable, OnDestroy, Inject, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { TableService, TableResponseModel, ITableState} from '../../../../_usys/crud-table';
 import { Organizacion } from '../../models/organizacion.model';
 import { Observable } from 'rxjs';
@@ -10,14 +10,27 @@ import { map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class OrganizacionService  extends TableService<Organizacion> implements OnDestroy{
+  URL: string;
   constructor(@Inject(HttpClient) http) {
     super(http);
+  }
+  OnInit(){
+    
   }
 
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<Organizacion>> {
-    return this.http.get<Organizacion[]>("http://localhost:8080/api/organizacion/listar").pipe(
-      map((response: Organizacion[]) => {
+    if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
+      this.URL = 'http://localhost:8080/api/organizacion/listar';
+    }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
+      this.URL = `http://localhost:8080/api/organizacion/ver/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+    }else{
+      this.URL = `http://localhost:8080/api/organizacion/ver/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      console.log(this.URL)
+    }
+
+    return this.http.get<Organizacion[]>(this.URL).pipe(
+      map((response: Organizacion[]) => { 
         const filteredResult = baseFilter(response, tableState);
         const result: TableResponseModel<Organizacion> = {
           items: filteredResult.items,

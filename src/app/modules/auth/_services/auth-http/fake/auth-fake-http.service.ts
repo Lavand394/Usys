@@ -66,7 +66,11 @@ export class AuthHTTPService {
           this.idDirectorio = objectDirectorios;
           console.log(this.idDirectorio);
         });
-        
+        const svariable = {
+          orgID: result.idOrganizacion,
+          userType: result.idTipoUsuario
+                  }
+        localStorage.setItem('svariable', JSON.stringify(svariable));
        /* this.validarSession('Usuario', email, password).pipe(
           catchError((errorMessage) => {
             return of(undefined);

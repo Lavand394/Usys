@@ -56,10 +56,10 @@ constructor(
     this.subscriptions.forEach((sb) => sb.unsubscribe());
   }
   getTotalCoincidences(){
-     this.documentoService.obtenerTotalDocumentos(this.idOrganizacion, this.documentoService.texto).subscribe(res => this.resultados = res);
+     this.documentoService.obtenerTotalDocumentos(this.documentoService.texto).subscribe(res => this.resultados = res);
   }
   getDocumentos(){
-    this.documentoService.fetchDocumentos(this.MODULO, this.idOrganizacion, this.documentoService.texto, this.apartirDe, this.mostrar);
+    this.documentoService.fetchDocumentos(this.MODULO, this.documentoService.texto, this.apartirDe, this.mostrar);
   }
   
   // PAGINACION DINAMICA
@@ -81,8 +81,8 @@ constructor(
     this.documentoService.patchState({ paginator });
   }
   busquedaRapida(event){
-    this.documentoService.fetchDocumentos(this.MODULO, this.idOrganizacion, this.filtroR, this.apartirDe, this.mostrar);
-    this.documentoService.obtenerTotalDocumentos(this.idOrganizacion, this.filtroR).subscribe(res => this.resultados = res);
+    this.documentoService.fetchDocumentos(this.MODULO, this.filtroR, this.apartirDe, this.mostrar);
+    this.documentoService.obtenerTotalDocumentos(this.filtroR).subscribe(res => this.resultados = res);
   }
 
   

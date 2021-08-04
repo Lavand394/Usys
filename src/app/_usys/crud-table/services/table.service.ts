@@ -289,11 +289,11 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
 }
 
 
-  public fetchDocumentos( modulo: string, idOrganizacion, filtro, apartirDe, mostrar) {
+  public fetchDocumentos( modulo: string, filtro, apartirDe, mostrar) {
     this.MODAL = modulo;
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const request = this.findDocumentos(this._tableState$.value,idOrganizacion, filtro, apartirDe, mostrar)
+    const request = this.findDocumentos(this._tableState$.value, filtro, apartirDe, mostrar)
       .pipe(
         tap((res: TableResponseModel<T>) => {
           console.log(res)

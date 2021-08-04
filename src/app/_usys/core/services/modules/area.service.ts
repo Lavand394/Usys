@@ -10,13 +10,23 @@ import { map } from 'rxjs/operators';
   providedIn: "root",
 })
 export class AreaService  extends TableService<Area> implements OnDestroy{
+  URL: string;
   constructor(@Inject(HttpClient) http) {
     super(http);
   }
 
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<Area>> {
-    return this.http.get<Area[]>("http://localhost:8080/api/area/listar").pipe(
+    if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
+      this.URL = 'http://localhost:8080/api/area/listar';
+    }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
+      this.URL = `http://localhost:8080/api/area/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+    }else{
+      this.URL = `http://localhost:8080/api/area/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      console.log(this.URL)
+    }
+
+    return this.http.get<Area[]>(this.URL).pipe(
       map((response: Area[]) => {
         const filteredResult = baseFilter(response, tableState);
         const result: TableResponseModel<Area> = {
