@@ -23,7 +23,7 @@ export class AuthHTTPService {
 
   public idOrganizacion;
   public idTipoUsuario;
-  public idDirectorio: DatosSession;
+  public idDirectorio: object;
 
 
   protected http: HttpClient;
@@ -61,8 +61,8 @@ export class AuthHTTPService {
           catchError((errorMessage) => {
             return of(null);
           })
-        ).subscribe((objectDirectorios: DatosSession) => {
-          console.log(objectDirectorios);
+        ).subscribe((objectDirectorios: object) => {
+          
           this.idDirectorio = objectDirectorios;
           console.log(this.idDirectorio);
         });
@@ -167,9 +167,9 @@ export class AuthHTTPService {
     );*/
   }
 
-  getDirectorios(modulo, idrol: number): Observable<DatosSession> {
+  getDirectorios(modulo, idrol: number): Observable<object> {
     const url = `${this.API_URL1}${modulo}/obtenerDirectorios/${idrol}`;
-    return this.http.get<DatosSession>(url);
+    return this.http.get<object>(url);
   }
 }
 
