@@ -24,7 +24,7 @@ export class AuthHTTPService {
   public idOrganizacion;
   public idTipoUsuario;
   public idDirectorio: object;
-
+  public directoriotexto: string;
 
   protected http: HttpClient;
   API_URL1 = 'http://localhost:8080/api/';
@@ -48,9 +48,6 @@ export class AuthHTTPService {
         if (result === null) {
           return notFoundError;
         }
-
-
-        console.log(result);
         
         this.idOrganizacion = result.idOrganizacion;
         this.idTipoUsuario = result.idTipoUsuario;
@@ -64,13 +61,15 @@ export class AuthHTTPService {
         ).subscribe((objectDirectorios: object) => {
           
           this.idDirectorio = objectDirectorios;
-          console.log(this.idDirectorio);
+          this.directoriotexto = this.idDirectorio.toString();
+           
+          const svariable = {
+            orgID: result.idOrganizacion,
+            userType: result.idTipoUsuario,
+            directory: this.directoriotexto
+                    }
+          localStorage.setItem('svariable', JSON.stringify(svariable));
         });
-        const svariable = {
-          orgID: result.idOrganizacion,
-          userType: result.idTipoUsuario
-                  }
-        localStorage.setItem('svariable', JSON.stringify(svariable));
        /* this.validarSession('Usuario', email, password).pipe(
           catchError((errorMessage) => {
             return of(undefined);
@@ -83,10 +82,10 @@ export class AuthHTTPService {
 
 
         const auth = new AuthModel;
-            auth.accessToken = 'access-token-8f3ae836da744329a6f93bf20594b5cc';
-            auth.refreshToken = 'access-token-f8c137a2c98743f48b643e71161d90aa';
-            auth.expiresIn = new Date(Date.now() + 100 * 24 * 60 * 60 * 1000);
-            return auth;
+        auth.accessToken = 'access-token-8f3ae836da744329a6f93bf20594b5cc';
+        auth.refreshToken = 'access-token-f8c137a2c98743f48b643e71161d90aa';
+        auth.expiresIn = new Date(Date.now() + 100 * 24 * 60 * 60 * 1000);
+        return auth;
        
       })
     );

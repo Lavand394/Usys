@@ -17,18 +17,11 @@ export class DocumentoService  extends TableService<Documento> implements OnDest
   constructor(@Inject(HttpClient) http) {
     super(http);
   }
- 
+
 // READ
 findDocumentos(tableState: ITableState, fil, apa, mo): Observable<TableResponseModel<Documento>> {
-  if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
-    this.URL = `http://localhost:8080/api/documento/buscar/${JSON.parse( localStorage.getItem('svariable')).orgID}/${fil}/${apa}/${mo}/`;
-  }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
-    this.URL = `http://localhost:8080/api/documento/buscar/${JSON.parse( localStorage.getItem('svariable')).orgID}/${fil}/${apa}/${mo}/`;
-  }else{
-    this.URL = `http://localhost:8080/api/documento/buscar/${JSON.parse( localStorage.getItem('svariable')).orgID}/${fil}/${apa}/${mo}/`;
-    console.log(this.URL)
-  }
-  return this.http.get<Documento[]>(this.URL).pipe(
+    this.URL = `http://localhost:8080/api/documento/buscar/${JSON.parse( localStorage.getItem('svariable')).orgID}/${fil}/${apa}/${mo}/${JSON.parse( localStorage.getItem('svariable')).directory}/`;
+    return this.http.get<Documento[]>(this.URL).pipe(
     map((response: Documento[]) => {
       const filteredResult = baseFilter(response, tableState);
       const result: TableResponseModel<Documento> = {
@@ -43,7 +36,7 @@ ngOnDestroy() {
   this.subscriptions.forEach(sb => sb.unsubscribe());
 }
   obtenerTotalDocumentos(filtro): Observable<any> {
-    return this.http.get(`${environment.backend}/documento/buscar/total/${JSON.parse( localStorage.getItem('svariable')).orgID}/${filtro}/`)
+    return this.http.get(`${environment.backend}/documento/buscar/total/${JSON.parse( localStorage.getItem('svariable')).orgID}/${filtro}/${JSON.parse( localStorage.getItem('svariable')).directory}/`)
     .pipe(
       map(response => response as any)
     );

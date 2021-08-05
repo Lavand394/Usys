@@ -133,6 +133,7 @@ export abstract class TableService<T> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
     const url = `${this.API_URL}${ this.MODAL}/ver/${id}`;
+    console.log(url)
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
