@@ -90,6 +90,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   formGroup: FormGroup;
   isChecked: true;
   arrPermisoSelect;
+  arrDirectorioSelect;
   idModuloSelect = null;
   MODULO = 'rol';
   disabled = true;
@@ -104,7 +105,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   TREE_DATA_E: Directorio[] = [
   ];
 
- 
+
   loading = false;
 
   ngOnInit(): void {
@@ -226,6 +227,37 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
       ).subscribe((res: Permisos) => {
         this.arrPermisoSelect = res;
         this.ngupdatedPermisoCheck(action);
+      });
+    }
+
+  }
+
+  saveDirectorio(action, idIntermedio) {
+    if (action === 'habilita') {
+      this.rolService.createPermisoCheck('IntPermisoDirectorio', this.arrDirectorioSelect).pipe(
+        tap(() => {
+
+        }),
+        catchError((errorMessage) => {
+          this.modal.dismiss(errorMessage);
+          return of(this.arrDirectorioSelect);
+        }),
+      ).subscribe((res: Directorio) => {
+        this.arrDirectorioSelect = res;
+        this.ngupdatedDirectorioCheck(action);
+      });
+    } else if (action === 'desahabilita') {
+      this.rolService.deleteItemsPermisoCheck('IntPermisoDirectorio', idIntermedio).pipe(
+        tap(() => {
+
+        }),
+        catchError((errorMessage) => {
+          this.modal.dismiss(errorMessage);
+          return of(this.arrDirectorioSelect);
+        }),
+      ).subscribe((res: Permisos) => {
+        this.arrDirectorioSelect = res;
+        this.ngupdatedDirectorioCheck(action);
       });
     }
 
@@ -354,6 +386,26 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
 
   }
 
+  ngupdatedDirectorioCheck(action) {
+    for (const property in this.directorio) {
+      const iddirectorio = `${this.directorio[property].id}`;
+      for (const objdirectorioselect in this.arrDirectorioSelect) {
+        if (Number(iddirectorio) === Number(`${this.arrDirectorioSelect[objdirectorioselect].id}`)) {
+          //Find index of specific object using findIndex method.    
+          if (action === 'habilita') {
+            //Update object's name property.
+            this.directorio[property].id = Number(`${this.arrDirectorioSelect[objdirectorioselect].dir}`);
+            this.directorio[property].habilitado = 1;
+          } else if (action === 'desahabilita') {
+            //Update object's name property.
+            this.permisos[property].id = 0;
+            this.directorio[property].habilitado = 0;
+          }
+        }
+      }
+    }
+  }
+
   /**
    * function to detect if the description value was modified.
    * @param newObj 
@@ -379,7 +431,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   treeControl = new FlatTreeControl<Directorio>(
     node => node.level, node => node.expandable);
 
- 
+
 
   checklistSelection = new SelectionModel<Directorio>(true);
 
@@ -412,18 +464,29 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   }
 
   ngcheckTree(event) {
+    var obj;
     console.log(event.value);
     if (event.checked) {
       console.log('habilita');
       console.log(this.directorio);
       for (const children in this.directorio) {
         const idPadre = `${this.directorio[children].idPadre}`;
-        if(Number(idPadre) === Number(event.value)){
+        if (Number(idPadre) === Number(event.value)) {
           this.checklistSelection.toggle(this.directorio[children]);
+          if (Number(this.directorio[children].habilitado) === 0) {
+            obj = { idIntermedio: this.directorio[children].dir, idRol: this.rol.id, idDirectorio: this.directorio[children].id, idPermisoD: 1 };
+            this.arrDirectorioSelect = obj;
+            this.saveDirectorio('habilita', Number(this.directorio[children].dir));
+          }
           for (const children2 in this.directorio) {
             const idPadre2 = `${this.directorio[children2].idPadre}`;
-            if(Number(idPadre2) === Number(this.directorio[children].id)){
+            if (Number(idPadre2) === Number(this.directorio[children].id)) {
               this.checklistSelection.toggle(this.directorio[children2]);
+              if (Number(this.directorio[children2].habilitado) === 0) {
+                obj = { idIntermedio: this.directorio[children2].dir, idRol: this.rol.id, idDirectorio: this.directorio[children2].id, idPermisoD: 1 };
+                this.arrDirectorioSelect = obj;
+                this.saveDirectorio('habilita', Number(this.directorio[children2].dir));
+              }
             }
           }
         }
@@ -433,16 +496,53 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
       console.log(this.directorio);
       for (const children in this.directorio) {
         const idPadre = `${this.directorio[children].idPadre}`;
-        if(Number(idPadre) === Number(event.value)){
+        if (Number(idPadre) === Number(event.value)) {
           this.checklistSelection.deselect(this.directorio[children]);
+          if (Number(this.directorio[children].habilitado) === 1) {
+            obj = { idIntermedio: this.directorio[children].dir, idRol: this.rol.id, idDirectorio: this.directorio[children].id, idPermisoD: 1 };
+            this.arrDirectorioSelect = obj;
+            this.saveDirectorio('desahabilita', Number(this.directorio[children].dir));
+          }
+
           for (const children2 in this.directorio) {
             const idPadre2 = `${this.directorio[children2].idPadre}`;
-            if(Number(idPadre2) === Number(this.directorio[children].id)){
+            if (Number(idPadre2) === Number(this.directorio[children].id)) {
               this.checklistSelection.deselect(this.directorio[children2]);
+              if (Number(this.directorio[children2].habilitado) === 1) {
+                obj = { idIntermedio: this.directorio[children2].dir, idRol: this.rol.id, idDirectorio: this.directorio[children2].id, idPermisoD: 1 };
+                this.arrDirectorioSelect = obj;
+                this.saveDirectorio('desahabilita', Number(this.directorio[children2].dir));
+              }
             }
           }
         }
       }
+    }
+
+    let idIntermedio;
+    let habilitado;
+    for (const property in this.directorio) {
+      const iddirectorio = `${this.directorio[property].id}`;
+      if (Number(iddirectorio) === Number(event.value)) {
+        idIntermedio = `${this.directorio[property].dir}`;
+        habilitado = `${this.directorio[property].habilitado}`;
+      }
+    }
+
+    if (event.checked) {
+      if (Number(habilitado) === 0) {
+        obj = { idIntermedio: idIntermedio, idRol: this.rol.id, idDirectorio: event.value, idPermisoD: 1 };
+        this.arrDirectorioSelect = obj;
+        this.saveDirectorio('habilita', idIntermedio);
+      }
+
+    } else {
+      if (Number(habilitado) === 1) {
+        obj = { idIntermedio: idIntermedio, idRol: this.rol.id, idDirectorio: event.value, idPermisoD: 1 };
+        this.arrDirectorioSelect = obj;
+        this.saveDirectorio('desahabilita', idIntermedio);
+      }
+
     }
 
   }
@@ -451,7 +551,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
    * @description function to load the module catalog.
    */
   loadAreas() {
-    this.rolService.getItemByIdCustomGeneral('area', 'organizacion', Number(JSON.parse( localStorage.getItem('svariable')).orgID)).pipe(
+    this.rolService.getItemByIdCustomGeneral('area', 'organizacion', Number(JSON.parse(localStorage.getItem('svariable')).orgID)).pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
@@ -481,12 +581,12 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     ).subscribe((directorio: Directorio) => {
       console.log(directorio);
       this.TREE_DATA_E = [];
-     
+
       this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
-      
+
       this.hasChild = (_: number, node: Directorio) => node.expandable;
       this.directorio = directorio;
-     
+
       for (const property in directorio) {
         const expandable = `${directorio[property].expandable}`;
         const habilitado = `${directorio[property].habilitado}`;
@@ -498,25 +598,25 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
           directorio[property].isExpanded = false;
         }
 
-        
-       
+
+
         this.TREE_DATA_E.push(directorio[property]);
         this.dataSource = new ArrayDataSource(this.TREE_DATA_E);
         this.hasChild = (_: number, node: Directorio) => node.expandable;
-        
-        
+
+
       }
 
       for (const property in directorio) {
         const habilitado = `${directorio[property].habilitado}`;
-        if(Number(habilitado) === 1){
+        if (Number(habilitado) === 1) {
           this.checklistSelection.toggle(directorio[property]);
-        }else{
+        } else {
           this.checklistSelection.deselect(directorio[property]);
         }
       }
 
-     
+
 
     });
 
