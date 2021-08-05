@@ -53,7 +53,8 @@ const EMPTY_PERSONA: Persona = {
   apellidoPaterno: '',
   apellidoMaterno: '',
   idSexo: undefined, // H = 1 | M = 2 | O = 3
-  fechaNacimiento: new Date()
+  fechaNacimiento: new Date(),
+  estatus: 1
 }
 
 const EMPTY_EMPLEADO: Empleado = {
@@ -62,7 +63,8 @@ const EMPTY_EMPLEADO: Empleado = {
   puesto: '',
   cargo: '',
   idPersona: undefined,
-  idArea: undefined
+  idArea: undefined,
+  estatus: 1
 }
 
 @Component({
@@ -87,7 +89,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   area: Area;
   sexo: Sexo;
   fechaN: string;
-  MODULO = 'Empleado';
+  MODULO = 'empleado';
   customEmpleadoEdit: CustomEmpleadoEdit;
   private subscriptions: Subscription[] = [];
   constructor(
@@ -115,7 +117,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
       this.loadForm();
     } else {
       console.log('ID EMPLEADO: ' + this.id);
-      const sb = this.customersService.getItemByIdCustomGeneral('Empleado', 'verCustomEdit', this.id).pipe(
+      const sb = this.customersService.getItemByIdCustomGeneral('empleado', 'ver', this.id).pipe(
         first(),
         catchError((errorMessage) => {
           this.modal.dismiss(errorMessage);
@@ -215,7 +217,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
               tap(() => {
                 this.modal.close();
               }),
-              catchError((err) => {
+              catchError((err) => { 
                 this.modal.dismiss(err);
                 return of(undefined);
               })
@@ -281,7 +283,7 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   loadCatalogos() {
-    const sb = this.customersService.getCatalogo('Rol').pipe(
+    const sb = this.customersService.getCatalogo('rol').pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
@@ -324,7 +326,8 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   createEmpleado() {
     this.empleado.idPersona = this.persona.id;
     this.empleado.idArea = this.area.id;
-    this.customersService.createGeneral('Empleado', this.empleado).pipe(
+    this.empleado.estatus = 1;
+    this.customersService.createGeneral('empleado', this.empleado).pipe(
       tap(() => {
 
       }),
@@ -360,7 +363,9 @@ export class EditEmpleadoModalComponent implements OnInit, OnDestroy {
   }
 
   addNumEmpleado() {
-    this.customersService.addNumEmpleado('Empleado', this.empleado).pipe(
+    let objsvariable = JSON.parse(localStorage.getItem('svariable')).orgID;
+    console.log('id organizacion en session :' + Number(objsvariable));
+    this.customersService.addNumEmpleado('empleado', this.empleado.id, Number(objsvariable)).pipe(
       tap(() => {
 
       }),

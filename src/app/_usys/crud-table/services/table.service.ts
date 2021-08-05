@@ -103,7 +103,6 @@ export abstract class TableService<T> {
 
   // READ (Returning filtered list of entities)
   find(tableState: ITableState): Observable<TableResponseModel<T>> {
-    console.log('ok2')
     const url = this.API_URL +  this.MODAL + '/listar';
     this._errorMessage.next('');
     return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
@@ -217,12 +216,28 @@ export abstract class TableService<T> {
 
   // DELETE
   deleteCustomModulo(modulo, id: any): Observable<any> {
-    this._isLoading$.next(true);
+    /*this._isLoading$.next(true);
     this._errorMessage.next('');
     const url = `${this.API_URL}${modulo}/eliminar/${id}`;
     return this.http.delete(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
+        console.error('DELETE ITEM', id, err);
+        return of({});
+      }),
+      finalize(() => this._isLoading$.next(false))
+    );*/
+
+    this._isLoading$.next(true);
+    this._errorMessage.next('');
+    const url = `${this.API_URL}${modulo}/eliminar/${id}`;
+    return this.http.delete(url).pipe(
+      tap((res) => {
+        this.successMessage();
+       }),
+      catchError(err => {
+        this._errorMessage.next(err);
+        this.failedMessage();
         console.error('DELETE ITEM', id, err);
         return of({});
       }),
@@ -574,8 +589,8 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   }
 
   // UPDATE
-  addNumEmpleado(modulo,item: BaseModel): Observable<any> {
-    const url = `${this.API_URL}${modulo}/agregarNumEmpleado/${item.id}`;
+  addNumEmpleado(modulo,item: number, idOrganizacion: number): Observable<any> {
+    const url = `${this.API_URL}${modulo}/numeroEmpleado/${idOrganizacion}/${item}`;
     this._isLoading$.next(true);
     this._errorMessage.next('');
     return this.http.put(url, item).pipe(

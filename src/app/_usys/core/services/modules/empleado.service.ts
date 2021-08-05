@@ -11,13 +11,23 @@ import { map } from 'rxjs/operators';
   providedIn: "root",
 })
 export class EmpleadoService  extends TableService<CustomEmpleado> implements OnDestroy{
+  URL: string;
   constructor(@Inject(HttpClient) http) {
     super(http);
   }
 
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<CustomEmpleado>> {
-    return this.http.get<CustomEmpleado[]>("http://localhost:8080/api/Empleado/listarCustomEmpleado").pipe(
+    if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
+      this.URL = 'http://localhost:8080/api/empleado/listar';
+    }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
+      this.URL = `http://localhost:8080/api/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+    }else{
+      this.URL = `http://localhost:8080/api/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      console.log(this.URL)
+    }
+
+    return this.http.get<CustomEmpleado[]>(this.URL).pipe(
       map((response: CustomEmpleado[]) => {
         const filteredResult = baseFilter(response, tableState);
         const result: TableResponseModel<CustomEmpleado> = {
@@ -31,7 +41,16 @@ export class EmpleadoService  extends TableService<CustomEmpleado> implements On
 
   // READ
   findCustomEmpleado(tableState: ITableState): Observable<TableResponseModel<CustomEmpleado>> {
-    return this.http.get<CustomEmpleado[]>("http://localhost:8080/api/Empleado/listarCustomEmpleado").pipe(
+    if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
+      this.URL = 'http://localhost:8080/api/empleado/listar';
+    }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
+      this.URL = `http://localhost:8080/api/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+    }else{
+      this.URL = `http://localhost:8080/api/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      console.log(this.URL)
+    }
+
+    return this.http.get<CustomEmpleado[]>(this.URL).pipe(
       map((response: CustomEmpleado[]) => {
         const filteredResult = baseFilter(response, tableState);
         const result: TableResponseModel<CustomEmpleado> = {

@@ -9,4 +9,5 @@ export interface Empleado {
   cargo: string;
   idPersona: number;
   idArea: number;
+  estatus: number;
 }

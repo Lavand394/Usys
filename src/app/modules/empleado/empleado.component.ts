@@ -43,7 +43,7 @@ isLoading: boolean;
 filterGroup: FormGroup;
 searchGroup: FormGroup;
 private subscriptions: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
-MODULO = 'Empleado';
+MODULO = 'empleado';
 constructor(
   private fb: FormBuilder,
   private modalService: NgbModal,
@@ -57,7 +57,7 @@ constructor(
     console.log(this.authService.idOrganizacion);
     this.filterForm();
     this.searchForm();
-    this.EmplService.fetchCustomEmpleado(this.MODULO);
+    this.EmplService.fetch(this.MODULO);
     this.grouping = this.EmplService.grouping;
     this.paginator = this.EmplService.paginator;
     this.sorting = this.EmplService.sorting;

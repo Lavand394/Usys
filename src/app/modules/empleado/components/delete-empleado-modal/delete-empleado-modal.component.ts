@@ -24,7 +24,7 @@ export class DeleteEmpleadoModalComponent implements OnInit, OnDestroy {
   deleteEmpleado() {
     this.isLoading = true;
 
-    this.customersService.getItemByIdCustomGeneral('Empleado', 'verCustomEdit', this.idEmpleado).pipe(
+    this.customersService.getItemByIdCustomGeneral('empleado', 'ver', this.idEmpleado).pipe(
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
         return of(undefined);
@@ -37,7 +37,7 @@ export class DeleteEmpleadoModalComponent implements OnInit, OnDestroy {
           }),
           finalize(() => {
             // delete empleado:
-            const sbe = this.emplService.delete(this.idEmpleado).pipe(
+            const sbe = this.emplService.delete(this.customEmpleadoEdit.idEmpleado).pipe(
               catchError((err) => {
                 this.modal.dismiss(err);
                 return of(undefined);
