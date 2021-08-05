@@ -87,7 +87,7 @@ constructor(
 
   
   public visualizarDocumento(content, url, nombreDocumento) {
-    this.urlDocumento = this.sanitizer.bypassSecurityTrustResourceUrl(`http://docs.google.com/gview?url=${url}&embedded=true`);
+    this.urlDocumento = this.sanitizer.bypassSecurityTrustResourceUrl(`https://docs.google.com/gview?url=${url}&embedded=true`);
     this.nombreDocumento = nombreDocumento;
     this.urlDocumentoDescarga = url;
     this.modalService.open(content, {
