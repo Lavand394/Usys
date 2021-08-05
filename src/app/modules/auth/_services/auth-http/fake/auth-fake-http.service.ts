@@ -24,8 +24,12 @@ export class AuthHTTPService {
   public idOrganizacion;
   public idTipoUsuario;
   public idDirectorio: object;
-
-
+  public directoriotexto: string;
+  public totalStorage;
+  public usedStorage;
+  public totalDocumentoUploaded;
+  public totalUsers;
+  public totalUsersCreated;
   protected http: HttpClient;
   API_URL1 = 'http://localhost:8080/api/';
   API_URL = `${environment.apiUrl}/users`;
@@ -48,13 +52,15 @@ export class AuthHTTPService {
         if (result === null) {
           return notFoundError;
         }
-
-
-        console.log(result);
         
         this.idOrganizacion = result.idOrganizacion;
         this.idTipoUsuario = result.idTipoUsuario;
-   
+        this.obtenerTotalStorage(result.idOrganizacion).subscribe();
+        this.obtenerUsedStorage(result.idOrganizacion).subscribe();
+        this.obtenerTotalDocumentsUploaded(result.idOrganizacion).subscribe();
+        this.obtenerTotalUsers(result.idOrganizacion).subscribe();
+        this.obtenerTotalUsersCreated(result.idOrganizacion).subscribe();
+
 
         this.getDirectorios('Usuario',result.idRol).pipe(
         
@@ -64,13 +70,26 @@ export class AuthHTTPService {
         ).subscribe((objectDirectorios: object) => {
           
           this.idDirectorio = objectDirectorios;
-          console.log(this.idDirectorio);
+          this.directoriotexto = this.idDirectorio.toString();
+           
+          
+          const svariable = {
+            orgID: result.idOrganizacion,
+            userType: result.idTipoUsuario,
+            directory: this.directoriotexto,
+            totalStorage: this.totalStorage,
+            usedStorage: this.usedStorage,
+            totalDocumentoUploaded :  this.totalDocumentoUploaded,
+            totalUsers:  this.totalUsers,
+            totalUsersCreated: this.totalUsersCreated
+                    }
+                    console.log(svariable)
+          localStorage.setItem('svariable', JSON.stringify(svariable));
         });
-        const svariable = {
-          orgID: result.idOrganizacion,
-          userType: result.idTipoUsuario
-                  }
-        localStorage.setItem('svariable', JSON.stringify(svariable));
+
+
+        
+
        /* this.validarSession('Usuario', email, password).pipe(
           catchError((errorMessage) => {
             return of(undefined);
@@ -83,10 +102,10 @@ export class AuthHTTPService {
 
 
         const auth = new AuthModel;
-            auth.accessToken = 'access-token-8f3ae836da744329a6f93bf20594b5cc';
-            auth.refreshToken = 'access-token-f8c137a2c98743f48b643e71161d90aa';
-            auth.expiresIn = new Date(Date.now() + 100 * 24 * 60 * 60 * 1000);
-            return auth;
+        auth.accessToken = 'access-token-8f3ae836da744329a6f93bf20594b5cc';
+        auth.refreshToken = 'access-token-f8c137a2c98743f48b643e71161d90aa';
+        auth.expiresIn = new Date(Date.now() + 100 * 24 * 60 * 60 * 1000);
+        return auth;
        
       })
     );
@@ -170,6 +189,53 @@ export class AuthHTTPService {
   getDirectorios(modulo, idrol: number): Observable<object> {
     const url = `${this.API_URL1}${modulo}/obtenerDirectorios/${idrol}`;
     return this.http.get<object>(url);
+  }
+  
+  obtenerTotalStorage(organizacion): Observable<any> {
+    return this.http.get(`${environment.backend}/ParametroOrganizacion/espacioDisponible/${organizacion}`)
+    .pipe(
+      map(response => {
+        response as any;
+        this.totalStorage = response;
+      })
+    );
+  }
+  obtenerUsedStorage(organizacion): Observable<any> {
+    console.log(`${environment.backend}/documento/espacioOcupado/${organizacion}`)
+    return this.http.get(`${environment.backend}/documento/espacioOcupado/${organizacion}`)
+    .pipe(
+      map(response => {
+        response as any;
+        this.usedStorage = response;
+      })
+    );
+  }
+  obtenerTotalDocumentsUploaded(organizacion): Observable<any> {
+    return this.http.get(`${environment.backend}/documento/totalDocumentos/${organizacion}`)
+    .pipe(
+      map(response => {
+        response as any;
+        this.totalDocumentoUploaded = response;
+      })
+    );
+  }
+  obtenerTotalUsers(organizacion): Observable<any> {
+    return this.http.get(`${environment.backend}/ParametroOrganizacion/usuariosDisponible/${organizacion}`)
+    .pipe(
+      map(response => {
+        response as any;
+        this.totalUsers = response;
+      })
+    );
+  }
+  obtenerTotalUsersCreated(organizacion): Observable<any> {
+    return this.http.get(`${environment.backend}/Usuario/totalUsuariosOcupados/${organizacion}`)
+    .pipe(
+      map(response => {
+        response as any;
+        this.totalUsersCreated = response;
+      })
+    );
   }
 }
 

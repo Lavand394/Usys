@@ -87,7 +87,7 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
           return of(EMPTY_ORGANIZACION);
         })
       ).subscribe((organizacion: Organizacion) => {
-        this.organizacion = organizacion;
+        this.organizacion = organizacion[0];
         this.loadForm();
       });
       this.subscriptions.push(sb);
@@ -107,7 +107,7 @@ export class EditOrganizacionModalComponent implements OnInit, OnDestroy {
     this.subscriptions.push(paises);
   }
 loadSelectEstado(){
-  const estados = this.selectService.getAllItems('Estado').pipe(
+  const estados = this.selectService.getAllItems('estado').pipe(
     first(),
     catchError((errorMessage) => {
       this.modal.dismiss(errorMessage);

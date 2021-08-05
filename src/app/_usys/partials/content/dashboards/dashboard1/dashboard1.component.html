@@ -63,7 +63,7 @@
                         <!--begin::Content-->
                         <div class="d-flex flex-column">
                             <h3 class="text-dark h3 mb-3">Almacenamiento </h3>
-                            <div class="text-dark-50">15,29GB de 20GB Disponibles</div>
+                            <div class="text-dark-50">{{usedStorage}}GB de {{totalStorage}}GB Disponibles</div>
                         </div>
                         <!--end::Content-->
                     </div>
@@ -97,7 +97,7 @@
                         <!--begin::Content-->
                         <div class="d-flex flex-column">
                             <h3 class="text-dark h3 mb-3">Archivos</h3>
-                            <div class="text-dark-50">800 almacenados hasta el momento</div>
+                            <div class="text-dark-50">{{totalDocumentoUploaded}} almacenados hasta el momento</div>
                         </div>
                         <!--end::Content-->
                     </div>
@@ -130,7 +130,7 @@
                         <!--begin::Content-->
                         <div class="d-flex flex-column">
                             <h3 class="text-dark h3 mb-3">Usuarios</h3>
-                            <div class="text-dark-50">90 Creados de 100 Disponibles</div>
+                            <div class="text-dark-50">{{totalUsersCreated}} Creados de {{totalUsers}} Disponibles</div>
                         </div>
                         <!--end::Content-->
                     </div>
