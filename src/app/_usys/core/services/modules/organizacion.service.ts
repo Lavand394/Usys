@@ -5,6 +5,7 @@ import { Organizacion } from '../../models/organizacion.model';
 import { Observable } from 'rxjs';
 import { baseFilter } from '../../../../_fake/fake-helpers/http-extenstions';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -21,11 +22,11 @@ export class OrganizacionService  extends TableService<Organizacion> implements 
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<Organizacion>> {
     if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
-      this.URL = 'http://localhost:8080/api/organizacion/listar';
+      this.URL = `${environment.backend}/organizacion/listar`;
     }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
-      this.URL = `http://localhost:8080/api/organizacion/ver/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/organizacion/ver/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
     }else{
-      this.URL = `http://localhost:8080/api/organizacion/ver/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/organizacion/ver/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
       console.log(this.URL)
     }
 

@@ -31,7 +31,7 @@ export class AuthHTTPService {
   public totalUsers;
   public totalUsersCreated;
   protected http: HttpClient;
-  API_URL1 = 'http://localhost:8080/api/';
+  API_URL1 = environment.backend;
   API_URL = `${environment.apiUrl}/users`;
   MODAL = '';
   constructor(http: HttpClient) {

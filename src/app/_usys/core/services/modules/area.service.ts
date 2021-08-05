@@ -5,7 +5,7 @@ import { Area } from '../../models/area.model';
 import { Observable } from 'rxjs';
 import { baseFilter } from '../../../../_fake/fake-helpers/http-extenstions';
 import { map } from 'rxjs/operators';
-
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: "root",
 })
@@ -18,11 +18,11 @@ export class AreaService  extends TableService<Area> implements OnDestroy{
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<Area>> {
     if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
-      this.URL = 'http://localhost:8080/api/area/listar';
+      this.URL = `${environment.backend}/area/listar`;
     }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
-      this.URL = `http://localhost:8080/api/area/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/area/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
     }else{
-      this.URL = `http://localhost:8080/api/area/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/area/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
       console.log(this.URL)
     }
 

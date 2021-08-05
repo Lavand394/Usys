@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { TableService, TableResponseModel, ITableState} from '../../../../_usys/crud-table';
+import { environment } from '../../../../../environments/environment';
 
 import { Observable } from 'rxjs';
 import { BaseModel } from '../../models/base.model';
@@ -14,7 +15,7 @@ export class SelectService  extends TableService<any> implements OnDestroy{
   }
  
   getAllItems(lista: string): Observable<BaseModel> { 
-    const url = `http://localhost:8080/api/${lista}/listar`;
+    const url = `${environment.backend}/${lista}/listar`;
     return this.http.get<BaseModel>(url);
   }
 

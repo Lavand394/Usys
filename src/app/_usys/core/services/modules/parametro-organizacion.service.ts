@@ -5,6 +5,7 @@ import { ParametroOrganizacion } from '../../models/parametro-organizacion.model
 import { Observable } from 'rxjs';
 import { baseFilter } from '../../../../_fake/fake-helpers/http-extenstions';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class ParametroOrganizacionService  extends TableService<ParametroOrganiz
 
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<ParametroOrganizacion>> {
-    return this.http.get<ParametroOrganizacion[]>("http://localhost:8080/api/ParametroOrganizacion/listar").pipe(
+    return this.http.get<ParametroOrganizacion[]>(`${environment.backend}/ParametroOrganizacion/listar`).pipe(
       map((response: ParametroOrganizacion[]) => {
         const filteredResult = baseFilter(response, tableState);
         const result: TableResponseModel<ParametroOrganizacion> = {

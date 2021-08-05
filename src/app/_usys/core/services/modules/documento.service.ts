@@ -20,7 +20,7 @@ export class DocumentoService  extends TableService<Documento> implements OnDest
 
 // READ
 findDocumentos(tableState: ITableState, fil, apa, mo): Observable<TableResponseModel<Documento>> {
-    this.URL = `http://localhost:8080/api/documento/buscar/${JSON.parse( localStorage.getItem('svariable')).orgID}/${fil}/${apa}/${mo}/${JSON.parse( localStorage.getItem('svariable')).directory}/`;
+    this.URL = `${environment.backend}/documento/buscar/${JSON.parse( localStorage.getItem('svariable')).orgID}/${fil}/${apa}/${mo}/${JSON.parse( localStorage.getItem('svariable')).directory}/`;
     return this.http.get<Documento[]>(this.URL).pipe(
     map((response: Documento[]) => {
       const filteredResult = baseFilter(response, tableState);

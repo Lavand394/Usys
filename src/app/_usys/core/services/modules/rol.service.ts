@@ -5,6 +5,7 @@ import { Rol } from '../../models/rol.model';
 import { Observable } from 'rxjs';
 import { baseFilter } from '../../../../_fake/fake-helpers/http-extenstions';
 import { map } from 'rxjs/operators';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: "root",
@@ -18,11 +19,11 @@ export class RolService  extends TableService<Rol> implements OnDestroy{
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<Rol>> {
     if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
-      this.URL = 'http://localhost:8080/api/rol/listar';
+      this.URL = `${environment.backend}/rol/listar`;
     }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
-      this.URL = `http://localhost:8080/api/rol/listarIdOrganizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/rol/listarIdOrganizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
     }else{
-      this.URL = `http://localhost:8080/api/rol/listarIdOrganizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/rol/listarIdOrganizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
       console.log(this.URL)
     }
 

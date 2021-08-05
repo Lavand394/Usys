@@ -9,7 +9,8 @@ import { SortState } from '../models/sort.model';
 import { GroupingState } from '../models/grouping.model';
 import Swal from 'sweetalert2';
 import { Directorio } from '../../core/models/directorio.model';
-import { Documento } from '../../core/models/documento.model';
+import { environment } from '../../../../environments/environment';
+
 const DEFAULT_STATE: ITableState = {
   filter: {},
   paginator: new PaginatorState(),
@@ -64,7 +65,7 @@ export abstract class TableService<T> {
   protected http: HttpClient;
   // API URL has to be overrided
  // API_URL = `${environment.apiUrl}/endpoint`;
- API_URL = 'http://localhost:8080/api/';
+ API_URL = environment.backend;
  MODAL = '';
   constructor(http: HttpClient) {
     this.http = http;
@@ -279,7 +280,7 @@ export abstract class TableService<T> {
   obtenerDocumentos(idOrganizacion, filtro, apartirDe, mostrar): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `http://localhost:8080/api/documento/buscar/${idOrganizacion}/${filtro}/${apartirDe}/${mostrar}/`;
+    const url = `${environment.backend}/documento/buscar/${idOrganizacion}/${filtro}/${apartirDe}/${mostrar}/`;
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -293,7 +294,7 @@ export abstract class TableService<T> {
 
 // READ (Returning filtered list of entities)
 findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, apartirDe?:number, mostrar?:number): Observable<TableResponseModel<T>> {
-  const url = `http://localhost:8080/api/documento/buscar/${idOrganizacion}/${filtro}/${apartirDe}/${mostrar}/`;
+  const url = `${environment.backend}/documento/buscar/${idOrganizacion}/${filtro}/${apartirDe}/${mostrar}/`;
   this._errorMessage.next('');
   return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
     catchError(err => {
@@ -462,7 +463,6 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   getPermisosByRolModulo(idModulo: number, idRol: number, paramUrl): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    //const url = `http://localhost:8080/api/CatalogoPermiso/verPermisosPorRolModulo/${idRol}/${idModulo}`;
     const url = `${this.API_URL}${paramUrl}/${idRol}/${idModulo}`;
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, Inject } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { TableService, TableResponseModel, ITableState} from '../../../../_usys/crud-table';
-import { Usuario } from '../../models/usuario.model';
+import { environment } from '../../../../../environments/environment';
 import { CustomEmpleado } from '../../models/customEmpleado.models';
 import { Observable } from 'rxjs';
 import { baseFilter } from '../../../../_fake/fake-helpers/http-extenstions';
@@ -19,11 +19,11 @@ export class EmpleadoService  extends TableService<CustomEmpleado> implements On
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<CustomEmpleado>> {
     if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
-      this.URL = 'http://localhost:8080/api/empleado/listar';
+      this.URL = `${environment.backend}/empleado/listar`;
     }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
-      this.URL = `http://localhost:8080/api/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
     }else{
-      this.URL = `http://localhost:8080/api/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
       console.log(this.URL)
     }
 
@@ -42,11 +42,11 @@ export class EmpleadoService  extends TableService<CustomEmpleado> implements On
   // READ
   findCustomEmpleado(tableState: ITableState): Observable<TableResponseModel<CustomEmpleado>> {
     if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
-      this.URL = 'http://localhost:8080/api/empleado/listar';
+      this.URL = `${environment.backend}/empleado/listar`;
     }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
-      this.URL = `http://localhost:8080/api/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
     }else{
-      this.URL = `http://localhost:8080/api/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      this.URL = `${environment.backend}/empleado/organizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
       console.log(this.URL)
     }
 
