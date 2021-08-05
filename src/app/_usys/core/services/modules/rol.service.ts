@@ -10,13 +10,23 @@ import { map } from 'rxjs/operators';
   providedIn: "root",
 })
 export class RolService  extends TableService<Rol> implements OnDestroy{
+  URL: string;
   constructor(@Inject(HttpClient) http) {
     super(http);
   }
 
   // READ
   find(tableState: ITableState): Observable<TableResponseModel<Rol>> {
-    return this.http.get<Rol[]>("http://localhost:8080/api/Rol/listar").pipe(
+    if (JSON.parse( localStorage.getItem('svariable')).userType === 1){
+      this.URL = 'http://localhost:8080/api/rol/listar';
+    }else if(JSON.parse( localStorage.getItem('svariable')).userType === 2){
+      this.URL = `http://localhost:8080/api/rol/listarIdOrganizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+    }else{
+      this.URL = `http://localhost:8080/api/rol/listarIdOrganizacion/${JSON.parse( localStorage.getItem('svariable')).orgID}`;
+      console.log(this.URL)
+    }
+
+    return this.http.get<Rol[]>(this.URL).pipe(
       map((response: Rol[]) => {
         const filteredResult = baseFilter(response, tableState);
         const result: TableResponseModel<Rol> = {

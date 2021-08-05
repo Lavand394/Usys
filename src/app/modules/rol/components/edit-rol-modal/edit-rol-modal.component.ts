@@ -91,7 +91,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
   isChecked: true;
   arrPermisoSelect;
   idModuloSelect = null;
-  MODULO = 'Rol';
+  MODULO = 'rol';
   disabled = true;
   disabledButtonSave = true;
   private subscriptions: Subscription[] = [];
@@ -445,23 +445,13 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
       }
     }
 
-    //action for save 
-    /*if (event.checked) {
-      var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 1, idIntermedia: idIntermedio, idRol: this.rol.id };
-      this.arrPermisoSelect = obj;
-      this.savePermiso('habilita', idIntermedio);
-    } else {
-      var obj = { idModulo: this.idModuloSelect, idPermiso: event.value, accion: acciona, habilitado: 0, idIntermedia: idIntermedio, idRol: this.rol.id };
-      this.arrPermisoSelect = obj;
-      this.savePermiso('desahabilita', idIntermedio);
-    }*/
   }
 
   /**
    * @description function to load the module catalog.
    */
   loadAreas() {
-    this.rolService.getItemByIdCustomGeneral('area', 'listarPorOrganizacion', 2).pipe(
+    this.rolService.getItemByIdCustomGeneral('area', 'organizacion', Number(JSON.parse( localStorage.getItem('svariable')).orgID)).pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
@@ -482,7 +472,7 @@ export class EditRolModalComponent implements OnInit, OnDestroy {
     this.idModuloSelect = idModuloN;
     console.log(this.idModuloSelect);
 
-    this.rolService.getPermisosByRolModulo(this.rol.id, this.idModuloSelect, 'Rol' + '/listarDirectoriosPorRolArea').pipe(
+    this.rolService.getPermisosByRolModulo(this.rol.id, this.idModuloSelect, 'rol' + '/listarDirectoriosPorRolArea').pipe(
       first(),
       catchError((errorMessage) => {
         this.modal.dismiss(errorMessage);
