@@ -172,7 +172,7 @@ export class AuthHTTPService {
   }
 
   validarSession(modulo, email: string, password: string): Observable<DatosSession> {
-    const url = `${this.API_URL1}${modulo}/validarSession/${email}/${password}`;
+    const url = `${this.API_URL1}/${modulo}/validarSession/${email}/${password}`;
     return this.http.get<DatosSession>(url);
     /*this._isLoading$.next(true);
     this._errorMessage.next('');
@@ -187,7 +187,7 @@ export class AuthHTTPService {
   }
 
   getDirectorios(modulo, idrol: number): Observable<object> {
-    const url = `${this.API_URL1}${modulo}/obtenerDirectorios/${idrol}`;
+    const url = `${this.API_URL1}/${modulo}/obtenerDirectorios/${idrol}`;
     return this.http.get<object>(url);
   }
   

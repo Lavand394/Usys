@@ -92,7 +92,7 @@ export abstract class TableService<T> {
   createParam(item: BaseModel, paramUrl): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(`${this.API_URL}${paramUrl}`, item).pipe(
+    return this.http.post<BaseModel>(`${this.API_URL}/${paramUrl}`, item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
@@ -118,7 +118,7 @@ export abstract class TableService<T> {
   // READ (Returning filtered list of entities)
   findById(tableState: ITableState, id: number): Observable<TableResponseModel<T>> {
     //const url = this.API_URL +  this.MODAL + '/listarIdOrganizacion/'+id;
-    const url = `${this.API_URL}${this.MODAL}/listarIdOrganizacion/${id}`;
+    const url = `${this.API_URL}/${this.MODAL}/listarIdOrganizacion/${id}`;
     this._errorMessage.next('');
     return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
       catchError(err => {
@@ -132,7 +132,7 @@ export abstract class TableService<T> {
   getItemById(id: number): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}${ this.MODAL}/ver/${id}`;
+    const url = `${this.API_URL}/${ this.MODAL}/ver/${id}`;
     console.log(url)
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
@@ -147,7 +147,7 @@ export abstract class TableService<T> {
   getItemByIdParametroOrganizacion(id: number, paramUrl): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}${paramUrl}/${id}`;
+    const url = `${this.API_URL}/${paramUrl}/${id}`;
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -161,9 +161,9 @@ export abstract class TableService<T> {
   update(item: BaseModel, urlparam?: string): Observable<any> {
     var url;
     if(urlparam){
-       url = `${this.API_URL}${urlparam}${item.id}`;
+       url = `${this.API_URL}/${urlparam}${item.id}`;
     }else{
-       url = `${this.API_URL}${ this.MODAL}/editar/${item.id}`;
+       url = `${this.API_URL}/${ this.MODAL}/editar/${item.id}`;
     }
     this._isLoading$.next(true);
     this._errorMessage.next('');
@@ -201,7 +201,7 @@ export abstract class TableService<T> {
   delete(id: any): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}${this.MODAL}/eliminar/${id}`;
+    const url = `${this.API_URL}/${this.MODAL}/eliminar/${id}`;
     return this.http.delete(url).pipe(
       tap((res) => {
         this.successMessage();
@@ -232,7 +232,7 @@ export abstract class TableService<T> {
 
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}${modulo}/eliminar/${id}`;
+    const url = `${this.API_URL}/${modulo}/eliminar/${id}`;
     return this.http.delete(url).pipe(
       tap((res) => {
         this.successMessage();
@@ -251,7 +251,7 @@ export abstract class TableService<T> {
   deletePermisoRol(id: any, modulo: string): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}${modulo}/eliminarByRol/${id}`;
+    const url = `${this.API_URL}/${modulo}/eliminarByRol/${id}`;
     return this.http.delete(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -463,7 +463,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   getPermisosByRolModulo(idModulo: number, idRol: number, paramUrl): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}${paramUrl}/${idRol}/${idModulo}`;
+    const url = `${this.API_URL}/${paramUrl}/${idRol}/${idModulo}`;
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -493,7 +493,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   deleteItemsPermisoCheck(modulo, id: any): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}${modulo}/eliminar/${id}`;
+    const url = `${this.API_URL}/${modulo}/eliminar/${id}`;
     return this.http.delete(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -591,7 +591,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
 
   // UPDATE
   addNumEmpleado(modulo,item: number, idOrganizacion: number): Observable<any> {
-    const url = `${this.API_URL}${modulo}/numeroEmpleado/${idOrganizacion}/${item}`;
+    const url = `${this.API_URL}/${modulo}/numeroEmpleado/${idOrganizacion}/${item}`;
     this._isLoading$.next(true);
     this._errorMessage.next('');
     return this.http.put(url, item).pipe(
@@ -607,7 +607,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   getItemByIdCustom(modulo, id: number): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}${modulo}/ver/${id}`;
+    const url = `${this.API_URL}/${modulo}/ver/${id}`;
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -621,7 +621,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   getItemByIdCustomGeneral(modulo: string,apiaction :string, id: number): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}${modulo}/${apiaction}/${id}`;
+    const url = `${this.API_URL}/${modulo}/${apiaction}/${id}`;
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -633,7 +633,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   }
   
   updateCustomModal(modulo, item: BaseModel): Observable<any> {
-    const url = `${this.API_URL}${modulo}/editar/${item.id}`;
+    const url = `${this.API_URL}/${modulo}/editar/${item.id}`;
     this._isLoading$.next(true);
     this._errorMessage.next('');
     return this.http.put(url, item).pipe(
@@ -647,8 +647,8 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   }
 
   getDirectorios(idModulo: number, idRol: number, paramUrl){
-    console.log(`${this.API_URL}${paramUrl}/${idModulo}/${idRol}`);
-    return this.http.get<Directorio[]>(`${this.API_URL}${paramUrl}/${idModulo}/${idRol}`)
+    console.log(`${this.API_URL}/${paramUrl}/${idModulo}/${idRol}`);
+    return this.http.get<Directorio[]>(`${this.API_URL}/${paramUrl}/${idModulo}/${idRol}`)
 /*
     this._isLoading$.next(true);
     this._errorMessage.next('');
