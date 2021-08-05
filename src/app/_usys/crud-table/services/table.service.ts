@@ -76,7 +76,7 @@ export abstract class TableService<T> {
   create(item: BaseModel): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(this.API_URL +  this.MODAL + '/crear', item).pipe(
+    return this.http.post<BaseModel>(this.API_URL +'/'+ this.MODAL + '/crear', item).pipe(
       tap((res) => {
         this.successMessage();
        }),
@@ -104,7 +104,7 @@ export abstract class TableService<T> {
 
   // READ (Returning filtered list of entities)
   find(tableState: ITableState): Observable<TableResponseModel<T>> {
-    const url = this.API_URL +  this.MODAL + '/listar';
+    const url = this.API_URL +'/'+  this.MODAL + '/listar';
     this._errorMessage.next('');
     return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
       catchError(err => {
@@ -186,7 +186,7 @@ export abstract class TableService<T> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
     const body = { ids, status };
-    const url = this.API_URL +  this.MODAL + '/updateStatus';
+    const url = this.API_URL +'/'+ this.MODAL + '/updateStatus';
     return this.http.put(url, body).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -449,7 +449,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   getCatalogo(modulo) {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = this.API_URL +  modulo + '/listar';
+    const url = this.API_URL +'/'+  modulo + '/listar';
     return this.http.get<BaseModel>(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -479,7 +479,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   createPermisoCheck(modulo, item: BaseModel): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(this.API_URL +  modulo + '/crear', item).pipe(
+    return this.http.post<BaseModel>(this.API_URL +'/'+  modulo + '/crear', item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
@@ -563,7 +563,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   
   // READ (Returning filtered list of entities)
   findCustomEmpleado(tableState: ITableState): Observable<TableResponseModel<T>> {
-    const url = this.API_URL +  this.MODAL + '/listarCustomEmpleado';
+    const url = this.API_URL +'/'+ this.MODAL + '/listarCustomEmpleado';
     this._errorMessage.next('');
     return this.http.post<TableResponseModel<T>>(url, tableState).pipe(
       catchError(err => {
@@ -579,7 +579,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   createGeneral(modulo,item: BaseModel): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(this.API_URL +  modulo + '/crear', item).pipe(
+    return this.http.post<BaseModel>(this.API_URL +'/'+ modulo + '/crear', item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
