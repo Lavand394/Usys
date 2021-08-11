@@ -9,5 +9,7 @@ export interface CustomEmpleado {
     apellidoMaterno: string;
     correo: string;
     estatus: number;
+    razonSocial: string;
+    nombreArea: string;
 
 }

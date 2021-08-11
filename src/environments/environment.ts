@@ -8,8 +8,8 @@ export const environment = {
   USERDATA_KEY: 'authf649fc9a5f55',
   isMockEnabled: true,
   apiUrl: 'api',
-  //backend: 'http://localhost:8080/api',
-  backend: 'https://usysback.azurewebsites.net/api'
+  backend: 'http://localhost:8080/api',
+  //backend: 'https://usysback.azurewebsites.net/api'
 };
 
 /*

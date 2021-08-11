@@ -40,6 +40,7 @@ grouping: GroupingState;
 isLoading: boolean;
 filterGroup: FormGroup;
 searchGroup: FormGroup;
+tipoUsuario: number;
 private subscriptions: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
 MODULO = 'area';
 constructor(
@@ -51,6 +52,7 @@ constructor(
 
   // angular lifecircle hooks
   ngOnInit(): void {
+    this.tipoUsuario = JSON.parse( localStorage.getItem('svariable')).userType;
     this.filterForm();
     this.searchForm();
     this.AreaService.fetch(this.MODULO);
