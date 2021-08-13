@@ -23,6 +23,7 @@ export class AuthHTTPService {
 
   public idOrganizacion;
   public idTipoUsuario;
+  public idUsuario;
   public idDirectorio: object;
   public directoriotexto: string;
   public totalStorage;
@@ -55,6 +56,7 @@ export class AuthHTTPService {
         
         this.idOrganizacion = result.idOrganizacion;
         this.idTipoUsuario = result.idTipoUsuario;
+        this.idUsuario = result.idUsuario;
         this.obtenerTotalStorage(result.idOrganizacion).subscribe();
         this.obtenerUsedStorage(result.idOrganizacion).subscribe();
         this.obtenerTotalDocumentsUploaded(result.idOrganizacion).subscribe();
@@ -76,6 +78,7 @@ export class AuthHTTPService {
           const svariable = {
             orgID: result.idOrganizacion,
             userType: result.idTipoUsuario,
+            userID: result.idUsuario,
             directory: this.directoriotexto,
             totalStorage: this.totalStorage,
             usedStorage: this.usedStorage,

@@ -71,12 +71,12 @@ export abstract class TableService<T> {
     this.http = http;
   }
 
-  // CREATE
-  // server should return the object with ID
+  // CREATE 
+  // server should return the object with ID  
   create(item: BaseModel): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(this.API_URL +'/'+ this.MODAL + '/crear', item).pipe(
+    return this.http.post<BaseModel>(`${this.API_URL}/${this.MODAL}/crear/${JSON.parse( localStorage.getItem('svariable')).userID}`, item).pipe(
       tap((res) => {
         this.successMessage();
        }),
@@ -92,7 +92,7 @@ export abstract class TableService<T> {
   createParam(item: BaseModel, paramUrl): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(`${this.API_URL}/${paramUrl}`, item).pipe(
+    return this.http.post<BaseModel>(`${this.API_URL}/${paramUrl}/${JSON.parse( localStorage.getItem('svariable')).userID}`, item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
@@ -161,9 +161,9 @@ export abstract class TableService<T> {
   update(item: BaseModel, urlparam?: string): Observable<any> {
     var url;
     if(urlparam){
-       url = `${this.API_URL}/${urlparam}${item.id}`;
+       url = `${this.API_URL}/${urlparam}${item.id}/${JSON.parse( localStorage.getItem('svariable')).userID}`;
     }else{
-       url = `${this.API_URL}/${ this.MODAL}/editar/${item.id}`;
+       url = `${this.API_URL}/${ this.MODAL}/editar/${item.id}/${JSON.parse( localStorage.getItem('svariable')).userID}`;
     }
     this._isLoading$.next(true);
     this._errorMessage.next('');
@@ -201,7 +201,7 @@ export abstract class TableService<T> {
   delete(id: any): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}/${this.MODAL}/eliminar/${id}`;
+    const url = `${this.API_URL}/${this.MODAL}/eliminar/${id}/${JSON.parse( localStorage.getItem('svariable')).userID}`;
     return this.http.delete(url).pipe(
       tap((res) => {
         this.successMessage();
@@ -232,7 +232,7 @@ export abstract class TableService<T> {
 
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}/${modulo}/eliminar/${id}`;
+    const url = `${this.API_URL}/${modulo}/eliminar/${id}/${JSON.parse( localStorage.getItem('svariable')).userID}`;
     return this.http.delete(url).pipe(
       tap((res) => {
         this.successMessage();
@@ -251,7 +251,7 @@ export abstract class TableService<T> {
   deletePermisoRol(id: any, modulo: string): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}/${modulo}/eliminarByRol/${id}`;
+    const url = `${this.API_URL}/${modulo}/eliminarByRol/${id}/${JSON.parse( localStorage.getItem('svariable')).userID}`;
     return this.http.delete(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -266,7 +266,7 @@ export abstract class TableService<T> {
   deleteItems(ids: number[] = []): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = this.API_URL + '/eliminar';
+    const url = `${this.API_URL}/eliminar/${JSON.parse( localStorage.getItem('svariable')).userID}`;
     const body = { ids };
     return this.http.put(url, body).pipe(
       catchError(err => {
@@ -479,7 +479,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   createPermisoCheck(modulo, item: BaseModel): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(this.API_URL +'/'+  modulo + '/crear', item).pipe(
+    return this.http.post<BaseModel>(`${this.API_URL}/${modulo}/crear/${JSON.parse( localStorage.getItem('svariable')).userID}`, item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
@@ -493,7 +493,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   deleteItemsPermisoCheck(modulo, id: any): Observable<any> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    const url = `${this.API_URL}/${modulo}/eliminar/${id}`;
+    const url = `${this.API_URL}/${modulo}/eliminar/${id}/${JSON.parse( localStorage.getItem('svariable')).userID}`;
     return this.http.delete(url).pipe(
       catchError(err => {
         this._errorMessage.next(err);
@@ -579,7 +579,7 @@ findDocumentos(tableState: ITableState, idOrganizacion?:number, filtro?:string, 
   createGeneral(modulo,item: BaseModel): Observable<BaseModel> {
     this._isLoading$.next(true);
     this._errorMessage.next('');
-    return this.http.post<BaseModel>(this.API_URL +'/'+ modulo + '/crear', item).pipe(
+    return this.http.post<BaseModel>(`${this.API_URL}/${modulo}/crear/${JSON.parse( localStorage.getItem('svariable')).userID}`, item).pipe(
       catchError(err => {
         this._errorMessage.next(err);
         console.error('CREATE ITEM', err);
