@@ -20,7 +20,6 @@ import { DeleteOrganizacionModalComponent } from './components/delete-organizaci
 import { EditOrganizacionModalComponent } from './components/edit-organizacion-modal/edit-organizacion-modal.component';
 import { OrganizacionService } from '../../_usys/core/services/modules/organizacion.service';
 import {EditOrganizacionParametrosModalComponent} from './components/edit-organizacion-parametros-modal/edit-organizacion-parametros-modal.component';
-import { AuthHTTPService } from '../auth/_services/auth-http/fake/auth-fake-http.service';
 @Component({
   selector: 'app-organizacion',
   templateUrl: './organizacion.component.html',

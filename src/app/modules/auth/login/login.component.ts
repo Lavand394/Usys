@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { UserModel } from '../_models/user.model';
@@ -12,14 +12,10 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  // KeenThemes mock, change it to:
-  // defaultAuth = {
-  //   email: '',
-  //   password: '',
-  // };
+
   defaultAuth: any = {
-    email: '',
-    password: '',
+    email: 'contactolbernal@gmail.com',
+    password: '12345',
   };
   loginForm: FormGroup;
   hasError: boolean;
@@ -68,14 +64,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   submit() {
     this.hasError = false;
-    const loginSubscr = this.authService
-      .login(this.f.email.value, this.f.password.value)
-      .pipe(first())
-      .subscribe((user: UserModel) => {
-        if (user) {
+
+    const loginSubscr = this.authService.login(this.f.email.value, this.f.password.value).pipe(first()).subscribe((user: UserModel) => {
+        //console.log("user: " + JSON.stringify(user))
+        if (user) { 
           this.router.navigate(['/dashboard']);
-          //menu
-          // datos usuarios
         } else {
           this.hasError = true;
         }

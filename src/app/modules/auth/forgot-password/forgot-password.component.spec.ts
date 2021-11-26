@@ -18,13 +18,6 @@ const fakeAuth = {
   password: 'demo',
 };
 
-class FakeAuthService {
-  forgotPassword(email: string): Observable<boolean> {
-    const isChecked = email.toLowerCase() === fakeAuth.email.toLowerCase();
-    return of(isChecked);
-  }
-}
-
 describe('ForgotPasswordComponent', () => {
   let component: ForgotPasswordComponent;
   let fixture: ComponentFixture<ForgotPasswordComponent>;
@@ -35,12 +28,7 @@ describe('ForgotPasswordComponent', () => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, FormsModule, HttpClientTestingModule],
       declarations: [ForgotPasswordComponent],
-      providers: [
-        {
-          provide: AuthService,
-          useClass: FakeAuthService,
-        },
-      ],
+      providers: [],
     }).compileComponents();
 
     injector = getTestBed();
